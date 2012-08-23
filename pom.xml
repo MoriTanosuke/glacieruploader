@@ -20,6 +20,14 @@
 		<artifactId>jackson-asl</artifactId>
 		<version>0.9.5</version>
 	</dependency>
+	<!-- not yet available -->
+	<!-- 
+	<dependency>
+		<groupId>com.amazonaws</groupId>
+		<artifactId>aws-java-sdk</artifactId>
+		<version>1.3.17</version>
+	</dependency>
+	 -->
 	</dependencies>
 	<build>
 		<plugins>
