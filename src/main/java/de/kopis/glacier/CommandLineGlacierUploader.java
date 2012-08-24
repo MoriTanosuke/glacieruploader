@@ -40,8 +40,10 @@ public class CommandLineGlacierUploader {
                     CommandLineGlacierUploader.class.getResourceAsStream(credentialFile));
 
             final AmazonGlacierClient client = new AmazonGlacierClient(credentials);
+            System.out.println("Using endpoint " + endpoint);
             client.setEndpoint(endpoint);
 
+            System.out.println("Starting upload of " + uploadFile);
             final ArchiveTransferManager atm = new ArchiveTransferManager(client, credentials);
             final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
             System.out.println("Uploaded archive " + archiveId);
