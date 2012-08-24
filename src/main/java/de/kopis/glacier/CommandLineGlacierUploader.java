@@ -48,7 +48,7 @@ public class CommandLineGlacierUploader {
             final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
             System.out.println("Uploaded archive " + archiveId);
         } catch (NullPointerException e) {
-            System.err.println("Can not read credentials. Check your file.");
+            System.err.println("Can not read credentials. Check the file " + credentialFile + " for errors.");
             e.printStackTrace();
         }
     }
