@@ -25,30 +25,24 @@ public class VaultInventoryLister {
     final AmazonGlacierClient client = new AmazonGlacierClient(credentials);
     client.setEndpoint("https://glacier.eu-west-1.amazonaws.com");
 
-    final ListVaultsResult listVaults = client
-        .listVaults(new ListVaultsRequest());
+    final ListVaultsResult listVaults = client.listVaults(new ListVaultsRequest());
     for (final DescribeVaultOutput vault : listVaults.getVaultList()) {
-      System.out.println("Vault " + vault.getVaultName() + ", last inventory: "
-          + vault.getLastInventoryDate());
+      System.out.println("Vault " + vault.getVaultName() + ", last inventory: " + vault.getLastInventoryDate());
 
       if (vault.getLastInventoryDate() != null) {
-        final InitiateJobRequest initJobRequest = new InitiateJobRequest()
-            .withVaultName(vault.getVaultName()).withJobParameters(
-                new JobParameters().withType("inventory-retrieval"));
+        final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vault.getVaultName())
+            .withJobParameters(new JobParameters().withType("inventory-retrieval"));
 
-        final InitiateJobResult initJobResult = client
-            .initiateJob(initJobRequest);
+        final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
         final String jobId = initJobResult.getJobId();
         System.out.println("Inventory Job ID=" + jobId);
 
         // TODO wait for job
 
-        final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest()
-            .withVaultName(vault.getVaultName()).withJobId(jobId);
-        final GetJobOutputResult jobOutputResult = client
-            .getJobOutput(jobOutputRequest);
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(
-            jobOutputResult.getBody()));
+        final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vault.getVaultName())
+            .withJobId(jobId);
+        final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
         String line = null;
         while ((line = reader.readLine()) != null) {
           System.out.println(line);
