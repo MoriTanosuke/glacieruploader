@@ -9,13 +9,13 @@ A simple java command line application for Amazon Glacier.
 How to run
 ==========
 
-You need a file names ´aws.properties´ with 2 lines:
+You need a file named `aws.properties` with 2 lines:
 
     accessKey=your_aws_access_key
     secretKey=your_secret_key
 
-When running the uploader, specify the path to this file with ´--credentials /path/to/aws.properties´. If
-you don't specify this option, the default is to search for the file in javas ´user.home´ directory.
+When running the uploader, specify the path to this file with `--credentials /path/to/aws.properties`. If
+you don't specify this option, the default is to search for the file in javas `user.home` directory.
 
 Upload
 ------
