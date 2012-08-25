@@ -6,12 +6,38 @@ A simple java command line application for Amazon Glacier
 How to run
 ==========
 
-[Download the package][0] and open a command line. Then run
+You need a file names ´aws.properties´ in your classpath with 2 lines:
 
-    java -jar uploader-0.0.1-SNAPSHOT-jar-with-dependencies.jar aws.properties PATH_TO_ARCHIVE YOUR_ENDPOINT YOUR_VAULT
+    accessKey=your_aws_access_key
+    secretKey=your_secret_key
 
-If you provide a wrong number of argument, you should get a USAGE message with explanations.
-Keep in mind that this is the very first version and it might break in creative ways.
+Upload
+------
+
+You'll call the tool like this:
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --file /path/to/my/file.zip
+    
+    Starting to upload README.md...
+    Using endpoint https://glacier.eu-west-1.amazonaws.com
+    Starting upload of file.zip
+    Uploaded archive j7UL7pH46FJGhoAxNVDsdjhHs_GLSKGLd12Dq44dfiyTciW6DSCQubctUFEZ4nKWPrJzv_YoxPVK_TfdAuMCxiQIE3_zEGDg84luI0-tzWMusdfjKHG2ILuhJhK5PySOOaw
+
+This will return an archive id which you can use to retrieve the archive again later.
+
+List inventory
+--------------
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --list-inventory
+
+This will list the complete inventory of the vault and you can copy the archive ids that you want to retrieve.
+
+Download archive
+================
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --download myarchiveid
+
+This will retrieve the archive.
 
 This is not working for me. What should I do?
 =============================================
