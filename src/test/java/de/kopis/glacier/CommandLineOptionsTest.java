@@ -62,9 +62,23 @@ public class CommandLineOptionsTest {
     assertTrue("Option 'list-inventory' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
         optionSet.has("list-inventory"));
   }
+  @Test
+  public void hasActionOptionListInventoryWithJobId() {
+    String[] newArgs = Arrays.copyOf(args, args.length + 2);
+    newArgs[newArgs.length - 2] = "--list-inventory";
+    newArgs[newArgs.length - 1] = "inventory-job-id";
+
+    OptionSet optionSet = optionsParser.parse(newArgs);
+    assertTrue("Option 'list-inventory' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+        optionSet.has("list-inventory"));
+    if(optionSet.hasArgument(optionsParser.INVENTORY_LISTING)) {
+      assertEquals("Value of option 'list-inventory' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+          "inventory-job-id", optionSet.valueOf("list-inventory"));
+    }
+  }
 
   @Test
-  public void hasActionOptionDowlnoad() {
+  public void hasActionOptionDownload() {
     String[] newArgs = Arrays.copyOf(args, args.length + 2);
     newArgs[newArgs.length - 2] = "--download";
     newArgs[newArgs.length - 1] = "myarchiveid";

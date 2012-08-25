@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.kopis.glacier</groupId>
 	<artifactId>uploader</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -51,9 +51,17 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
+					<fileSets>
+						<fileSet>
+							<directory>${project.build.resourcesDirectory}</directory>
+							<excludes>
+								<exclude>**/aws.properties</exclude>
+							</excludes>
+						</fileSet>
+					</fileSets>
 					<archive>
 						<manifest>
-							<mainClass>de.kopis.glacier.CommandLineGlacierUploader</mainClass>
+							<mainClass>de.kopis.glacier.GlacierUploader</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
