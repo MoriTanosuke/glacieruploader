@@ -3,6 +3,9 @@ package de.kopis.glacier;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 
 import joptsimple.OptionSet;
@@ -19,7 +22,7 @@ public class CommandLineOptionsTest {
   public void setUp() {
     optionsParser = new GlacierUploaderOptionParser();
 
-    args = new String[] { "--vault", "vaultname", "--endpoint", "endpointurl" };
+    args = new String[] { "--vault", "vaultname", "--endpoint", "file:///endpointurl" };
   }
 
   @Test
@@ -32,12 +35,25 @@ public class CommandLineOptionsTest {
   }
 
   @Test
-  public void hasRequiredEndpointOptionWithUrl() {
+  public void hasRequiredEndpointOptionWithUrl() throws MalformedURLException {
     OptionSet optionSet = optionsParser.parse(args);
     assertTrue("Option 'endpoint' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
         optionSet.has("endpoint"));
     assertEquals("Value of option 'endpoint' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
-        "endpointurl", optionSet.valueOf("endpoint"));
+        new URL("file:///endpointurl"), optionSet.valueOf("endpoint"));
+  }
+
+  @Test
+  public void hasOptionalCredentialsOptionWithFile() {
+    String[] newArgs = Arrays.copyOf(args, args.length + 2);
+    newArgs[newArgs.length - 2] = "--credentials";
+    newArgs[newArgs.length - 1] = "/path/to/aws.properties";
+    
+    OptionSet optionSet = optionsParser.parse(newArgs);
+    assertTrue("Option 'credentials' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+        optionSet.has("credentials"));
+    assertEquals("Value of option 'credentials' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+        new File("/path/to/aws.properties"), optionSet.valueOf("credentials"));
   }
 
   @Test
@@ -50,7 +66,7 @@ public class CommandLineOptionsTest {
     assertTrue("Option 'upload' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
         optionSet.has("upload"));
     assertEquals("Value of option 'upload' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
-        "/path/to/file", optionSet.valueOf("upload"));
+        new File("/path/to/file"), optionSet.valueOf("upload"));
   }
 
   @Test
