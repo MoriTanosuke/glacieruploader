@@ -6,10 +6,13 @@ A simple java command line application for Amazon Glacier
 How to run
 ==========
 
-You need a file names ´aws.properties´ in your classpath with 2 lines:
+You need a file names ´aws.properties´ with 2 lines:
 
     accessKey=your_aws_access_key
     secretKey=your_secret_key
+
+When running the uploader, specify the path to this file with ´--credentials /path/to/aws.properties´. If
+you don't specify this option, the default is to search for the file in javas ´user.home´ directory.
 
 Upload
 ------
@@ -18,7 +21,7 @@ You'll call the tool like this:
 
     java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --file /path/to/my/file.zip
     
-    Starting to upload README.md...
+    Starting to upload file.zip...
     Using endpoint https://glacier.eu-west-1.amazonaws.com
     Starting upload of file.zip
     Uploaded archive j7UL7pH46FJGhoAxNVDsdjhHs_GLSKGLd12Dq44dfiyTciW6DSCQubctUFEZ4nKWPrJzv_YoxPVK_TfdAuMCxiQIE3_zEGDg84luI0-tzWMusdfjKHG2ILuhJhK5PySOOaw
