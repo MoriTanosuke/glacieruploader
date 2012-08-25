@@ -22,7 +22,7 @@ Upload
 
 You'll call the tool like this:
 
-    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --file /path/to/my/file.zip
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --upload /path/to/my/file.zip
     
     Starting to upload file.zip...
     Using endpoint https://glacier.eu-west-1.amazonaws.com
