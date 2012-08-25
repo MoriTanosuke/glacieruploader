@@ -29,7 +29,7 @@ List inventory
 --------------
 
     java -jarglacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --list-inventory
-    Listing inventory for vault cr_backup...
+    Listing inventory for vault myvaultname...
     Inventory Job ID=8yM9rC4RvSKW5QlXdsglkjJHDFGPMSQyZA2CjhpIWgw2AE4lyyIU87uZz2d-b8eoKrCbGehR4vj5dfHiKPA9Zj5
 
 This will give you a job ID for the inventory listing of the vault. After the job is completed, you can retrieve the listing.
