@@ -1,12 +1,15 @@
 glacieruploader
 ===============
 
-A simple java command line application for Amazon Glacier
+A simple java command line application for Amazon Glacier.
+
+[![Build Status](https://secure.travis-ci.org/MoriTanosuke/glacieruploader.png?branch=master)](http://travis-ci.org/MoriTanosuke/glacieruploader)
+
 
 How to run
 ==========
 
-You need a file names ´aws.properties´ in your classpath with 2 lines:
+You need a file names `aws.properties` in your classpath with 2 lines:
 
     accessKey=your_aws_access_key
     secretKey=your_secret_key
@@ -57,7 +60,6 @@ might be a good idea to check for existing issues before reporting a new one.
 
 And as always, you can [fork me and fix the error yourself][2]. :-)
 
-[![Build Status](https://secure.travis-ci.org/MoriTanosuke/glacieruploader.png?branch=master)](http://travis-ci.org/MoriTanosuke/glacieruploader)
 
 [0]: https://github.com/MoriTanosuke/glacieruploader/downloads
 [1]: https://github.com/MoriTanosuke/glacieruploader/issues
