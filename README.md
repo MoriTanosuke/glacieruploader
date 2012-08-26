@@ -17,10 +17,17 @@ You need a file named `aws.properties` with 2 lines:
 When running the uploader, specify the path to this file with `--credentials /path/to/aws.properties`. If
 you don't specify this option, the default is to search for the file in javas `user.home` directory.
 
-Upload
-------
+Create vault
+------------
 
-You'll call the tool like this:
+Available since 0.0.4.
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --create-vault
+
+Upload archive
+--------------
+
+Available since 0.0.3.
 
     java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --upload /path/to/my/file.zip
     
@@ -31,8 +38,20 @@ You'll call the tool like this:
 
 This will return an archive id which you can use to retrieve the archive again later.
 
+Download archive
+----------------
+
+Available since 0.0.4.
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --download myarchiveid
+
+This will download the archive to a temporary location and append the prefix `glacier-` and the postfix `.dl`
+to the file. *This will change later and you'll provide the file location.*
+
 List inventory
 --------------
+
+Available since 0.0.3.
 
     java -jarglacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --list-inventory
     Listing inventory for vault myvaultname...
@@ -43,12 +62,16 @@ This will give you a job ID for the inventory listing of the vault. After the jo
 Retrieve inventory listing
 --------------------------
 
+Available since 0.0.3.
+
     java -jarglacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --list-inventory yourjobidfromthepreviousstep
     Retrieving inventory for job id 8yM9rC4RvSKW5QlXdsglkjJHDFGPMSQyZA2CjhpIWgw2AE4lyyIU87uZz2d-b8eoKrCbGehR4vj5dfHiKPA9Zj5...
     Using endpoint https://glacier.eu-west-1.amazonaws.com
 
 Download archive
 ----------------
+
+Available since 0.0.3.
 
     java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --download myarchiveid
 
