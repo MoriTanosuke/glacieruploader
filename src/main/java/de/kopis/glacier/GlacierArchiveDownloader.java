@@ -17,7 +17,7 @@ public class GlacierArchiveDownloader extends AbstractGlacierCommand {
     System.out.println("Downloading archive " + archiveId + " from vault " + vaultName + "...");
 
     try {
-      final File downloadFile = File.createTempFile("glacier", "dl");
+      final File downloadFile = File.createTempFile("glacier-", ".dl");
       final ArchiveTransferManager atm = new ArchiveTransferManager(client, credentials);
       atm.download(vaultName, archiveId, downloadFile);
       System.out.println("Archive downloaded to " + downloadFile);

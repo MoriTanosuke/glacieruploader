@@ -40,26 +40,27 @@ public class GlacierUploader {
     try {
       final File credentialFile = options.valueOf(optionParser.CREDENTIALS);
       final URL endpointUrl = options.valueOf(optionParser.ENDPOINT);
+      final String vaultName = options.valueOf(optionParser.VAULT);
 
       if (options.has(optionParser.UPLOAD)) {
         System.out.println("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
         final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(credentialFile);
-        glacierUploader.upload(endpointUrl, options.valueOf(optionParser.VAULT), options.valueOf(optionParser.UPLOAD));
+        glacierUploader.upload(endpointUrl, vaultName, options.valueOf(optionParser.UPLOAD));
       } else if (options.has(optionParser.INVENTORY_LISTING)) {
         final VaultInventoryLister vaultInventoryLister = new VaultInventoryLister(credentialFile);
         if (options.hasArgument(optionParser.INVENTORY_LISTING)) {
-          vaultInventoryLister.retrieveInventoryListing(endpointUrl, options.valueOf(optionParser.VAULT),
+          vaultInventoryLister.retrieveInventoryListing(endpointUrl, vaultName,
               options.valueOf(optionParser.INVENTORY_LISTING));
         } else {
-          System.out.println("Listing inventory for vault " + options.valueOf(optionParser.VAULT) + "...");
-          vaultInventoryLister.startInventoryListing(endpointUrl, options.valueOf(optionParser.VAULT));
+          System.out.println("Listing inventory for vault " + vaultName + "...");
+          vaultInventoryLister.startInventoryListing(endpointUrl, vaultName);
         }
       } else if (options.has(optionParser.DOWNLOAD)) {
         final GlacierArchiveDownloader downloader = new GlacierArchiveDownloader(credentialFile);
-        downloader.download(endpointUrl, options.valueOf(optionParser.VAULT), options.valueOf(optionParser.DOWNLOAD));
+        downloader.download(endpointUrl, vaultName, options.valueOf(optionParser.DOWNLOAD));
       } else if (options.has(optionParser.CREATE_VAULT)) {
         final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(credentialFile);
-        vaultCreator.createVault(endpointUrl, options.valueOf(optionParser.CREATE_VAULT));
+        vaultCreator.createVault(endpointUrl, vaultName);
       } else {
         try {
           System.out.println("Ooops, can't determine what you want to do. Check your options.");
