@@ -24,8 +24,9 @@ package de.kopis.glacier;
  * #L%
  */
 
-
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import joptsimple.OptionSet;
 
@@ -37,26 +38,28 @@ public class GlacierUploader {
     final OptionSet options = optionParser.parse(args);
 
     try {
+      final File credentialFile = options.valueOf(optionParser.CREDENTIALS);
+      final URL endpointUrl = options.valueOf(optionParser.ENDPOINT);
+
       if (options.has(optionParser.UPLOAD)) {
-        // TODO upload archive
         System.out.println("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
-        final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(options.valueOf(optionParser.CREDENTIALS));
-        glacierUploader.upload(options.valueOf(optionParser.ENDPOINT),
-            options.valueOf(optionParser.VAULT), options.valueOf(optionParser.UPLOAD));
+        final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(credentialFile);
+        glacierUploader.upload(endpointUrl, options.valueOf(optionParser.VAULT), options.valueOf(optionParser.UPLOAD));
       } else if (options.has(optionParser.INVENTORY_LISTING)) {
-        final VaultInventoryLister vaultInventoryLister = new VaultInventoryLister(options.valueOf(optionParser.CREDENTIALS));
+        final VaultInventoryLister vaultInventoryLister = new VaultInventoryLister(credentialFile);
         if (options.hasArgument(optionParser.INVENTORY_LISTING)) {
-          System.out.println("Retrieving inventory for job id " + options.valueOf(optionParser.INVENTORY_LISTING)
-              + "...");
-          vaultInventoryLister.retrieveInventoryListing(options.valueOf(optionParser.ENDPOINT),
-              options.valueOf(optionParser.VAULT), options.valueOf(optionParser.INVENTORY_LISTING));
+          vaultInventoryLister.retrieveInventoryListing(endpointUrl, options.valueOf(optionParser.VAULT),
+              options.valueOf(optionParser.INVENTORY_LISTING));
         } else {
           System.out.println("Listing inventory for vault " + options.valueOf(optionParser.VAULT) + "...");
-          vaultInventoryLister.startInventoryListing(options.valueOf(optionParser.ENDPOINT),
-              options.valueOf(optionParser.VAULT));
+          vaultInventoryLister.startInventoryListing(endpointUrl, options.valueOf(optionParser.VAULT));
         }
       } else if (options.has(optionParser.DOWNLOAD)) {
-        // TODO download archive
+        final GlacierArchiveDownloader downloader = new GlacierArchiveDownloader(credentialFile);
+        downloader.download(endpointUrl, options.valueOf(optionParser.VAULT), options.valueOf(optionParser.DOWNLOAD));
+      } else if (options.has(optionParser.CREATE_VAULT)) {
+        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(credentialFile);
+        vaultCreator.createVault(endpointUrl, options.valueOf(optionParser.CREATE_VAULT));
       } else {
         try {
           System.out.println("Ooops, can't determine what you want to do. Check your options.");

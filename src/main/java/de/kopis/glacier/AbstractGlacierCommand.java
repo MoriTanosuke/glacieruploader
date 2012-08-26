@@ -24,21 +24,35 @@ package de.kopis.glacier;
  * #L%
  */
 
-
 import java.io.File;
 import java.io.IOException;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
+import com.amazonaws.services.glacier.model.DescribeVaultRequest;
+import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
 public abstract class AbstractGlacierCommand {
   protected final AWSCredentials credentials;
   protected final AmazonGlacierClient client;
 
-  public AbstractGlacierCommand(File credentials) throws IOException {
+  public AbstractGlacierCommand(final File credentials) throws IOException {
     this.credentials = new PropertiesCredentials(credentials);
     client = new AmazonGlacierClient(this.credentials);
+  }
+
+  protected void describeVault(final String vaultName) {
+    final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
+    final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
+
+    System.out.println("Describing the vault: " + vaultName);
+    System.out.println("CreationDate: " + describeVaultResult.getCreationDate());
+    System.out.println("LastInventoryDate: " + describeVaultResult.getLastInventoryDate());
+    System.out.println("NumberOfArchives: " + describeVaultResult.getNumberOfArchives());
+    System.out.println("SizeInBytes: " + describeVaultResult.getSizeInBytes());
+    System.out.println("VaultARN: " + describeVaultResult.getVaultARN());
+    System.out.println("VaultName: " + describeVaultResult.getVaultName());
   }
 
 }

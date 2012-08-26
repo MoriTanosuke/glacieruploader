@@ -24,7 +24,6 @@ package de.kopis.glacier;
  * #L%
  */
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
   }
 
   public void startInventoryListing(URL endpointUrl, String vaultName) {
-    System.out.println("Using endpoint " + endpointUrl);
+    System.out.println("Starting inventory listing for vault " + vaultName + "...");
     client.setEndpoint(endpointUrl.toExternalForm());
 
     final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
@@ -58,9 +57,9 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
   }
 
   public void retrieveInventoryListing(URL endpointUrl, String vaultName, String jobId) {
-    System.out.println("Using endpoint " + endpointUrl);
+    System.out.println("Retrieving inventory for job id " + jobId + "...");
     client.setEndpoint(endpointUrl.toExternalForm());
-    
+
     final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
     final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
     final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
