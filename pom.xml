@@ -4,6 +4,24 @@
 	<groupId>de.kopis.glacier</groupId>
 	<artifactId>uploader</artifactId>
 	<version>0.0.3-SNAPSHOT</version>
+	<inceptionYear>2012</inceptionYear>
+
+	<organization>
+		<name>Carsten Ringe</name>
+		<url>https://github.com/MoriTanosuke/glacieruploader</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+		</license>
+	</licenses>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -37,6 +55,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -55,7 +74,7 @@
 						<fileSet>
 							<directory>${project.build.resourcesDirectory}</directory>
 							<excludes>
-								<exclude>**/aws.properties</exclude>
+								<exclude>src/main/resources/aws.properties</exclude>
 							</excludes>
 						</fileSet>
 					</fileSets>
@@ -75,6 +94,25 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.3</version>
+				<configuration>
+					<verbose>false</verbose>
+					<addSvnKeyWords>true</addSvnKeyWords>
+					<licenseName>gpl_v3</licenseName>
+				</configuration>
+				<executions>
+					<execution>
+						<id>first</id>
+						<goals>
+							<goal>update-file-header</goal>
+						</goals>
+						<phase>process-sources</phase>
 					</execution>
 				</executions>
 			</plugin>

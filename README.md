@@ -63,7 +63,13 @@ might be a good idea to check for existing issues before reporting a new one.
 
 And as always, you can [fork me and fix the error yourself][2]. :-)
 
+License
+=======
+
+This project is distributed under [GNU GPL v3][3].
+
 
 [0]: https://github.com/MoriTanosuke/glacieruploader/downloads
 [1]: https://github.com/MoriTanosuke/glacieruploader/issues
 [2]: https://github.com/MoriTanosuke/glacieruploader/fork
+[3]: http://www.gnu.org/licenses/gpl-3.0.html
