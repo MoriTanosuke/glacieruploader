@@ -5,7 +5,6 @@ A simple java command line application for Amazon Glacier.
 
 [![Build Status](https://secure.travis-ci.org/MoriTanosuke/glacieruploader.png?branch=master)](http://travis-ci.org/MoriTanosuke/glacieruploader)
 
-
 How to run
 ==========
 
