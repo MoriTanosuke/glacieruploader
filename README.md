@@ -5,6 +5,13 @@ A simple java command line application for Amazon Glacier. You can find the late
 
 [![Build Status](https://secure.travis-ci.org/MoriTanosuke/glacieruploader.png?branch=master)](http://travis-ci.org/MoriTanosuke/glacieruploader)
 
+How to get it
+=============
+
+Either [download the latest binary](https://github.com/MoriTanosuke/glacieruploader/downloads), or build 
+from source. TODO: provide building instructions.
+
+
 How to run
 ==========
 
