@@ -38,11 +38,11 @@ import com.amazonaws.services.glacier.model.JobParameters;
 
 public class VaultInventoryLister extends AbstractGlacierCommand {
 
-  public VaultInventoryLister(File credentials) throws IOException {
+  public VaultInventoryLister(final File credentials) throws IOException {
     super(credentials);
   }
 
-  public void startInventoryListing(URL endpointUrl, String vaultName) {
+  public void startInventoryListing(final URL endpointUrl, final String vaultName) {
     System.out.println("Starting inventory listing for vault " + vaultName + "...");
     client.setEndpoint(endpointUrl.toExternalForm());
 
@@ -56,7 +56,7 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
     // TODO wait for job, but it could take about 4 hours says the SDK...
   }
 
-  public void retrieveInventoryListing(URL endpointUrl, String vaultName, String jobId) {
+  public void retrieveInventoryListing(final URL endpointUrl, final String vaultName, final String jobId) {
     System.out.println("Retrieving inventory for job id " + jobId + "...");
     client.setEndpoint(endpointUrl.toExternalForm());
 
@@ -68,7 +68,7 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
       while ((line = reader.readLine()) != null) {
         System.out.println(line);
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       System.err.println("Something went wrong while reading inventory.");
       e.printStackTrace();
     }

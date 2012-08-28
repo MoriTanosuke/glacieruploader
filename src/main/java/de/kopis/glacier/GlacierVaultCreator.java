@@ -42,6 +42,8 @@ public class GlacierVaultCreator extends AbstractGlacierCommand {
   public void createVault(final URL endpoint, final String vaultName) {
     System.out.println("Creating vault " + vaultName + "...");
     final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
+    client.setEndpoint(endpoint.toExternalForm());
+
     try {
       final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
       System.out.println("Vault " + vaultName + " created.");
@@ -57,6 +59,8 @@ public class GlacierVaultCreator extends AbstractGlacierCommand {
 
   public void deleteVault(final URL endpoint, final String vaultName) {
     System.out.println("Deleting vault " + vaultName + "...");
+    client.setEndpoint(endpoint.toExternalForm());
+
     DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
     // TODO check for notifications first?
     client.deleteVault(deleteVaultRequest);
