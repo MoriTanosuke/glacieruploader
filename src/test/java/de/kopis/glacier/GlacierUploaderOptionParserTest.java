@@ -134,10 +134,20 @@ public class GlacierUploaderOptionParserTest {
   @Test
   public void hasActionOptionCreateVault() {
     String[] newArgs = Arrays.copyOf(args, args.length + 1);
-    newArgs[newArgs.length - 1] = "--create-vault";
+    newArgs[newArgs.length - 1] = "--create";
 
     OptionSet optionSet = optionsParser.parse(newArgs);
-    assertTrue("Option 'create-vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
-        optionSet.has("create-vault"));
+    assertTrue("Option 'create' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+        optionSet.has("create"));
+  }
+
+  @Test
+  public void hasActionOptionDeleteVault() {
+    String[] newArgs = Arrays.copyOf(args, args.length + 1);
+    newArgs[newArgs.length - 1] = "--delete";
+
+    OptionSet optionSet = optionsParser.parse(newArgs);
+    assertTrue("Option 'delete' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+        optionSet.has("delete"));
   }
 }

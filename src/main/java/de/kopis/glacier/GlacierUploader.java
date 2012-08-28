@@ -61,6 +61,9 @@ public class GlacierUploader {
       } else if (options.has(optionParser.CREATE_VAULT)) {
         final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(credentialFile);
         vaultCreator.createVault(endpointUrl, vaultName);
+      } else if (options.has(optionParser.DELETE_VAULT)) {
+        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(credentialFile);
+        vaultCreator.deleteVault(endpointUrl, vaultName);
       } else {
         try {
           System.out.println("Ooops, can't determine what you want to do. Check your options.");

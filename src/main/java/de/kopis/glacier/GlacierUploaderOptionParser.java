@@ -39,6 +39,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
   public final OptionSpec<String> INVENTORY_LISTING;
   public final OptionSpec<Void> CREATE_VAULT;
   public final OptionSpec<File> CREDENTIALS;
+  public final OptionSpec<Void> DELETE_VAULT;
 
   public GlacierUploaderOptionParser() {
     super();
@@ -51,7 +52,8 @@ public class GlacierUploaderOptionParser extends OptionParser {
     DOWNLOAD = accepts("download", "download an existing archive").withRequiredArg().ofType(String.class);
     CREDENTIALS = accepts("credentials", "path to your aws credentials file").withRequiredArg().ofType(File.class)
         .defaultsTo(new File(System.getProperty("user.home") + "/aws.properties"));
-    CREATE_VAULT = accepts("create-vault", "creates a new vault");
+    CREATE_VAULT = accepts("create", "creates a new vault");
+    DELETE_VAULT = accepts("delete", "deletes an existing vault");
   }
 
 }
