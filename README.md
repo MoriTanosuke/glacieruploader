@@ -22,7 +22,14 @@ Create vault
 
 Available since 0.0.4.
 
-    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --create-vault
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --create
+
+Delete vault
+------------
+
+Available since 0.0.4.
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --delete
 
 Upload archive
 --------------
