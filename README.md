@@ -8,9 +8,7 @@ A simple java command line application for Amazon Glacier. You can find the late
 How to get it
 =============
 
-Either [download the latest binary](https://github.com/MoriTanosuke/glacieruploader/downloads), or build 
-from source. TODO: provide building instructions.
-
+Either [download the latest binary](https://github.com/MoriTanosuke/glacieruploader/downloads), or [build from source](https://github.com/MoriTanosuke/glacieruploader/wiki/How-to-build).
 
 How to run
 ==========
