@@ -35,6 +35,7 @@ import com.amazonaws.services.glacier.model.GetJobOutputResult;
 import com.amazonaws.services.glacier.model.InitiateJobRequest;
 import com.amazonaws.services.glacier.model.InitiateJobResult;
 import com.amazonaws.services.glacier.model.JobParameters;
+import com.amazonaws.services.glacier.model.ResourceNotFoundException;
 
 public class VaultInventoryLister extends AbstractGlacierCommand {
 
@@ -60,16 +61,19 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
     System.out.println("Retrieving inventory for job id " + jobId + "...");
     client.setEndpoint(endpointUrl.toExternalForm());
 
-    final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
-    final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
-    final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
-    String line = null;
     try {
+      final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
+      final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
+      final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
+      String line = null;
       while ((line = reader.readLine()) != null) {
         System.out.println(line);
       }
-    } catch (IOException e) {
-      System.err.println("Something went wrong while reading inventory.");
+    } catch (final ResourceNotFoundException e) {
+      System.err.println(e.getLocalizedMessage());
+      e.printStackTrace();
+    } catch (final IOException e) {
+      System.err.println(e.getLocalizedMessage());
       e.printStackTrace();
     }
   }

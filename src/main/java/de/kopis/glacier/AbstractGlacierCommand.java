@@ -32,14 +32,21 @@ import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.model.DescribeVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultResult;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sqs.AmazonSQSClient;
 
 public abstract class AbstractGlacierCommand {
   protected final AWSCredentials credentials;
   protected final AmazonGlacierClient client;
+  protected final AmazonSQSClient sqs;
+  protected final AmazonSNSClient sns;
 
   public AbstractGlacierCommand(final File credentials) throws IOException {
     this.credentials = new PropertiesCredentials(credentials);
     client = new AmazonGlacierClient(this.credentials);
+    sqs = new AmazonSQSClient(this.credentials);
+    sns = new AmazonSNSClient(this.credentials);
+
   }
 
   protected void describeVault(final String vaultName) {
