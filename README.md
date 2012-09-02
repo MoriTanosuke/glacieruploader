@@ -1,10 +1,14 @@
 glacieruploader
 ===============
 
-A simple java command line application for Amazon Glacier.
+A simple java command line application for Amazon Glacier. You can find the latest version at [https://github.com/MoriTanosuke/glacieruploader/](https://github.com/MoriTanosuke/glacieruploader/).
 
 [![Build Status](https://secure.travis-ci.org/MoriTanosuke/glacieruploader.png?branch=master)](http://travis-ci.org/MoriTanosuke/glacieruploader)
 
+How to get it
+=============
+
+Either [download the latest binary](https://github.com/MoriTanosuke/glacieruploader/downloads), or [build from source](https://github.com/MoriTanosuke/glacieruploader/wiki/How-to-build).
 
 How to run
 ==========
@@ -73,14 +77,6 @@ Available since 0.0.3.
     Retrieving inventory for job id 8yM9rC4RvSKW5QlXdsglkjJHDFGPMSQyZA2CjhpIWgw2AE4lyyIU87uZz2d-b8eoKrCbGehR4vj5dfHiKPA9Zj5...
     Using endpoint https://glacier.eu-west-1.amazonaws.com
 
-Download archive
-----------------
-
-Available since 0.0.3.
-
-    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --download myarchiveid
-
-This will retrieve the archive.
 
 This is not working for me. What should I do?
 =============================================
