@@ -1,0 +1,1 @@
+{"VaultARN":"arn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup","InventoryDate":"2012-08-29T02:56:35Z","ArchiveList":[{"ArchiveId":"thisisaverylongrandomstringthatworksasthearchiveid","ArchiveDescription":"a custom description for your archive","CreationDate":"2012-08-23T04:14:56Z","Size":123456789,"SHA256TreeHash":"123456789123456789123456789"}]}

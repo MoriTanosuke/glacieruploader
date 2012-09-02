@@ -30,29 +30,38 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
 import com.amazonaws.services.glacier.model.InitiateJobRequest;
 import com.amazonaws.services.glacier.model.InitiateJobResult;
 import com.amazonaws.services.glacier.model.JobParameters;
-import com.amazonaws.services.glacier.model.ResourceNotFoundException;
+import com.amazonaws.util.json.JSONException;
 
 public class VaultInventoryLister extends AbstractGlacierCommand {
 
-  public VaultInventoryLister(final File credentials) throws IOException {
+  private final VaultInventoryPrinter printer;
+
+  public VaultInventoryLister(File credentials) throws IOException {
     super(credentials);
+    printer = new VaultInventoryPrinter();
   }
 
   public void startInventoryListing(final URL endpointUrl, final String vaultName) {
     System.out.println("Starting inventory listing for vault " + vaultName + "...");
     client.setEndpoint(endpointUrl.toExternalForm());
 
-    final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
-        new JobParameters().withType("inventory-retrieval"));
+    try {
+      final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
+          new JobParameters().withType("inventory-retrieval"));
 
-    final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
-    final String jobId = initJobResult.getJobId();
-    System.out.println("Inventory Job created with ID=" + jobId);
+      final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
+      final String jobId = initJobResult.getJobId();
+      System.out.println("Inventory Job created with ID=" + jobId);
+    } catch (final AmazonClientException e) {
+      System.err.println(e.getLocalizedMessage());
+      // e.printStackTrace();
+    }
 
     // TODO wait for job, but it could take about 4 hours says the SDK...
   }
@@ -65,16 +74,23 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
       final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
       final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
       final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
+      String content = "";
       String line = null;
       while ((line = reader.readLine()) != null) {
-        System.out.println(line);
+        content += line;
       }
-    } catch (final ResourceNotFoundException e) {
+      reader.close();
+      // TODO use dendency injection here
+      printer.setInventory(content);
+      printer.printInventory(System.out);
+    } catch (final AmazonClientException e) {
       System.err.println(e.getLocalizedMessage());
-      e.printStackTrace();
+      // e.printStackTrace();
+    } catch (JSONException e) {
+      System.err.println(e.getLocalizedMessage());
     } catch (final IOException e) {
       System.err.println(e.getLocalizedMessage());
-      e.printStackTrace();
+      // e.printStackTrace();
     }
   }
 }
