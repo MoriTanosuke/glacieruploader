@@ -43,7 +43,7 @@ public class GlacierArchiveDownloader extends AbstractGlacierCommand {
 
     try {
       final File downloadFile = File.createTempFile("glacier-", ".dl");
-      final ArchiveTransferManager atm = new ArchiveTransferManager(client, credentials);
+      final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
       atm.download(vaultName, archiveId, downloadFile);
       System.out.println("Archive downloaded to " + downloadFile);
     } catch (final IOException e) {
