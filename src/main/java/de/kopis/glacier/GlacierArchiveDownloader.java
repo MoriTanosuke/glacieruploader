@@ -37,25 +37,24 @@ public class GlacierArchiveDownloader extends AbstractGlacierCommand {
     super(endpoint, credentials);
   }
 
-  public void download(final String vaultName, final String archiveId) {
-    System.out.println("Downloading archive " + archiveId + " from vault " + vaultName + "...");
+  public void download(final String vaultName, final String archiveId, final String targetFile) {
+    final File downloadFile = new File(targetFile);
+    download(vaultName, archiveId, downloadFile);
+  }
 
-    try {
-      final File downloadFile = File.createTempFile("glacier-", ".dl");
-      final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
-      atm.download(vaultName, archiveId, downloadFile);
-      System.out.println("Archive downloaded to " + downloadFile);
-    } catch (final IOException e) {
-      System.err.println("Can not download archive " + archiveId + " from vault " + vaultName + ".");
-      e.printStackTrace();
-    }
+  public void download(final String vaultName, final String archiveId, final File targetFile) {
+    log.info("Downloading archive " + archiveId + " from vault " + vaultName + "...");
+
+    final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
+    atm.download(vaultName, archiveId, targetFile);
+    log.info("Archive downloaded to " + targetFile);
   }
 
   public void delete(final URL endpointUrl, final String vaultName, final String archiveId) {
-    System.out.println("Deleting archive " + archiveId + " from vault " + vaultName + "...");
+    log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
     final DeleteArchiveRequest deleteArchiveRequest = new DeleteArchiveRequest(vaultName, archiveId);
     client.deleteArchive(deleteArchiveRequest);
-    System.out.println("Archive " + archiveId + " deleted from vault " + vaultName + ".");
+    log.info("Archive " + archiveId + " deleted from vault " + vaultName + ".");
   }
 
 }

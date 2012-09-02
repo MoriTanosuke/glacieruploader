@@ -32,6 +32,7 @@ import joptsimple.OptionSpec;
 
 public class GlacierUploaderOptionParser extends OptionParser {
 
+  public final OptionSpec<File> TARGET_FILE;
   public final OptionSpec<URL> ENDPOINT;
   public final OptionSpec<String> VAULT;
   public final OptionSpec<File> UPLOAD;
@@ -54,6 +55,6 @@ public class GlacierUploaderOptionParser extends OptionParser {
         .defaultsTo(new File(System.getProperty("user.home") + "/aws.properties"));
     CREATE_VAULT = accepts("create", "creates a new vault");
     DELETE_VAULT = accepts("delete", "deletes an existing vault");
+    TARGET_FILE = accepts("target", "filename to store downloaded archive").withRequiredArg().ofType(File.class);
   }
-
 }

@@ -37,12 +37,12 @@ public class CommandLineGlacierUploader extends AbstractGlacierCommand {
   }
 
   public void upload(final String vaultName, final File uploadFile) {
-    System.out.println("Uploading " + uploadFile + " to vault " + vaultName + "...");
+    log.info("Uploading " + uploadFile + " to vault " + vaultName + "...");
     try {
-      System.out.println("Starting upload of " + uploadFile);
+      log.info("Starting upload of " + uploadFile);
       final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
       final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
-      System.out.println("Uploaded archive " + archiveId);
+      log.info("Uploaded archive " + archiveId);
     } catch (final IOException e) {
       System.err.println("Something went wrong while uploading " + uploadFile + ".");
       e.printStackTrace();

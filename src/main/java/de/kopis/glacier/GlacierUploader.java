@@ -47,7 +47,7 @@ public class GlacierUploader {
       final String vaultName = options.valueOf(optionParser.VAULT);
 
       if (options.has(optionParser.UPLOAD)) {
-        System.out.println("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
+        log.info("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
         final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(endpointUrl, credentialFile);
         glacierUploader.upload(vaultName, options.valueOf(optionParser.UPLOAD));
       } else if (options.has(optionParser.INVENTORY_LISTING)) {
@@ -56,12 +56,13 @@ public class GlacierUploader {
           vaultInventoryLister.retrieveInventoryListing(endpointUrl, vaultName,
               options.valueOf(optionParser.INVENTORY_LISTING));
         } else {
-          System.out.println("Listing inventory for vault " + vaultName + "...");
+          log.info("Listing inventory for vault " + vaultName + "...");
           vaultInventoryLister.startInventoryListing(vaultName);
         }
       } else if (options.has(optionParser.DOWNLOAD)) {
         final GlacierArchiveDownloader downloader = new GlacierArchiveDownloader(endpointUrl, credentialFile);
-        downloader.download(vaultName, options.valueOf(optionParser.DOWNLOAD));
+        downloader.download(vaultName, options.valueOf(optionParser.DOWNLOAD),
+            options.valueOf(optionParser.TARGET_FILE));
       } else if (options.has(optionParser.CREATE_VAULT)) {
         final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
         vaultCreator.createVault(vaultName);
@@ -69,7 +70,7 @@ public class GlacierUploader {
         final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
         vaultCreator.deleteVault(vaultName);
       } else {
-        System.out.println("Ooops, can't determine what you want to do. Check your options.");
+        log.info("Ooops, can't determine what you want to do. Check your options.");
         try {
           optionParser.printHelpOn(System.err);
         } catch (final IOException e) {
@@ -77,7 +78,7 @@ public class GlacierUploader {
         }
       }
     } catch (final IOException e) {
-      System.out.println("Ooops, something is wrong with your setup.");
+      log.info("Ooops, something is wrong with your setup.");
       log.error("Something is wrong with the system configuration", e);
     }
   }

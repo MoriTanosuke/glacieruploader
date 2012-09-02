@@ -48,7 +48,7 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
   }
 
   public void startInventoryListing(final String vaultName) {
-    System.out.println("Starting inventory listing for vault " + vaultName + "...");
+    log.info("Starting inventory listing for vault " + vaultName + "...");
 
     try {
       final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
@@ -56,7 +56,7 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
 
       final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
       final String jobId = initJobResult.getJobId();
-      System.out.println("Inventory Job created with ID=" + jobId);
+      log.info("Inventory Job created with ID=" + jobId);
     } catch (final AmazonClientException e) {
       System.err.println(e.getLocalizedMessage());
       // e.printStackTrace();
@@ -66,7 +66,7 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
   }
 
   public void retrieveInventoryListing(final URL endpointUrl, final String vaultName, final String jobId) {
-    System.out.println("Retrieving inventory for job id " + jobId + "...");
+    log.info("Retrieving inventory for job id " + jobId + "...");
     client.setEndpoint(endpointUrl.toExternalForm());
 
     try {

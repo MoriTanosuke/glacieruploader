@@ -42,12 +42,12 @@ public class GlacierVaultCreator extends AbstractGlacierCommand {
   }
 
   public void createVault(final String vaultName) {
-    System.out.println("Creating vault " + vaultName + "...");
+    log.info("Creating vault " + vaultName + "...");
 
     try {
       final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
       final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
-      System.out.println("Vault " + vaultName + " created.");
+      log.info("Vault " + vaultName + " created.");
 
       final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
       final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
@@ -62,11 +62,11 @@ public class GlacierVaultCreator extends AbstractGlacierCommand {
   }
 
   public void deleteVault(final String vaultName) {
-    System.out.println("Deleting vault " + vaultName + "...");
+    log.info("Deleting vault " + vaultName + "...");
 
     final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
     // TODO check for notifications first?
     client.deleteVault(deleteVaultRequest);
-    System.out.println("Vault " + vaultName + " deleted.");
+    log.info("Vault " + vaultName + " deleted.");
   }
 }
