@@ -26,40 +26,43 @@ package de.kopis.glacier;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
-import com.amazonaws.services.glacier.model.DescribeVaultRequest;
-import com.amazonaws.services.glacier.model.DescribeVaultResult;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 
 public abstract class AbstractGlacierCommand {
+  protected final Log log;
+
   protected final AWSCredentials credentials;
   protected final AmazonGlacierClient client;
   protected final AmazonSQSClient sqs;
   protected final AmazonSNSClient sns;
 
-  public AbstractGlacierCommand(final File credentials) throws IOException {
+  public AbstractGlacierCommand(final URL endpoint, final File credentials) throws IOException {
+    this.log = LogFactory.getLog(this.getClass());
+
     this.credentials = new PropertiesCredentials(credentials);
     client = new AmazonGlacierClient(this.credentials);
     sqs = new AmazonSQSClient(this.credentials);
     sns = new AmazonSNSClient(this.credentials);
 
+    setEndpoint(endpoint);
   }
 
-  protected void describeVault(final String vaultName) {
-    final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
-    final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
+  protected void setEndpoint(final URL endpoint) {
+    log.info("Using endpoint " + endpoint);
 
-    System.out.println("Describing the vault: " + vaultName);
-    System.out.println("CreationDate: " + describeVaultResult.getCreationDate());
-    System.out.println("LastInventoryDate: " + describeVaultResult.getLastInventoryDate());
-    System.out.println("NumberOfArchives: " + describeVaultResult.getNumberOfArchives());
-    System.out.println("SizeInBytes: " + describeVaultResult.getSizeInBytes());
-    System.out.println("VaultARN: " + describeVaultResult.getVaultARN());
-    System.out.println("VaultName: " + describeVaultResult.getVaultName());
+    client.setEndpoint(endpoint.toExternalForm());
+    // TODO check if this really fixes #13
+    sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
+    sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
   }
 
 }

@@ -42,14 +42,13 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
 
   private final VaultInventoryPrinter printer;
 
-  public VaultInventoryLister(File credentials) throws IOException {
-    super(credentials);
+  public VaultInventoryLister(final URL endpoint, final File credentials) throws IOException {
+    super(endpoint, credentials);
     printer = new VaultInventoryPrinter();
   }
 
-  public void startInventoryListing(final URL endpointUrl, final String vaultName) {
+  public void startInventoryListing(final String vaultName) {
     System.out.println("Starting inventory listing for vault " + vaultName + "...");
-    client.setEndpoint(endpointUrl.toExternalForm());
 
     try {
       final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
@@ -86,7 +85,7 @@ public class VaultInventoryLister extends AbstractGlacierCommand {
     } catch (final AmazonClientException e) {
       System.err.println(e.getLocalizedMessage());
       // e.printStackTrace();
-    } catch (JSONException e) {
+    } catch (final JSONException e) {
       System.err.println(e.getLocalizedMessage());
     } catch (final IOException e) {
       System.err.println(e.getLocalizedMessage());

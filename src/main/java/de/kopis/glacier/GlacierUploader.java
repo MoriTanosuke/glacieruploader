@@ -30,7 +30,11 @@ import java.net.URL;
 
 import joptsimple.OptionSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class GlacierUploader {
+  private static final Log log = LogFactory.getLog(GlacierUploader.class);
 
   public static void main(final String[] args) {
     final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser();
@@ -44,38 +48,37 @@ public class GlacierUploader {
 
       if (options.has(optionParser.UPLOAD)) {
         System.out.println("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
-        final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(credentialFile);
-        glacierUploader.upload(endpointUrl, vaultName, options.valueOf(optionParser.UPLOAD));
+        final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(endpointUrl, credentialFile);
+        glacierUploader.upload(vaultName, options.valueOf(optionParser.UPLOAD));
       } else if (options.has(optionParser.INVENTORY_LISTING)) {
-        final VaultInventoryLister vaultInventoryLister = new VaultInventoryLister(credentialFile);
+        final VaultInventoryLister vaultInventoryLister = new VaultInventoryLister(endpointUrl, credentialFile);
         if (options.hasArgument(optionParser.INVENTORY_LISTING)) {
           vaultInventoryLister.retrieveInventoryListing(endpointUrl, vaultName,
               options.valueOf(optionParser.INVENTORY_LISTING));
         } else {
           System.out.println("Listing inventory for vault " + vaultName + "...");
-          vaultInventoryLister.startInventoryListing(endpointUrl, vaultName);
+          vaultInventoryLister.startInventoryListing(vaultName);
         }
       } else if (options.has(optionParser.DOWNLOAD)) {
-        final GlacierArchiveDownloader downloader = new GlacierArchiveDownloader(credentialFile);
-        downloader.download(endpointUrl, vaultName, options.valueOf(optionParser.DOWNLOAD));
+        final GlacierArchiveDownloader downloader = new GlacierArchiveDownloader(endpointUrl, credentialFile);
+        downloader.download(vaultName, options.valueOf(optionParser.DOWNLOAD));
       } else if (options.has(optionParser.CREATE_VAULT)) {
-        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(credentialFile);
-        vaultCreator.createVault(endpointUrl, vaultName);
+        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
+        vaultCreator.createVault(vaultName);
       } else if (options.has(optionParser.DELETE_VAULT)) {
-        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(credentialFile);
-        vaultCreator.deleteVault(endpointUrl, vaultName);
+        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
+        vaultCreator.deleteVault(vaultName);
       } else {
+        System.out.println("Ooops, can't determine what you want to do. Check your options.");
         try {
-          System.out.println("Ooops, can't determine what you want to do. Check your options.");
           optionParser.printHelpOn(System.err);
         } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          log.error("Can not print help", e);
         }
       }
     } catch (final IOException e) {
       System.out.println("Ooops, something is wrong with your setup.");
-      e.printStackTrace();
+      log.error("Something is wrong with the system configuration", e);
     }
   }
 

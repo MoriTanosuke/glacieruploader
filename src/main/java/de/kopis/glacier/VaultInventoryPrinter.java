@@ -28,18 +28,24 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.amazonaws.util.json.JSONArray;
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 
 public class VaultInventoryPrinter {
+  private final Log log;
 
   private String inventory;
 
   public VaultInventoryPrinter() {
+    log = LogFactory.getLog(VaultInventoryPrinter.class);
   }
 
   public VaultInventoryPrinter(final String inventory) {
+    this();
     this.inventory = inventory;
   }
 

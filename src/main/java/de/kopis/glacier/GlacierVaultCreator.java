@@ -33,21 +33,25 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.model.CreateVaultRequest;
 import com.amazonaws.services.glacier.model.CreateVaultResult;
 import com.amazonaws.services.glacier.model.DeleteVaultRequest;
+import com.amazonaws.services.glacier.model.DescribeVaultRequest;
+import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
 public class GlacierVaultCreator extends AbstractGlacierCommand {
-  public GlacierVaultCreator(final File credentials) throws IOException {
-    super(credentials);
+  public GlacierVaultCreator(final URL endpoint, final File credentials) throws IOException {
+    super(endpoint, credentials);
   }
 
-  public void createVault(final URL endpoint, final String vaultName) {
+  public void createVault(final String vaultName) {
     System.out.println("Creating vault " + vaultName + "...");
-    final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
-    client.setEndpoint(endpoint.toExternalForm());
 
     try {
+      final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
       final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
       System.out.println("Vault " + vaultName + " created.");
-      describeVault(vaultName);
+
+      final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
+      final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
+      new VaultPrinter().printVault(describeVaultResult, System.out);
     } catch (final AmazonServiceException e) {
       System.err.println("Couldn't create vault.");
       e.printStackTrace();
@@ -57,11 +61,10 @@ public class GlacierVaultCreator extends AbstractGlacierCommand {
     }
   }
 
-  public void deleteVault(final URL endpoint, final String vaultName) {
+  public void deleteVault(final String vaultName) {
     System.out.println("Deleting vault " + vaultName + "...");
-    client.setEndpoint(endpoint.toExternalForm());
 
-    DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
+    final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
     // TODO check for notifications first?
     client.deleteVault(deleteVaultRequest);
     System.out.println("Vault " + vaultName + " deleted.");

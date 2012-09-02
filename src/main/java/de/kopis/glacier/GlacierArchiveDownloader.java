@@ -33,13 +33,12 @@ import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 
 public class GlacierArchiveDownloader extends AbstractGlacierCommand {
 
-  public GlacierArchiveDownloader(final File credentials) throws IOException {
-    super(credentials);
+  public GlacierArchiveDownloader(final URL endpoint, final File credentials) throws IOException {
+    super(endpoint, credentials);
   }
 
-  public void download(final URL endpointUrl, final String vaultName, final String archiveId) {
+  public void download(final String vaultName, final String archiveId) {
     System.out.println("Downloading archive " + archiveId + " from vault " + vaultName + "...");
-    client.setEndpoint(endpointUrl.toExternalForm());
 
     try {
       final File downloadFile = File.createTempFile("glacier-", ".dl");
