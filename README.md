@@ -53,11 +53,14 @@ Download archive
 ----------------
 
 Available since 0.0.4.
+Changed in 0.0.5.
 
-    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --download myarchiveid
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --download myarchiveid --target path/to/filename.zip
 
 This will download the archive to a temporary location and append the prefix `glacier-` and the postfix `.dl`
 to the file. *This will change later and you'll provide the file location.*
+
+The option `--target` specifies an absolute or relative path to a file where the downloaded archive will be saved.
 
 List inventory
 --------------
