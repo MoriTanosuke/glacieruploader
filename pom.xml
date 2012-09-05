@@ -17,7 +17,13 @@
 			<url>http://www.gnu.org/licenses/gpl-3.0.html</url>
 		</license>
 	</licenses>
-	
+
+	<scm>
+		<connection>scm:git:git@github.com:MoriTanosuke/glacieruploader.git</connection>
+		<developerConnection>scm:git:git@github.com:MoriTanosuke/glacieruploader.git</developerConnection>
+		<url>https://github.com/MoriTanosuke/glacieruploader</url>
+	</scm>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -63,6 +69,14 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
