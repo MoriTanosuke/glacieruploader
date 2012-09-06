@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.kopis.glacier</groupId>
 	<artifactId>uploader</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<inceptionYear>2012</inceptionYear>
 
 	<organization>
@@ -21,7 +21,7 @@
 		<connection>scm:git:${git.origin}</connection>
 		<developerConnection>scm:git:${git.origin}</developerConnection>
 		<url>https://github.com/MoriTanosuke/glacieruploader</url>
-	  <tag>uploader-0.0.5</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<properties>
