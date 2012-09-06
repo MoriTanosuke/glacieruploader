@@ -62,6 +62,16 @@ to the file. *This will change later and you'll provide the file location.*
 
 The option `--target` specifies an absolute or relative path to a file where the downloaded archive will be saved.
 
+Calculate HASH for file
+-----------------------
+
+Available since 0.0.5.
+
+    java -jar glacieruploader.jar --calculate /path/to/file.zip
+    cd229f64d6a3aeb4f1bcbe953d8a7be00a077747b6d6a1001e65d14ef10c1706
+
+This will calculate a TreeHash sum for the given file. The hash can be verified with the one calculated by Amazon.
+
 List inventory
 --------------
 

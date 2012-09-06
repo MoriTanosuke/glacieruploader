@@ -35,8 +35,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.amazonaws.util.json.JSONException;
-
-import de.kopis.glacier.util.VaultInventoryPrinter;
+import com.amazonaws.util.json.JSONObject;
 
 public class VaultInventoryPrinterTest {
 
@@ -48,7 +47,18 @@ public class VaultInventoryPrinterTest {
     assertEquals("ARN:\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup\n"
         + "Archive ID:\t\tthisisaverylongrandomstringthatworksasthearchiveid\n"
         + "CreationDate:\t2012-08-23T04:14:56Z\n" + "Description:\ta custom description for your archive\n"
-        + "Size:\t\t\t123456789 (117.74kB)\n" + "SHA:\t\t\t123456789123456789123456789\n", out.toString());
+        + "Size:\t\t\t123456789 (117.74MB)\n" + "SHA:\t\t\t123456789123456789123456789\n", out.toString());
+  }
+
+  @Test
+  public void printArchiveSize() throws JSONException {
+    assertEquals("123456789 (117.74MB)",
+        new VaultInventoryPrinter().printArchiveSize(new JSONObject("{Size:123456789}")));
+  }
+
+  @Test
+  public void sanitizeMissingSizeIndicator() {
+    assertArrayEquals(new String[] { "123456789", "B" }, new VaultInventoryPrinter().sanitize("123456789"));
   }
 
   @Test

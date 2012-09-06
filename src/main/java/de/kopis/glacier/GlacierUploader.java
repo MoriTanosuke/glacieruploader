@@ -27,11 +27,14 @@ package de.kopis.glacier;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 
 import joptsimple.OptionSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import de.kopis.glacier.util.TreeHashCalculator;
 
 public class GlacierUploader {
   private static final Log log = LogFactory.getLog(GlacierUploader.class);
@@ -69,6 +72,9 @@ public class GlacierUploader {
       } else if (options.has(optionParser.DELETE_VAULT)) {
         final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
         vaultCreator.deleteVault(vaultName);
+      } else if (options.has(optionParser.CALCULATE_HASH)) {
+        System.out.println(TreeHashCalculator.toHex(TreeHashCalculator.computeSHA256TreeHash(options
+            .valueOf(optionParser.CALCULATE_HASH))));
       } else {
         log.info("Ooops, can't determine what you want to do. Check your options.");
         try {
@@ -80,7 +86,9 @@ public class GlacierUploader {
     } catch (final IOException e) {
       log.info("Ooops, something is wrong with your setup.");
       log.error("Something is wrong with the system configuration", e);
+    } catch (final NoSuchAlgorithmException e) {
+      log.info("Ooops, something is wrong with your setup. Can not calculate hashsum.");
+      log.error("Something is wrong with the system configuration. Can not calculate hashsum.", e);
     }
   }
-
 }

@@ -41,6 +41,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
   public final OptionSpec<Void> CREATE_VAULT;
   public final OptionSpec<File> CREDENTIALS;
   public final OptionSpec<Void> DELETE_VAULT;
+  public final OptionSpec<File> CALCULATE_HASH;
 
   public GlacierUploaderOptionParser() {
     super();
@@ -56,5 +57,6 @@ public class GlacierUploaderOptionParser extends OptionParser {
     CREATE_VAULT = accepts("create", "creates a new vault");
     DELETE_VAULT = accepts("delete", "deletes an existing vault");
     TARGET_FILE = accepts("target", "filename to store downloaded archive").withRequiredArg().ofType(File.class);
+    CALCULATE_HASH = accepts("calculate", "calculate hashsum for a file").withRequiredArg().ofType(File.class);
   }
 }

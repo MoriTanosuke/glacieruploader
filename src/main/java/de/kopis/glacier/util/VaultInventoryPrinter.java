@@ -27,6 +27,9 @@ package de.kopis.glacier.util;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,26 +84,33 @@ public class VaultInventoryPrinter {
     o.println("SHA:\t\t\t" + archive.get("SHA256TreeHash"));
   }
 
-  private String printArchiveSize(final JSONObject archive) throws JSONException {
+  protected String printArchiveSize(final JSONObject archive) throws JSONException {
     final String size = archive.getString("Size");
     final String humanReadableSize = humanReadableSize(size);
+    return size + " (" + humanReadableSize + ")";
+  }
+
+  private String humanReadableSize(final String size) throws IllegalArgumentException {
+    final String[] sanitizedSize = sanitize(size);
+    double sizeAsDouble = 0;
+    try {
+      // parse as US value, because WTF? java default?
+      sizeAsDouble = NumberFormat.getInstance(Locale.US).parse(sanitizedSize[0]).doubleValue();
+    } catch (final ParseException e) {
+      throw new IllegalArgumentException("Can not parse Number", e);
+    }
+    String humanReadableSize = "";
+    String sizeClass = sanitizedSize[1];
+    if (sizeAsDouble > 1024) {
+      sizeClass = getLargerSizeClass(sanitizedSize[1]);
+      humanReadableSize = humanReadableSize(sizeAsDouble / 1024.0 + " " + sizeClass);
+    } else {
+      humanReadableSize = round(Double.toString(sizeAsDouble), 2, BigDecimal.ROUND_UP) + sizeClass;
+    }
     return humanReadableSize;
   }
 
-  private String humanReadableSize(final String size) {
-    final String[] sanitizedSize = sanitize(size);
-    final double sizeAsDouble = Double.parseDouble(sanitizedSize[0]);
-    String humanReadableSize = "";
-    if (sizeAsDouble > 1024) {
-      sanitizedSize[1] = getLargerSizeClass(sanitizedSize[1]);
-      humanReadableSize = humanReadableSize(Double.toString(sizeAsDouble / 1024.0));
-    } else {
-      humanReadableSize = Double.toString(sizeAsDouble);
-    }
-    return round(humanReadableSize, 2, BigDecimal.ROUND_UP);
-  }
-
-  public String getLargerSizeClass(final String oldSizeClass) {
+  private String getLargerSizeClass(final String oldSizeClass) {
     String newSizeClass = "B";
     if ("B".equals(oldSizeClass)) {
       newSizeClass = "kB";
@@ -116,16 +126,21 @@ public class VaultInventoryPrinter {
     return newSizeClass;
   }
 
-  public String[] sanitize(final String size) {
-    final Pattern patternClass = Pattern.compile("^([0-9]+)");
+  protected String[] sanitize(final String size) {
+    final Pattern patternClass = Pattern.compile("([0-9.]+)\\s*?([kMGTP]?B)");
     final Matcher m = patternClass.matcher(size);
-    final String pureSize = m.group(1);
-    final String sizeClass = "";// m.group(2);
+    String[] s = new String[] { size, "B" };
+    if (m.find()) {
+      final String pureSize = m.group(1);
+      final String sizeClass = m.group(2);
 
-    return new String[] { pureSize, sizeClass };
+      s = new String[] { pureSize, sizeClass };
+    }
+
+    return s;
   }
 
-  public String round(final String unrounded, final int precision, final int roundingMode) {
+  private String round(final String unrounded, final int precision, final int roundingMode) {
     final BigDecimal bd = new BigDecimal(unrounded);
     final BigDecimal rounded = bd.setScale(precision, roundingMode);
     return rounded.toString();
