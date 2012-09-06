@@ -1,14 +1,14 @@
 glacieruploader
 ===============
 
-A simple java command line application for Amazon Glacier. You can find the latest version at [https://github.com/MoriTanosuke/glacieruploader/](https://github.com/MoriTanosuke/glacieruploader/).
-
-[![Build Status](https://secure.travis-ci.org/MoriTanosuke/glacieruploader.png?branch=master)](http://travis-ci.org/MoriTanosuke/glacieruploader)
+A simple java command line application for Amazon Glacier. You can find the latest version at [https://github.com/MoriTanosuke/glacieruploader/][6].
 
 How to get it
 =============
 
-Either [download the latest binary](https://github.com/MoriTanosuke/glacieruploader/downloads), or [build from source](https://github.com/MoriTanosuke/glacieruploader/wiki/How-to-build).
+Either [download the latest binary][0], or [build from source][5].
+
+You can [download a nightly build][4] from our our CI server.
 
 How to run
 ==========
@@ -110,3 +110,6 @@ This project is distributed under [GNU GPL v3][3].
 [1]: https://github.com/MoriTanosuke/glacieruploader/issues
 [2]: https://github.com/MoriTanosuke/glacieruploader/fork
 [3]: http://www.gnu.org/licenses/gpl-3.0.html
+[4]: https://cringe.ci.cloudbees.com/job/glacieruploader/
+[5]: https://github.com/MoriTanosuke/glacieruploader/wiki/How-to-build
+[6]: https://github.com/MoriTanosuke/glacieruploader/
