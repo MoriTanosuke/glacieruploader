@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.util;
 
 /*
  * #%L
@@ -27,6 +27,8 @@ package de.kopis.glacier;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,14 +88,41 @@ public class VaultInventoryPrinter {
   }
 
   private String humanReadableSize(final String size) {
-    final double sizeAsDouble = Double.parseDouble(size);
+    final String[] sanitizedSize = sanitize(size);
+    final double sizeAsDouble = Double.parseDouble(sanitizedSize[0]);
     String humanReadableSize = "";
     if (sizeAsDouble > 1024) {
+      sanitizedSize[1] = getLargerSizeClass(sanitizedSize[1]);
       humanReadableSize = humanReadableSize(Double.toString(sizeAsDouble / 1024.0));
     } else {
       humanReadableSize = Double.toString(sizeAsDouble);
     }
     return round(humanReadableSize, 2, BigDecimal.ROUND_UP);
+  }
+
+  public String getLargerSizeClass(final String oldSizeClass) {
+    String newSizeClass = "B";
+    if ("B".equals(oldSizeClass)) {
+      newSizeClass = "kB";
+    } else if ("kB".equals(oldSizeClass)) {
+      newSizeClass = "MB";
+    } else if ("MB".equals(oldSizeClass)) {
+      newSizeClass = "GB";
+    } else if ("GB".equals(oldSizeClass)) {
+      newSizeClass = "TB";
+    } else if ("TB".equals(oldSizeClass)) {
+      newSizeClass = "PT";
+    }
+    return newSizeClass;
+  }
+
+  public String[] sanitize(final String size) {
+    final Pattern patternClass = Pattern.compile("^([0-9]+)");
+    final Matcher m = patternClass.matcher(size);
+    final String pureSize = m.group(1);
+    final String sizeClass = "";// m.group(2);
+
+    return new String[] { pureSize, sizeClass };
   }
 
   public String round(final String unrounded, final int precision, final int roundingMode) {

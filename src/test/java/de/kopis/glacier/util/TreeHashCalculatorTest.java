@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.util;
 
 /*
  * #%L
@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
+
+import de.kopis.glacier.util.TreeHashCalculator;
 
 public class TreeHashCalculatorTest {
 

@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.util;
 
 /*
  * #%L
@@ -24,6 +24,7 @@ package de.kopis.glacier;
  * #L%
  */
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -35,6 +36,8 @@ import org.junit.Test;
 
 import com.amazonaws.util.json.JSONException;
 
+import de.kopis.glacier.util.VaultInventoryPrinter;
+
 public class VaultInventoryPrinterTest {
 
   @Test
@@ -45,7 +48,32 @@ public class VaultInventoryPrinterTest {
     assertEquals("ARN:\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup\n"
         + "Archive ID:\t\tthisisaverylongrandomstringthatworksasthearchiveid\n"
         + "CreationDate:\t2012-08-23T04:14:56Z\n" + "Description:\ta custom description for your archive\n"
-        + "Size:\t\t\t117.74\n" + "SHA:\t\t\t123456789123456789123456789\n", out.toString());
+        + "Size:\t\t\t123456789 (117.74kB)\n" + "SHA:\t\t\t123456789123456789123456789\n", out.toString());
+  }
+
+  @Test
+  public void sanitizeBytes() {
+    assertArrayEquals(new String[] { "123456789", "B" }, new VaultInventoryPrinter().sanitize("123456789 B"));
+  }
+
+  @Test
+  public void sanitizeKilobytes() {
+    assertArrayEquals(new String[] { "123456789", "kB" }, new VaultInventoryPrinter().sanitize("123456789kB"));
+  }
+
+  @Test
+  public void sanitizeMegabytes() {
+    assertArrayEquals(new String[] { "123456789", "MB" }, new VaultInventoryPrinter().sanitize("123456789MB"));
+  }
+
+  @Test
+  public void sanitizeGigabytes() {
+    assertArrayEquals(new String[] { "123456789", "GB" }, new VaultInventoryPrinter().sanitize("123456789   GB"));
+  }
+
+  @Test
+  public void sanitizeKilTerabytes() {
+    assertArrayEquals(new String[] { "123456789", "TB" }, new VaultInventoryPrinter().sanitize("123456789TB"));
   }
 
   private String readFile(final String filename) throws IOException {

@@ -38,6 +38,8 @@ import com.amazonaws.services.glacier.model.InitiateJobResult;
 import com.amazonaws.services.glacier.model.JobParameters;
 import com.amazonaws.util.json.JSONException;
 
+import de.kopis.glacier.util.VaultInventoryPrinter;
+
 public class VaultInventoryLister extends AbstractGlacierCommand {
 
   private final VaultInventoryPrinter printer;
