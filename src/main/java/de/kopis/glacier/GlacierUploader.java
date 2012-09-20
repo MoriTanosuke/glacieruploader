@@ -66,6 +66,9 @@ public class GlacierUploader {
         final GlacierArchiveDownloader downloader = new GlacierArchiveDownloader(endpointUrl, credentialFile);
         downloader.download(vaultName, options.valueOf(optionParser.DOWNLOAD),
             options.valueOf(optionParser.TARGET_FILE));
+      } else if (options.has(optionParser.DELETE_ARCHIVE)) {
+        final GlacierArchiveDeleter deleter = new GlacierArchiveDeleter(endpointUrl, credentialFile);
+        deleter.delete(vaultName, options.valueOf(optionParser.DELETE_ARCHIVE));
       } else if (options.has(optionParser.CREATE_VAULT)) {
         final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
         vaultCreator.createVault(vaultName);
