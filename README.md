@@ -32,8 +32,9 @@ Delete vault
 ------------
 
 Available since 0.0.4.
+Changed in 0.0.6.
 
-    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --delete
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --delete-vault
 
 Upload archive
 --------------
@@ -61,6 +62,15 @@ This will download the archive to a temporary location and append the prefix `gl
 to the file. *This will change later and you'll provide the file location.*
 
 The option `--target` specifies an absolute or relative path to a file where the downloaded archive will be saved.
+
+Delete archive
+--------------
+
+Available since 0.0.6
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --delete myarchiveid
+
+Deletes the archive `myarchiveid`.
 
 Calculate HASH for file
 -----------------------
