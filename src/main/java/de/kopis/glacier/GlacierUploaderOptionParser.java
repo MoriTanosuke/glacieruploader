@@ -48,18 +48,18 @@ public class GlacierUploaderOptionParser extends OptionParser {
   public GlacierUploaderOptionParser() {
     super();
     VAULT = acceptsAll(new ArrayList<String>() {{add("vault"); add("v");}}, "name of your vault").withRequiredArg().ofType(String.class);
-    ENDPOINT = accepts("endpoint", "URL of the amazon AWS endpoint where your vault is").withRequiredArg().ofType(
+    ENDPOINT = acceptsAll(new ArrayList<String>() {{add("endpoint"); add("e");}}, "URL of the amazon AWS endpoint where your vault is").withRequiredArg().ofType(
         URL.class);
     UPLOAD = acceptsAll(new ArrayList<String>() {{add("upload"); add("u");}}, "start uploading a new archive").withRequiredArg().ofType(File.class);
-    INVENTORY_LISTING = accepts("list-inventory", "retrieve the inventory listing of a vault").withOptionalArg()
+    INVENTORY_LISTING = acceptsAll(new ArrayList<String>() {{add("list-inventory"); add("l");}}, "retrieve the inventory listing of a vault").withOptionalArg()
         .ofType(String.class);
     DOWNLOAD = acceptsAll(new ArrayList<String>() {{add("download"); add("o");}}, "download an existing archive").withRequiredArg().ofType(String.class);
     CREDENTIALS = acceptsAll(new ArrayList<String>() {{add("credentials");}}, "path to your aws credentials file").withRequiredArg().ofType(File.class)
         .defaultsTo(new File(System.getProperty("user.home") + "/aws.properties"));
     CREATE_VAULT = acceptsAll(new ArrayList<String>() {{add("create"); add("c");}}, "creates a new vault");
-    DELETE_VAULT = acceptsAll(new ArrayList<String>() {{add("delete-vault"); add("dv");}}, "deletes an existing vault");
+    DELETE_VAULT = acceptsAll(new ArrayList<String>() {{add("delete-vault"); add("r");}}, "deletes an existing vault");
     TARGET_FILE = acceptsAll(new ArrayList<String>() {{add("target"); add("t");}}, "filename to store downloaded archive").withRequiredArg().ofType(File.class);
-    CALCULATE_HASH = acceptsAll(new ArrayList<String>() {{add("calculate"); add("ca");}}, "calculate hashsum for a file").withRequiredArg().ofType(File.class);
+    CALCULATE_HASH = acceptsAll(new ArrayList<String>() {{add("calculate"); add("a");}}, "calculate hashsum for a file").withRequiredArg().ofType(File.class);
     DELETE_ARCHIVE = acceptsAll(new ArrayList<String>() {{add("delete"); add("d");}}, "deletes an existing archive").withOptionalArg().ofType(String.class);
   }
 }

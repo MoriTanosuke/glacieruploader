@@ -26,21 +26,21 @@ Command-line options
 
     Option                                  Description                            
     ------                                  -----------                            
+    -a, --calculate <File>                  calculate hashsum for a file           
     -c, --create                            creates a new vault                    
-    --ca, --calculate <File>                calculate hashsum for a file           
     --credentials <File>                    path to your aws credentials file      
                                               (default: /home/carsten/aws.         
                                               properties)                          
     -d, --delete                            deletes an existing archive            
-    --delete-vault, --dv                    deletes an existing vault              
-    --endpoint <URL>                        URL of the amazon AWS endpoint where   
+    -e, --endpoint <URL>                    URL of the amazon AWS endpoint where   
                                               your vault is                        
-    --list-inventory                        retrieve the inventory listing of a    
+    -l, --list-inventory                    retrieve the inventory listing of a    
                                               vault                                
     -o, --download                          download an existing archive           
+    -r, --delete-vault                      deletes an existing vault              
     -t, --target <File>                     filename to store downloaded archive   
     -u, --upload <File>                     start uploading a new archive          
-    -v, --vault                             name of your vault                     
+    -v, --vault                             name of your vault   
 
 Examples
 ========
