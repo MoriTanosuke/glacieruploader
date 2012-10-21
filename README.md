@@ -8,7 +8,7 @@ How to get it
 
 Either [download the latest binary][0], or [build from source][5].
 
-You can [download a nightly build][4] from our our CI server.
+You can [download a nightly build][4] from our the CI server.
 
 How to run
 ==========
@@ -45,6 +45,8 @@ Command-line options
 
 Configuration file
 ==================
+
+Available since 0.0.6
 
 If you don't want to specify the options `credentials`, `vault` and `endpoint` every time, you can 
 create a configuration file `.glacieruploaderrc` and enter the options there. The default is to search
