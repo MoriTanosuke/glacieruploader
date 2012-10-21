@@ -21,6 +21,30 @@ You need a file named `aws.properties` with 2 lines:
 When running the uploader, specify the path to this file with `--credentials /path/to/aws.properties`. If
 you don't specify this option, the default is to search for the file in javas `user.home` directory.
 
+Command-line options
+====================
+
+    Option                                  Description                            
+    ------                                  -----------                            
+    -c, --create                            creates a new vault                    
+    --ca, --calculate <File>                calculate hashsum for a file           
+    --credentials <File>                    path to your aws credentials file      
+                                              (default: /home/carsten/aws.         
+                                              properties)                          
+    -d, --delete                            deletes an existing archive            
+    --delete-vault, --dv                    deletes an existing vault              
+    --endpoint <URL>                        URL of the amazon AWS endpoint where   
+                                              your vault is                        
+    --list-inventory                        retrieve the inventory listing of a    
+                                              vault                                
+    -o, --download                          download an existing archive           
+    -t, --target <File>                     filename to store downloaded archive   
+    -u, --upload <File>                     start uploading a new archive          
+    -v, --vault                             name of your vault                     
+
+Examples
+========
+
 Create vault
 ------------
 

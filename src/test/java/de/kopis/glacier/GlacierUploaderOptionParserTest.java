@@ -48,14 +48,23 @@ public class GlacierUploaderOptionParserTest {
 
     args = new String[] { "--vault", "vaultname", "--endpoint", "file:///endpointurl" };
   }
+  
+  @Test
+  public void acceptsShortcutForVaultOption() {
+	  final OptionSet optionSet = optionsParser.parse(new String[] { "-v", "vaultname", "--endpoint", "file:///endpointurl" });
+	  assertTrue("Option 'vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+			  optionSet.has("vault"));
+	  assertEquals("Value of option 'vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+			  "vaultname", optionSet.valueOf("vault"));
+  }
 
   @Test
   public void hasRequiredVaultOptionWithName() {
-    final OptionSet optionSet = optionsParser.parse(args);
-    assertTrue("Option 'vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
-        optionSet.has("vault"));
-    assertEquals("Value of option 'vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
-        "vaultname", optionSet.valueOf("vault"));
+	  final OptionSet optionSet = optionsParser.parse(args);
+	  assertTrue("Option 'vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+			  optionSet.has("vault"));
+	  assertEquals("Value of option 'vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
+			  "vaultname", optionSet.valueOf("vault"));
   }
 
   @Test
