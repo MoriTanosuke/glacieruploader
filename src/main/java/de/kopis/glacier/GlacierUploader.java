@@ -26,11 +26,18 @@ package de.kopis.glacier;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
 import joptsimple.OptionSet;
 
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,15 +45,24 @@ import de.kopis.glacier.util.TreeHashCalculator;
 
 public class GlacierUploader {
   private static final Log log = LogFactory.getLog(GlacierUploader.class);
+  private static Configuration config;
 
-  public static void main(final String[] args) {
-    final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser();
+  public static void main(String[] args) {
+    config = new CompositeConfiguration();
+    ((CompositeConfiguration) config).addConfiguration(new SystemConfiguration());
+    try {
+      ((CompositeConfiguration) config).addConfiguration(new PropertiesConfiguration(new File(System
+          .getProperty("user.home"), ".glacieruploaderrc")));
+    } catch (ConfigurationException e1) {
+      log.warn("Can not read configuration", e1);
+    }
 
+    final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(config);
     final OptionSet options = optionParser.parse(args);
 
     try {
       final File credentialFile = options.valueOf(optionParser.CREDENTIALS);
-      final URL endpointUrl = options.valueOf(optionParser.ENDPOINT);
+      final URL endpointUrl = new URL(options.valueOf(optionParser.ENDPOINT));
       final String vaultName = options.valueOf(optionParser.VAULT);
 
       if (options.has(optionParser.UPLOAD)) {

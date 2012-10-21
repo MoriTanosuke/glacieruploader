@@ -25,16 +25,18 @@ package de.kopis.glacier;
  */
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 
+import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSpec;
+
+import org.apache.commons.configuration.Configuration;
 
 public class GlacierUploaderOptionParser extends OptionParser {
 
   public final OptionSpec<File> TARGET_FILE;
-  public final OptionSpec<URL> ENDPOINT;
+  public final OptionSpec<String> ENDPOINT;
   public final OptionSpec<String> VAULT;
   public final OptionSpec<File> UPLOAD;
   public final OptionSpec<String> DOWNLOAD;
@@ -45,17 +47,26 @@ public class GlacierUploaderOptionParser extends OptionParser {
   public final OptionSpec<Void> DELETE_VAULT;
   public final OptionSpec<File> CALCULATE_HASH;
 
-  public GlacierUploaderOptionParser() {
+  public GlacierUploaderOptionParser(Configuration config) {
     super();
-    VAULT = acceptsAll(new ArrayList<String>() {{add("vault"); add("v");}}, "name of your vault").withRequiredArg().ofType(String.class);
-    ENDPOINT = acceptsAll(new ArrayList<String>() {{add("endpoint"); add("e");}}, "URL of the amazon AWS endpoint where your vault is").withRequiredArg().ofType(
-        URL.class);
+    ArgumentAcceptingOptionSpec<String> vaultBuilder = acceptsAll(new ArrayList<String>() {{add("vault"); add("v");}}, "name of your vault").withRequiredArg().ofType(String.class);
+    if(config.containsKey("vault")) {
+      vaultBuilder.defaultsTo(config.getString("vault"));
+    }
+    VAULT = vaultBuilder;
+    ArgumentAcceptingOptionSpec<String> endpointBuilder = acceptsAll(new ArrayList<String>() {{add("endpoint"); add("e");}}, "URL of the amazon AWS endpoint where your vault is").withRequiredArg().ofType(String.class);
+    if(config.containsKey("endpoint")) {
+      endpointBuilder.defaultsTo(config.getString("endpoint"));
+    }
+    ENDPOINT = endpointBuilder;
     UPLOAD = acceptsAll(new ArrayList<String>() {{add("upload"); add("u");}}, "start uploading a new archive").withRequiredArg().ofType(File.class);
-    INVENTORY_LISTING = acceptsAll(new ArrayList<String>() {{add("list-inventory"); add("l");}}, "retrieve the inventory listing of a vault").withOptionalArg()
-        .ofType(String.class);
+    INVENTORY_LISTING = acceptsAll(new ArrayList<String>() {{add("list-inventory"); add("l");}}, "retrieve the inventory listing of a vault").withOptionalArg().ofType(String.class);
     DOWNLOAD = acceptsAll(new ArrayList<String>() {{add("download"); add("o");}}, "download an existing archive").withRequiredArg().ofType(String.class);
-    CREDENTIALS = acceptsAll(new ArrayList<String>() {{add("credentials");}}, "path to your aws credentials file").withRequiredArg().ofType(File.class)
-        .defaultsTo(new File(System.getProperty("user.home") + "/aws.properties"));
+    ArgumentAcceptingOptionSpec<File> credentialsBuilder = acceptsAll(new ArrayList<String>() {{add("credentials");}}, "path to your aws credentials file").withRequiredArg().ofType(File.class);
+    if(config.containsKey("credentials")) {
+      credentialsBuilder.defaultsTo(new File(config.getString("credentials")));
+    }
+    CREDENTIALS = credentialsBuilder;
     CREATE_VAULT = acceptsAll(new ArrayList<String>() {{add("create"); add("c");}}, "creates a new vault");
     DELETE_VAULT = acceptsAll(new ArrayList<String>() {{add("delete-vault"); add("r");}}, "deletes an existing vault");
     TARGET_FILE = acceptsAll(new ArrayList<String>() {{add("target"); add("t");}}, "filename to store downloaded archive").withRequiredArg().ofType(File.class);

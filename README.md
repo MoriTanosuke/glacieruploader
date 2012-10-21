@@ -18,8 +18,9 @@ You need a file named `aws.properties` with 2 lines:
     accessKey=your_aws_access_key
     secretKey=your_secret_key
 
-When running the uploader, specify the path to this file with `--credentials /path/to/aws.properties`. If
-you don't specify this option, the default is to search for the file in javas `user.home` directory.
+When running the uploader, specify the path to this file with `--credentials /path/to/aws.properties`
+or set the default in your configuration file. If you don't specify this option, the default is to
+search for the file in javas `user.home` directory.
 
 Command-line options
 ====================
@@ -41,6 +42,19 @@ Command-line options
     -t, --target <File>                     filename to store downloaded archive   
     -u, --upload <File>                     start uploading a new archive          
     -v, --vault                             name of your vault   
+
+Configuration file
+==================
+
+If you don't want to specify the options `credentials`, `vault` and `endpoint` every time, you can 
+create a configuration file `.glacieruploaderrc` and enter the options there. The default is to search
+for the configuration file in java `user.home` directory.
+
+This is an example of the configuration file:
+
+    credentials=/home/myuser/some/path/mysecretaws.properties
+    endpoint=https://glacier.eu-west-1.amazonaws.com
+    vault=myvaultname
 
 Examples
 ========

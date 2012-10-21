@@ -29,11 +29,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 
 import joptsimple.OptionSet;
 
+import org.apache.commons.configuration.SystemConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class GlacierUploaderOptionParserTest {
 
   @Before
   public void setUp() {
-    optionsParser = new GlacierUploaderOptionParser();
+    optionsParser = new GlacierUploaderOptionParser(new SystemConfiguration());
 
     args = new String[] { "--vault", "vaultname", "--endpoint", "file:///endpointurl" };
   }
@@ -73,7 +73,7 @@ public class GlacierUploaderOptionParserTest {
     assertTrue("Option 'endpoint' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
         optionSet.has("endpoint"));
     assertEquals("Value of option 'endpoint' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
-        new URL("file:///endpointurl"), optionSet.valueOf("endpoint"));
+        "file:///endpointurl", optionSet.valueOf("endpoint"));
   }
 
   @Test
