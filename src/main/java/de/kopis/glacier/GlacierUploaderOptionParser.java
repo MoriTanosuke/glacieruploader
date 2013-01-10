@@ -65,6 +65,8 @@ public class GlacierUploaderOptionParser extends OptionParser {
     ArgumentAcceptingOptionSpec<File> credentialsBuilder = acceptsAll(new ArrayList<String>() {{add("credentials");}}, "path to your aws credentials file").withRequiredArg().ofType(File.class);
     if(config.containsKey("credentials")) {
       credentialsBuilder.defaultsTo(new File(config.getString("credentials")));
+    } else {
+      credentialsBuilder.defaultsTo(new File(System.getProperty("user.home") + "/aws.properties"));
     }
     CREDENTIALS = credentialsBuilder;
     CREATE_VAULT = acceptsAll(new ArrayList<String>() {{add("create"); add("c");}}, "creates a new vault");
