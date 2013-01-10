@@ -58,7 +58,15 @@ public class GlacierUploader {
     }
 
     final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(config);
-    final OptionSet options = optionParser.parse(args);
+    final OptionSet options;
+    
+    try {
+    	options =  optionParser.parse(args);
+    } catch (Exception e) {
+    	System.err.println("Something went wrong parsign the arguments");
+		return;
+    }
+   
 
     try {
       final File credentialFile = options.valueOf(optionParser.CREDENTIALS);

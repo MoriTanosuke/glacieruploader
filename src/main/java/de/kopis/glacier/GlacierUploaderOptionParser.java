@@ -46,6 +46,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
   public final OptionSpec<String> DELETE_ARCHIVE;
   public final OptionSpec<Void> DELETE_VAULT;
   public final OptionSpec<File> CALCULATE_HASH;
+  public final OptionSpec<File> MULTIPARTUPLOAD;
 
   public GlacierUploaderOptionParser(Configuration config) {
     super();
@@ -74,5 +75,6 @@ public class GlacierUploaderOptionParser extends OptionParser {
     TARGET_FILE = acceptsAll(new ArrayList<String>() {{add("target"); add("t");}}, "filename to store downloaded archive").withRequiredArg().ofType(File.class);
     CALCULATE_HASH = acceptsAll(new ArrayList<String>() {{add("calculate"); add("a");}}, "calculate hashsum for a file").withRequiredArg().ofType(File.class);
     DELETE_ARCHIVE = acceptsAll(new ArrayList<String>() {{add("delete"); add("d");}}, "deletes an existing archive").withOptionalArg().ofType(String.class);
+    MULTIPARTUPLOAD = acceptsAll(new ArrayList<String>() {{add("multipartupload"); add("m");}}, "start uploading a new archive in chuncks").withRequiredArg().ofType(File.class);
   }
 }
