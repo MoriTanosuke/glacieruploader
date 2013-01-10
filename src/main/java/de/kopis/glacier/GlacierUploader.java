@@ -77,6 +77,10 @@ public class GlacierUploader {
         log.info("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
         final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(endpointUrl, credentialFile);
         glacierUploader.upload(vaultName, options.valueOf(optionParser.UPLOAD));
+      } else if (options.has(optionParser.MULTIPARTUPLOAD)) {
+          log.info("Starting to upload in chunks" + options.valueOf(optionParser.MULTIPARTUPLOAD) + "...");
+          final CommandLineGlacierMultipartUploader glacierUploader = new CommandLineGlacierMultipartUploader(endpointUrl, credentialFile);
+          glacierUploader.upload(vaultName, options.valueOf(optionParser.MULTIPARTUPLOAD));
       } else if (options.has(optionParser.INVENTORY_LISTING)) {
         final VaultInventoryLister vaultInventoryLister = new VaultInventoryLister(endpointUrl, credentialFile);
         if (options.hasArgument(optionParser.INVENTORY_LISTING)) {
