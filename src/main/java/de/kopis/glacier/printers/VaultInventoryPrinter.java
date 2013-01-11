@@ -26,12 +26,6 @@ package de.kopis.glacier.printers;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.amazonaws.util.json.JSONArray;
 import com.amazonaws.util.json.JSONException;
