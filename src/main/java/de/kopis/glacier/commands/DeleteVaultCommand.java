@@ -28,13 +28,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.glacier.model.CreateVaultRequest;
-import com.amazonaws.services.glacier.model.CreateVaultResult;
+import joptsimple.OptionSet;
+
 import com.amazonaws.services.glacier.model.DeleteVaultRequest;
-import com.amazonaws.services.glacier.model.DescribeVaultRequest;
-import com.amazonaws.services.glacier.model.DescribeVaultResult;
+
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class DeleteVaultCommand extends AbstractCommand {
   public DeleteVaultCommand(final URL endpoint, final File credentials) throws IOException {
@@ -49,4 +47,15 @@ public class DeleteVaultCommand extends AbstractCommand {
     client.deleteVault(deleteVaultRequest);
     log.info("Vault " + vaultName + " deleted.");
   }
+
+	@Override
+	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		String vaultName = options.valueOf(optionParser.VAULT);
+		this.deleteVault(vaultName);
+	}
+	
+	@Override
+	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		return options.has(optionParser.DELETE_VAULT) && options.has(optionParser.VAULT);
+	}
 }

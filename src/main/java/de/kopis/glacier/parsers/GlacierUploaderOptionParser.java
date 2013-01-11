@@ -48,6 +48,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
   public final OptionSpec<File> CALCULATE_HASH;
   public final OptionSpec<File> MULTIPARTUPLOAD;
 
+  @SuppressWarnings("serial")
   public GlacierUploaderOptionParser(Configuration config) {
     super();
     ArgumentAcceptingOptionSpec<String> vaultBuilder = acceptsAll(

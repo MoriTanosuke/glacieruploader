@@ -27,7 +27,6 @@ package de.kopis.glacier;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 
 import joptsimple.OptionSet;
 
@@ -38,13 +37,12 @@ import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.amazonaws.services.glacier.TreeHashGenerator;
-
 import de.kopis.glacier.commands.CreateVaultCommand;
 import de.kopis.glacier.commands.DeleteArchiveCommand;
 import de.kopis.glacier.commands.DeleteVaultCommand;
 import de.kopis.glacier.commands.DownloadArchiveCommand;
-import de.kopis.glacier.commands.ListArchivesCommand;
+import de.kopis.glacier.commands.RequestArchivesListCommand;
+import de.kopis.glacier.commands.TreeHashArchiveCommand;
 import de.kopis.glacier.commands.UploadArchiveCommand;
 import de.kopis.glacier.commands.UploadMultipartArchiveCommand;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
@@ -80,40 +78,37 @@ public final class GlacierUploader {
     try {
       final File credentialFile = options.valueOf(optionParser.CREDENTIALS);
       final URL endpointUrl = new URL(options.valueOf(optionParser.ENDPOINT));
-      final String vaultName = options.valueOf(optionParser.VAULT);
 
       if (options.has(optionParser.UPLOAD)) {
-        log.info("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
-        final UploadArchiveCommand glacierUploader = new UploadArchiveCommand(endpointUrl, credentialFile);
-        glacierUploader.upload(vaultName, options.valueOf(optionParser.UPLOAD));
+        //final UploadArchiveCommand glacierUploader = new UploadArchiveCommand(endpointUrl, credentialFile);
+        //glacierUploader.upload(vaultName, options.valueOf(optionParser.UPLOAD));
       } else if (options.has(optionParser.MULTIPARTUPLOAD)) {
-          log.info("Starting to upload in chunks" + options.valueOf(optionParser.MULTIPARTUPLOAD) + "...");
-          final UploadMultipartArchiveCommand glacierUploader = new UploadMultipartArchiveCommand(endpointUrl, credentialFile);
-          glacierUploader.upload(vaultName, options.valueOf(optionParser.MULTIPARTUPLOAD));
+          //final UploadMultipartArchiveCommand glacierUploader = new UploadMultipartArchiveCommand(endpointUrl, credentialFile);
+          //glacierUploader.upload(vaultName, options.valueOf(optionParser.MULTIPARTUPLOAD));
       } else if (options.has(optionParser.INVENTORY_LISTING)) {
-        final ListArchivesCommand vaultInventoryLister = new ListArchivesCommand(endpointUrl, credentialFile);
+        /*final ListArchivesCommand vaultInventoryLister = new ListArchivesCommand(endpointUrl, credentialFile);
         if (options.hasArgument(optionParser.INVENTORY_LISTING)) {
           vaultInventoryLister.retrieveInventoryListing(endpointUrl, vaultName,
               options.valueOf(optionParser.INVENTORY_LISTING));
         } else {
           log.info("Listing inventory for vault " + vaultName + "...");
           vaultInventoryLister.startInventoryListing(vaultName);
-        }
+        }*/
       } else if (options.has(optionParser.DOWNLOAD)) {
-        final DownloadArchiveCommand downloader = new DownloadArchiveCommand(endpointUrl, credentialFile);
-        downloader.download(vaultName, options.valueOf(optionParser.DOWNLOAD),
-            options.valueOf(optionParser.TARGET_FILE));
+        //final DownloadArchiveCommand downloader = new DownloadArchiveCommand(endpointUrl, credentialFile);
+        //downloader.download(vaultName, options.valueOf(optionParser.DOWNLOAD), options.valueOf(optionParser.TARGET_FILE));
       } else if (options.has(optionParser.DELETE_ARCHIVE)) {
-        final DeleteArchiveCommand deleter = new DeleteArchiveCommand(endpointUrl, credentialFile);
-        deleter.delete(vaultName, options.valueOf(optionParser.DELETE_ARCHIVE));
+        //final DeleteArchiveCommand deleter = new DeleteArchiveCommand(endpointUrl, credentialFile);
+        //deleter.delete(vaultName, options.valueOf(optionParser.DELETE_ARCHIVE));
       } else if (options.has(optionParser.CREATE_VAULT)) {
-        final CreateVaultCommand vaultCreator = new CreateVaultCommand(endpointUrl, credentialFile);
-        vaultCreator.createVault(vaultName);
+        //final CreateVaultCommand vaultCreator = new CreateVaultCommand(endpointUrl, credentialFile);
+        //vaultCreator.createVault(vaultName);
       } else if (options.has(optionParser.DELETE_VAULT)) {
-        final DeleteVaultCommand vaultCreator = new DeleteVaultCommand(endpointUrl, credentialFile);
-        vaultCreator.deleteVault(vaultName);
+        //final DeleteVaultCommand vaultCreator = new DeleteVaultCommand(endpointUrl, credentialFile);
+        //vaultCreator.deleteVault(vaultName);
       } else if (options.has(optionParser.CALCULATE_HASH)) {
-        log.info(TreeHashGenerator.calculateTreeHash(options.valueOf(optionParser.CALCULATE_HASH)));
+        //final TreeHashArchiveCommand thg = new TreeHashArchiveCommand(endpointUrl, credentialFile);
+        //thg.exec(options, optionParser);
       } else {
         log.info("Ooops, can't determine what you want to do. Check your options.");
         try {

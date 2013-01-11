@@ -28,14 +28,16 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import joptsimple.OptionSet;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.model.CreateVaultRequest;
 import com.amazonaws.services.glacier.model.CreateVaultResult;
-import com.amazonaws.services.glacier.model.DeleteVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultPrinter;
 
 public class CreateVaultCommand extends AbstractCommand {
@@ -49,8 +51,7 @@ public class CreateVaultCommand extends AbstractCommand {
     try {
       final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
       final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
-      log.info("Vault " + vaultName + " created.");
-
+      log.info("Vault " + vaultName + " created. " + createVaultResult);
       final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
       final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
       new VaultPrinter().printVault(describeVaultResult, System.out);
@@ -63,12 +64,14 @@ public class CreateVaultCommand extends AbstractCommand {
     }
   }
 
-  public void deleteVault(final String vaultName) {
-    log.info("Deleting vault " + vaultName + "...");
-
-    final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
-    // TODO check for notifications first?
-    client.deleteVault(deleteVaultRequest);
-    log.info("Vault " + vaultName + " deleted.");
-  }
+	@Override
+	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		final String vaultName = options.valueOf(optionParser.VAULT);
+		this.createVault(vaultName);
+	}
+	
+	@Override
+	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		return options.has(optionParser.CREATE_VAULT) && options.has(optionParser.VAULT);
+	}
 }

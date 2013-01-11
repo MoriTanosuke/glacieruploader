@@ -28,8 +28,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
+import joptsimple.OptionSet;
+
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
+
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class DownloadArchiveCommand extends AbstractCommand {
 
@@ -50,6 +53,16 @@ public class DownloadArchiveCommand extends AbstractCommand {
     log.info("Archive downloaded to " + targetFile);
   }
 
-
-
+	@Override
+	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		String vaultName = options.valueOf(optionParser.VAULT);
+		String archiveId = options.valueOf(optionParser.DOWNLOAD);
+		File targetFile = options.valueOf(optionParser.TARGET_FILE);
+		this.download(vaultName, archiveId, targetFile);
+	}
+	
+	@Override
+	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		return options.has(optionParser.DOWNLOAD) && options.has(optionParser.VAULT) && options.has(optionParser.TARGET_FILE);
+	}
 }

@@ -28,7 +28,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.commons.configuration.Configuration;
+import joptsimple.OptionSet;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,6 +38,8 @@ import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public abstract class AbstractCommand {
   protected final Log log;
@@ -54,7 +57,7 @@ public abstract class AbstractCommand {
     sqs = new AmazonSQSClient(this.credentials);
     sns = new AmazonSNSClient(this.credentials);
 
-    setEndpoint(endpoint);
+    this.setEndpoint(endpoint);
   }
 
   protected void setEndpoint(final URL endpoint) {
@@ -66,8 +69,8 @@ public abstract class AbstractCommand {
     sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
   }
   
-  public void exec(Configuration config) {
-	  
-  }
+  public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);
+  
+  public abstract boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser);
 
 }

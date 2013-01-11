@@ -28,7 +28,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import joptsimple.OptionSet;
+
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
+
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class UploadArchiveCommand extends AbstractCommand {
 
@@ -37,7 +41,7 @@ public class UploadArchiveCommand extends AbstractCommand {
   }
 
   public void upload(final String vaultName, final File uploadFile) {
-    log.info("Uploading " + uploadFile + " to vault " + vaultName + "...");
+    log.info("Starting to upload " + uploadFile + " to vault " + vaultName + "...");
     try {
       log.info("Starting upload of " + uploadFile);
       final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
@@ -48,4 +52,16 @@ public class UploadArchiveCommand extends AbstractCommand {
       e.printStackTrace();
     }
   }
+
+	@Override
+	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		final String vaultName = options.valueOf(optionParser.VAULT);
+		final File uploadFile = options.valueOf(optionParser.UPLOAD);
+		this.upload(vaultName, uploadFile);
+	}
+	
+	@Override
+	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		return options.has(optionParser.UPLOAD) && options.has(optionParser.VAULT);
+	}
 }

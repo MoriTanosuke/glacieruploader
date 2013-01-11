@@ -28,7 +28,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import joptsimple.OptionSet;
+
 import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
+
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class DeleteArchiveCommand extends AbstractCommand {
 
@@ -42,14 +46,19 @@ public class DeleteArchiveCommand extends AbstractCommand {
     final DeleteArchiveRequest deleteRequest = new DeleteArchiveRequest(vaultName, archiveId);
     client.deleteArchive(deleteRequest);
 
-    log.info("Archive " + archiveId + " deletion started.");
+    log.info("Archive " + archiveId + " deletion started from vault " + vaultName + ".");
   }
-  
-  public void delete(final URL endpointUrl, final String vaultName, final String archiveId) {
-	    log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
-	    final DeleteArchiveRequest deleteArchiveRequest = new DeleteArchiveRequest(vaultName, archiveId);
-	    client.deleteArchive(deleteArchiveRequest);
-	    log.info("Archive " + archiveId + " deleted from vault " + vaultName + ".");
-	  }
+
+	@Override
+	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		String vaultName = options.valueOf(optionParser.VAULT);
+		String archiveId = options.valueOf(optionParser.DELETE_ARCHIVE);
+		this.delete(vaultName, archiveId);
+	}
+	
+	@Override
+	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		return options.has(optionParser.DELETE_ARCHIVE) && options.has(optionParser.VAULT);
+	}
 
 }

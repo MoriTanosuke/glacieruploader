@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+import joptsimple.OptionSet;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
@@ -38,13 +40,14 @@ import com.amazonaws.services.glacier.model.InitiateJobResult;
 import com.amazonaws.services.glacier.model.JobParameters;
 import com.amazonaws.util.json.JSONException;
 
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultInventoryPrinter;
 
-public class ListArchivesCommand extends AbstractCommand {
+public class RequestArchivesListCommand extends AbstractCommand {
 
   private final VaultInventoryPrinter printer;
 
-  public ListArchivesCommand(final URL endpoint, final File credentials) throws IOException {
+  public RequestArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
     printer = new VaultInventoryPrinter();
   }
@@ -67,31 +70,14 @@ public class ListArchivesCommand extends AbstractCommand {
     // TODO wait for job, but it could take about 4 hours says the SDK...
   }
 
-  public void retrieveInventoryListing(final URL endpointUrl, final String vaultName, final String jobId) {
-    log.info("Retrieving inventory for job id " + jobId + "...");
-    client.setEndpoint(endpointUrl.toExternalForm());
-
-    try {
-      final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
-      final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
-      final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
-      String content = "";
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        content += line;
-      }
-      reader.close();
-      // TODO use dendency injection here
-      printer.setInventory(content);
-      printer.printInventory(System.out);
-    } catch (final AmazonClientException e) {
-      System.err.println(e.getLocalizedMessage());
-      // e.printStackTrace();
-    } catch (final JSONException e) {
-      System.err.println(e.getLocalizedMessage());
-    } catch (final IOException e) {
-      System.err.println(e.getLocalizedMessage());
-      // e.printStackTrace();
-    }
-  }
+	@Override
+	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		final String vaultName = options.valueOf(optionParser.VAULT);
+		this.startInventoryListing(vaultName);
+	}
+	
+	@Override
+	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		return options.has(optionParser.INVENTORY_LISTING) && !options.hasArgument(optionParser.INVENTORY_LISTING);
+	}
 }

@@ -36,11 +36,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import joptsimple.OptionSet;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.TreeHashGenerator;
 import com.amazonaws.services.glacier.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.glacier.model.CompleteMultipartUploadResult;
@@ -49,6 +48,8 @@ import com.amazonaws.services.glacier.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.glacier.model.UploadMultipartPartRequest;
 import com.amazonaws.services.glacier.model.UploadMultipartPartResult;
 import com.amazonaws.util.BinaryUtils;
+
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class UploadMultipartArchiveCommand extends AbstractCommand {
 
@@ -150,4 +151,16 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
       CompleteMultipartUploadResult compResult = client.completeMultipartUpload(compRequest);
       return compResult.getLocation();
   }
+  
+	@Override
+	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		final String vaultName = options.valueOf(optionParser.VAULT);
+		final File uploadFile = options.valueOf(optionParser.MULTIPARTUPLOAD);
+		this.upload(vaultName, uploadFile);
+	}
+	
+	@Override
+	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		return options.has(optionParser.MULTIPARTUPLOAD) && options.has(optionParser.VAULT);
+	}
 }
