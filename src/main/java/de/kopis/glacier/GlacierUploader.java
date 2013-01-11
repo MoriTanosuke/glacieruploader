@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
 
 import de.kopis.glacier.util.TreeHashCalculator;
 
-public class GlacierUploader {
+public final class GlacierUploader {
   private static final Log log = LogFactory.getLog(GlacierUploader.class);
   private static CompositeConfiguration config;
 
@@ -100,7 +100,7 @@ public class GlacierUploader {
         final CreateVaultCommand vaultCreator = new CreateVaultCommand(endpointUrl, credentialFile);
         vaultCreator.createVault(vaultName);
       } else if (options.has(optionParser.DELETE_VAULT)) {
-        final CreateVaultCommand vaultCreator = new CreateVaultCommand(endpointUrl, credentialFile);
+        final CreateVaultCommand vaultCreator = new DeleteVaultCommand(endpointUrl, credentialFile);
         vaultCreator.deleteVault(vaultName);
       } else if (options.has(optionParser.CALCULATE_HASH)) {
         System.out.println(TreeHashCalculator.toHex(TreeHashCalculator.computeSHA256TreeHash(options
