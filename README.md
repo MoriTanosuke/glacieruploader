@@ -90,6 +90,22 @@ Available since 0.0.3.
 
 This will return an archive id which you can use to retrieve the archive again later.
 
+Multipart Upload archive
+--------------
+
+Available since 0.0.8.
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --multipartupload /path/to/my/file.zip --partsize 10485760
+    
+    Multipart uploading upload file.zip...
+    Using endpoint https://glacier.eu-west-1.amazonaws.com
+    ArchiveID: j7UL7pH46FJGhoAxNVDsdjhHs_GLSKGLd12Dq44dfiyTciW6DSCQubctUFEZ4nKWPrJzv_YoxPVK_TfdAuMCxiQIE3_zEGDg84luI0-tzWMusdfjKHG2ILuhJhK5PySOOaw
+    Part uploaded, checksum: 964a3dea958ad12959450dcc8f28acba0830989d1b8ae72442cebbe6f0d29e3e
+    ...
+    Uploaded archive j7UL7pH46FJGhoAxNVDsdjhHs_GLSKGLd12Dq44dfiyTciW6DSCQubctUFEZ4nKWPrJzv_YoxPVK_TfdAuMCxiQIE3_zEGDg84luI0-tzWMusdfjKHG2ILuhJhK5PySOOaw
+
+This will return an archive id which you can use to retrieve the archive again later.
+
 Download archive
 ----------------
 
