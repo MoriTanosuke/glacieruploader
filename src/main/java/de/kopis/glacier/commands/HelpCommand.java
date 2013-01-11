@@ -6,8 +6,6 @@ import java.net.URL;
 
 import joptsimple.OptionSet;
 
-import com.amazonaws.services.glacier.TreeHashGenerator;
-
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class HelpCommand extends AbstractCommand {
