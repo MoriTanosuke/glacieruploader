@@ -84,7 +84,7 @@ public class VaultInventoryPrinter {
     o.println("SHA:\t\t\t" + archive.get("SHA256TreeHash"));
   }
 
-  protected String printArchiveSize(final JSONObject archive) throws JSONException {
+  public String printArchiveSize(final JSONObject archive) throws JSONException {
     final String size = archive.getString("Size");
     final String humanReadableSize = humanReadableSize(size);
     return size + " (" + humanReadableSize + ")";
@@ -126,7 +126,7 @@ public class VaultInventoryPrinter {
     return newSizeClass;
   }
 
-  protected String[] sanitize(final String size) {
+  public String[] sanitize(final String size) {
     final Pattern patternClass = Pattern.compile("([0-9.]+)\\s*?([kMGTP]?B)");
     final Matcher m = patternClass.matcher(size);
     String[] s = new String[] { size, "B" };

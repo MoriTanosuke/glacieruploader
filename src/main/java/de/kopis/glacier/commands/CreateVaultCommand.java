@@ -36,6 +36,8 @@ import com.amazonaws.services.glacier.model.DeleteVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
+import de.kopis.glacier.printers.VaultPrinter;
+
 public class CreateVaultCommand extends AbstractCommand {
   public CreateVaultCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);

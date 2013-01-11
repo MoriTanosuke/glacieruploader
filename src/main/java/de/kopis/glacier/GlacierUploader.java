@@ -42,6 +42,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.kopis.glacier.util.TreeHashCalculator;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.commands.*;
 
 public final class GlacierUploader {
   private static final Log log = LogFactory.getLog(GlacierUploader.class);
@@ -82,7 +84,7 @@ public final class GlacierUploader {
         glacierUploader.upload(vaultName, options.valueOf(optionParser.UPLOAD));
       } else if (options.has(optionParser.MULTIPARTUPLOAD)) {
           log.info("Starting to upload in chunks" + options.valueOf(optionParser.MULTIPARTUPLOAD) + "...");
-          final CommandLineGlacierMultipartUploader glacierUploader = new CommandLineGlacierMultipartUploader(endpointUrl, credentialFile);
+          final UploadMultipartArchiveCommand glacierUploader = new UploadMultipartArchiveCommand(endpointUrl, credentialFile);
           glacierUploader.upload(vaultName, options.valueOf(optionParser.MULTIPARTUPLOAD));
       } else if (options.has(optionParser.INVENTORY_LISTING)) {
         final ListArchivesCommand vaultInventoryLister = new ListArchivesCommand(endpointUrl, credentialFile);
@@ -104,7 +106,7 @@ public final class GlacierUploader {
         final CreateVaultCommand vaultCreator = new CreateVaultCommand(endpointUrl, credentialFile);
         vaultCreator.createVault(vaultName);
       } else if (options.has(optionParser.DELETE_VAULT)) {
-        final CreateVaultCommand vaultCreator = new DeleteVaultCommand(endpointUrl, credentialFile);
+        final DeleteVaultCommand vaultCreator = new DeleteVaultCommand(endpointUrl, credentialFile);
         vaultCreator.deleteVault(vaultName);
       } else if (options.has(optionParser.CALCULATE_HASH)) {
         System.out.println(TreeHashCalculator.toHex(TreeHashCalculator.computeSHA256TreeHash(options
