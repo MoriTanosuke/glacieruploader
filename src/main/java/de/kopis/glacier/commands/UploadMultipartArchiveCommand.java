@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.commands;
 
 /*
  * #%L
@@ -50,9 +50,9 @@ import com.amazonaws.services.glacier.model.UploadMultipartPartRequest;
 import com.amazonaws.services.glacier.model.UploadMultipartPartResult;
 import com.amazonaws.util.BinaryUtils;
 
-public class CommandLineGlacierMultipartUploader extends AbstractGlacierCommand {
+public class UploadMultipartArchiveCommand extends AbstractCommand {
 
-  public CommandLineGlacierMultipartUploader(final URL endpoint, final File credentials) throws IOException {
+  public UploadMultipartArchiveCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
   }
   
@@ -95,7 +95,8 @@ public class CommandLineGlacierMultipartUploader extends AbstractGlacierCommand 
       
       InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
       
-      System.out.println("ArchiveID: " + result.getUploadId());
+      log.info("ArchiveID: " + result.getUploadId());
+      
       return result.getUploadId();
   }
 
@@ -130,7 +131,7 @@ public class CommandLineGlacierMultipartUploader extends AbstractGlacierCommand 
           .withUploadId(uploadId);               
       
           UploadMultipartPartResult partResult = client.uploadMultipartPart(partRequest);
-          System.out.println("Part uploaded, checksum: " + partResult.getChecksum());
+          log.info("Part uploaded, checksum: " + partResult.getChecksum());
           
           currentPosition = currentPosition + read;
       }

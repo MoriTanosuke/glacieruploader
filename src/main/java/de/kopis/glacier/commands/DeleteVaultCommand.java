@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.commands;
 
 /*
  * #%L
@@ -36,29 +36,9 @@ import com.amazonaws.services.glacier.model.DeleteVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
-public class GlacierVaultCreator extends AbstractGlacierCommand {
-  public GlacierVaultCreator(final URL endpoint, final File credentials) throws IOException {
+public class DeleteVaultCommand extends AbstractCommand {
+  public DeleteVaultCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
-  }
-
-  public void createVault(final String vaultName) {
-    log.info("Creating vault " + vaultName + "...");
-
-    try {
-      final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
-      final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
-      log.info("Vault " + vaultName + " created.");
-
-      final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
-      final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
-      new VaultPrinter().printVault(describeVaultResult, System.out);
-    } catch (final AmazonServiceException e) {
-      System.err.println("Couldn't create vault.");
-      e.printStackTrace();
-    } catch (final AmazonClientException e) {
-      System.err.println("Couldn't create vault.");
-      e.printStackTrace();
-    }
   }
 
   public void deleteVault(final String vaultName) {

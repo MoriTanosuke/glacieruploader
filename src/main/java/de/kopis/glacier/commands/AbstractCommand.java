@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.commands;
 
 /*
  * #%L
@@ -37,7 +37,7 @@ import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 
-public abstract class AbstractGlacierCommand {
+public abstract class AbstractCommand {
   protected final Log log;
 
   protected final AWSCredentials credentials;
@@ -45,7 +45,7 @@ public abstract class AbstractGlacierCommand {
   protected final AmazonSQSClient sqs;
   protected final AmazonSNSClient sns;
 
-  public AbstractGlacierCommand(final URL endpoint, final File credentials) throws IOException {
+  public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
     this.log = LogFactory.getLog(this.getClass());
 
     this.credentials = new PropertiesCredentials(credentials);
@@ -63,6 +63,10 @@ public abstract class AbstractGlacierCommand {
     // TODO check if this really fixes #13
     sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
     sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
+  }
+  
+  public void exec(Hashtable params) {
+	  
   }
 
 }

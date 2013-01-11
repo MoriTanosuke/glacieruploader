@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.commands;
 
 /*
  * #%L
@@ -38,13 +38,13 @@ import com.amazonaws.services.glacier.model.InitiateJobResult;
 import com.amazonaws.services.glacier.model.JobParameters;
 import com.amazonaws.util.json.JSONException;
 
-import de.kopis.glacier.util.VaultInventoryPrinter;
+import de.kopis.glacier.printers.VaultInventoryPrinter;
 
-public class VaultInventoryLister extends AbstractGlacierCommand {
+public class ListArchivesCommand extends AbstractCommand {
 
   private final VaultInventoryPrinter printer;
 
-  public VaultInventoryLister(final URL endpoint, final File credentials) throws IOException {
+  public ListArchivesCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
     printer = new VaultInventoryPrinter();
   }

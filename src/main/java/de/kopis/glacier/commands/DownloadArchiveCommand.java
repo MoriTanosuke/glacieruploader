@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.commands;
 
 /*
  * #%L
@@ -28,24 +28,28 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 
-public class CommandLineGlacierUploader extends AbstractGlacierCommand {
+public class DownloadArchiveCommand extends AbstractCommand {
 
-  public CommandLineGlacierUploader(final URL endpoint, final File credentials) throws IOException {
+  public DownloadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
   }
 
-  public void upload(final String vaultName, final File uploadFile) {
-    log.info("Uploading " + uploadFile + " to vault " + vaultName + "...");
-    try {
-      log.info("Starting upload of " + uploadFile);
-      final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
-      final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
-      log.info("Uploaded archive " + archiveId);
-    } catch (final IOException e) {
-      System.err.println("Something went wrong while uploading " + uploadFile + ".");
-      e.printStackTrace();
-    }
+  public void download(final String vaultName, final String archiveId, final String targetFile) {
+    final File downloadFile = new File(targetFile);
+    download(vaultName, archiveId, downloadFile);
   }
+
+  public void download(final String vaultName, final String archiveId, final File targetFile) {
+    log.info("Downloading archive " + archiveId + " from vault " + vaultName + "...");
+
+    final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
+    atm.download(vaultName, archiveId, targetFile);
+    log.info("Archive downloaded to " + targetFile);
+  }
+
+
+
 }

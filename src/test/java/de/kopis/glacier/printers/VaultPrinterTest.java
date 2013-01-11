@@ -1,4 +1,4 @@
-package de.kopis.glacier;
+package de.kopis.glacier.printers;
 
 /*
  * #%L

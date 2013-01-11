@@ -43,18 +43,21 @@ import org.apache.commons.logging.LogFactory;
 
 import de.kopis.glacier.util.TreeHashCalculator;
 
-public class GlacierUploader {
+public final class GlacierUploader {
   private static final Log log = LogFactory.getLog(GlacierUploader.class);
-  private static Configuration config;
+  private static CompositeConfiguration config;
 
   public static void main(String[] args) {
     config = new CompositeConfiguration();
-    ((CompositeConfiguration) config).addConfiguration(new SystemConfiguration());
+    config.addConfiguration(new SystemConfiguration());
     try {
-      ((CompositeConfiguration) config).addConfiguration(new PropertiesConfiguration(new File(System
-          .getProperty("user.home"), ".glacieruploaderrc")));
-    } catch (ConfigurationException e1) {
-      log.warn("Can not read configuration", e1);
+    	config.addConfiguration(
+    		new PropertiesConfiguration(
+    			new File(System.getProperty("user.home"), ".glacieruploaderrc")
+    		)
+    	);
+    } catch (ConfigurationException e) {
+      log.warn("Can not read configuration", e);
     }
 
     final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(config);
@@ -63,7 +66,7 @@ public class GlacierUploader {
     try {
     	options =  optionParser.parse(args);
     } catch (Exception e) {
-    	System.err.println("Something went wrong parsign the arguments");
+    	System.err.println("Something went wrong parsing the arguments");
 		return;
     }
    
@@ -75,14 +78,14 @@ public class GlacierUploader {
 
       if (options.has(optionParser.UPLOAD)) {
         log.info("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
-        final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(endpointUrl, credentialFile);
+        final UploadArchiveCommand glacierUploader = new UploadArchiveCommand(endpointUrl, credentialFile);
         glacierUploader.upload(vaultName, options.valueOf(optionParser.UPLOAD));
       } else if (options.has(optionParser.MULTIPARTUPLOAD)) {
           log.info("Starting to upload in chunks" + options.valueOf(optionParser.MULTIPARTUPLOAD) + "...");
           final CommandLineGlacierMultipartUploader glacierUploader = new CommandLineGlacierMultipartUploader(endpointUrl, credentialFile);
           glacierUploader.upload(vaultName, options.valueOf(optionParser.MULTIPARTUPLOAD));
       } else if (options.has(optionParser.INVENTORY_LISTING)) {
-        final VaultInventoryLister vaultInventoryLister = new VaultInventoryLister(endpointUrl, credentialFile);
+        final ListArchivesCommand vaultInventoryLister = new ListArchivesCommand(endpointUrl, credentialFile);
         if (options.hasArgument(optionParser.INVENTORY_LISTING)) {
           vaultInventoryLister.retrieveInventoryListing(endpointUrl, vaultName,
               options.valueOf(optionParser.INVENTORY_LISTING));
@@ -91,17 +94,17 @@ public class GlacierUploader {
           vaultInventoryLister.startInventoryListing(vaultName);
         }
       } else if (options.has(optionParser.DOWNLOAD)) {
-        final GlacierArchiveDownloader downloader = new GlacierArchiveDownloader(endpointUrl, credentialFile);
+        final DownloadArchiveCommand downloader = new DownloadArchiveCommand(endpointUrl, credentialFile);
         downloader.download(vaultName, options.valueOf(optionParser.DOWNLOAD),
             options.valueOf(optionParser.TARGET_FILE));
       } else if (options.has(optionParser.DELETE_ARCHIVE)) {
-        final GlacierArchiveDeleter deleter = new GlacierArchiveDeleter(endpointUrl, credentialFile);
+        final DeleteArchiveCommand deleter = new DeleteArchiveCommand(endpointUrl, credentialFile);
         deleter.delete(vaultName, options.valueOf(optionParser.DELETE_ARCHIVE));
       } else if (options.has(optionParser.CREATE_VAULT)) {
-        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
+        final CreateVaultCommand vaultCreator = new CreateVaultCommand(endpointUrl, credentialFile);
         vaultCreator.createVault(vaultName);
       } else if (options.has(optionParser.DELETE_VAULT)) {
-        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
+        final CreateVaultCommand vaultCreator = new DeleteVaultCommand(endpointUrl, credentialFile);
         vaultCreator.deleteVault(vaultName);
       } else if (options.has(optionParser.CALCULATE_HASH)) {
         System.out.println(TreeHashCalculator.toHex(TreeHashCalculator.computeSHA256TreeHash(options
@@ -109,7 +112,7 @@ public class GlacierUploader {
       } else {
         log.info("Ooops, can't determine what you want to do. Check your options.");
         try {
-          optionParser.printHelpOn(System.err);
+          optionParser.printHelpOn(System.out);
         } catch (final IOException e) {
           log.error("Can not print help", e);
         }
