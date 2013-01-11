@@ -24,7 +24,6 @@ package de.kopis.glacier.printers;
  * #L%
  */
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -36,8 +35,6 @@ import org.junit.Test;
 
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
-
-import de.kopis.glacier.printers.VaultInventoryPrinter;
 
 public class VaultInventoryPrinterTest {
 
@@ -60,36 +57,6 @@ public class VaultInventoryPrinterTest {
 	public void printArchiveSize() throws JSONException {
 		assertEquals("123456789 (117.74MB)",
 				new VaultInventoryPrinter().printArchiveSize(new JSONObject("{Size:123456789}")));
-	}
-
-	@Test
-	public void sanitizeMissingSizeIndicator() {
-		assertArrayEquals(new String[] { "123456789", "B" }, new VaultInventoryPrinter().sanitize("123456789"));
-	}
-
-	@Test
-	public void sanitizeBytes() {
-		assertArrayEquals(new String[] { "123456789", "B" }, new VaultInventoryPrinter().sanitize("123456789 B"));
-	}
-
-	@Test
-	public void sanitizeKilobytes() {
-		assertArrayEquals(new String[] { "123456789", "kB" }, new VaultInventoryPrinter().sanitize("123456789kB"));
-	}
-
-	@Test
-	public void sanitizeMegabytes() {
-		assertArrayEquals(new String[] { "123456789", "MB" }, new VaultInventoryPrinter().sanitize("123456789MB"));
-	}
-
-	@Test
-	public void sanitizeGigabytes() {
-		assertArrayEquals(new String[] { "123456789", "GB" }, new VaultInventoryPrinter().sanitize("123456789	 GB"));
-	}
-
-	@Test
-	public void sanitizeKilTerabytes() {
-		assertArrayEquals(new String[] { "123456789", "TB" }, new VaultInventoryPrinter().sanitize("123456789TB"));
 	}
 
 	private String readFile(final String filename) throws IOException {

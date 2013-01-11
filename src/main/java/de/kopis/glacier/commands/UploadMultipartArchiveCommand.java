@@ -50,6 +50,7 @@ import com.amazonaws.services.glacier.model.UploadMultipartPartResult;
 import com.amazonaws.util.BinaryUtils;
 
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.HumanReadableSize;
 
 public class UploadMultipartArchiveCommand extends AbstractCommand {
 
@@ -59,7 +60,10 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
 	// from: http://docs.amazonwebservices.com/amazonglacier/latest/dev/uploading-an-archive-mpu-using-java.html
 	public void upload(final String vaultName, final File uploadFile, final Integer partSize) {
-		log.info("Multipart uploading " + uploadFile + " to vault " + vaultName + "...");
+		final String humanReadableSize = HumanReadableSize.parse(partSize);
+		final String size = partSize + " (" + humanReadableSize + ")";
+		
+		log.info("Multipart uploading " + uploadFile + " to vault " + vaultName + " with part size " + size);
 		try {
 			final String uploadId = initiateMultipartUpload(vaultName, partSize);
 			final String checksum = uploadParts(uploadId, uploadFile, vaultName, partSize);
