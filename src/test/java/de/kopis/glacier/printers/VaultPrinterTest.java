@@ -43,6 +43,7 @@ public class VaultPrinterTest {
 
   @Test
   public void testPrintVault() {
+    final String line = System.lineSeparator();
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     final DescribeVaultResult describeVaultResult = new DescribeVaultResult();
     describeVaultResult.setCreationDate(CREATION_DATE);
@@ -52,8 +53,12 @@ public class VaultPrinterTest {
     describeVaultResult.setVaultARN(ARN);
     describeVaultResult.setVaultName(VAULT_NAME);
     new VaultPrinter().printVault(describeVaultResult, out);
-    assertEquals("CreationDate:\t" + CREATION_DATE + "\n" + "LastInventoryDate:\t" + INVENTORY_DATE + "\n"
-        + "NumberOfArchives:\t" + NUMBER_OF_ARCHIVES + "\n" + "SizeInBytes:\t\t" + SIZE_IN_BYTES + "\n"
-        + "VaultARN:\t\t" + ARN + "\n" + "VaultName:\t\t" + VAULT_NAME + "\n", out.toString());
+    assertEquals(
+        "CreationDate:\t" + CREATION_DATE + line + 
+        "LastInventoryDate:\t" + INVENTORY_DATE + line +
+        "NumberOfArchives:\t" + NUMBER_OF_ARCHIVES + line +
+        "SizeInBytes:\t\t" + SIZE_IN_BYTES + line +
+        "VaultARN:\t\t" + ARN + line + 
+        "VaultName:\t\t" + VAULT_NAME + line, out.toString());
   }
 }

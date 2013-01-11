@@ -43,13 +43,16 @@ public class VaultInventoryPrinterTest {
 
   @Test
   public void testPrintInventoryListing() throws JSONException, IOException {
+    final String line = System.lineSeparator();
     final String inventory = readFile("target/test-classes/inventorylisting.txt");
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     new VaultInventoryPrinter(inventory).printInventory(out);
-    assertEquals("ARN:\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup\n"
-        + "Archive ID:\t\tthisisaverylongrandomstringthatworksasthearchiveid\n"
-        + "CreationDate:\t2012-08-23T04:14:56Z\n" + "Description:\ta custom description for your archive\n"
-        + "Size:\t\t\t123456789 (117.74MB)\n" + "SHA:\t\t\t123456789123456789123456789\n", out.toString());
+    assertEquals("ARN:\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup" + line
+        + "Archive ID:\t\tthisisaverylongrandomstringthatworksasthearchiveid" + line
+        + "CreationDate:\t2012-08-23T04:14:56Z" + line
+        + "Description:\ta custom description for your archive" + line
+        + "Size:\t\t\t123456789 (117.74MB)" + line 
+        + "SHA:\t\t\t123456789123456789123456789"+ line,  out.toString());
   }
 
   @Test
