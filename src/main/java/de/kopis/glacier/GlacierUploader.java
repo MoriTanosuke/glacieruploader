@@ -92,12 +92,16 @@ public final class GlacierUploader {
 		try {
 			// Set default
 			CommandFactory.setDefaultCommand(new HelpCommand());
+			CommandFactory.add(CommandFactory.getDefaultCommand());
 			
-			if (options.has(optionParser.CREDENTIALS) && options.has(optionParser.ENDPOINT)) {
-				final File credentials = options.valueOf(optionParser.CREDENTIALS);
-				final URL endpoint = new URL(options.valueOf(optionParser.ENDPOINT));
+			final File credentials = options.valueOf(optionParser.CREDENTIALS);
+			final String string_endpoint = options.valueOf(optionParser.ENDPOINT);
 				
-				log.info("Usign end point " + endpoint);
+			if (credentials != null && string_endpoint != null) {
+				
+				final URL endpoint = new URL(string_endpoint);
+				
+				log.info("Usign end point: " + string_endpoint);
 				
 				// Add all commands to the factory
 				CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
@@ -109,7 +113,6 @@ public final class GlacierUploader {
 				CommandFactory.add(new TreeHashArchiveCommand(endpoint, credentials));
 				CommandFactory.add(new UploadArchiveCommand(endpoint, credentials));
 				CommandFactory.add(new UploadMultipartArchiveCommand(endpoint, credentials));
-				CommandFactory.add(CommandFactory.getDefaultCommand());
 			}
 
 			// Find a valid one
