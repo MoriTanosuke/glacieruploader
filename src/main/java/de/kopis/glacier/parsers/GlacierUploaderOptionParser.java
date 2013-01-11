@@ -49,6 +49,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	public final OptionSpec<File> CALCULATE_HASH;
 	public final OptionSpec<File> MULTIPARTUPLOAD;
 	public final OptionSpec<Integer> PARTSIZE;
+	public final OptionSpec<Void> HELP;
 
 	public GlacierUploaderOptionParser(Configuration config) {
 		super();
@@ -65,6 +66,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 		this.DELETE_ARCHIVE       = this.parseDeleteArchive(config);
 		this.MULTIPARTUPLOAD      = this.parseMultipartUploadFile(config);
 		this.PARTSIZE             = this.parsePartSize(config);
+		this.HELP                 = this.parseHelp(config);
 	}
 	
 	@SuppressWarnings("serial")
@@ -228,7 +230,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	private ArgumentAcceptingOptionSpec<Integer> parsePartSize(Configuration config) {
 		return acceptsAll(
 				new ArrayList<String>() {{
-					add("partsize");
+					add("partsize"); add("p");
 				}},
 				"sets the size of each part for multipart uploads"
 			)
@@ -237,4 +239,13 @@ public class GlacierUploaderOptionParser extends OptionParser {
 			.defaultsTo(10485760); // 10 MB.
 	}
 	
+	@SuppressWarnings("serial")
+	private OptionSpecBuilder parseHelp(Configuration config) {
+		return acceptsAll(
+				new ArrayList<String>() {{
+					add("help"); add("h"); add("?");
+				}},
+				"display the help menu"
+			);
+	}
 }

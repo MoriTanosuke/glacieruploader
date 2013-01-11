@@ -44,20 +44,24 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 public abstract class AbstractCommand {
 	protected final Log log;
 
-	protected final AWSCredentials credentials;
-	protected final AmazonGlacierClient client;
-	protected final AmazonSQSClient sqs;
-	protected final AmazonSNSClient sns;
+	protected AWSCredentials credentials = null;
+	protected AmazonGlacierClient client = null;
+	protected AmazonSQSClient sqs = null;
+	protected AmazonSNSClient sns = null;
 
 	public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
 		this.log = LogFactory.getLog(this.getClass());
 
-		this.credentials = new PropertiesCredentials(credentials);
-		client = new AmazonGlacierClient(this.credentials);
-		sqs = new AmazonSQSClient(this.credentials);
-		sns = new AmazonSNSClient(this.credentials);
+		if (credentials != null) {
+			this.credentials = new PropertiesCredentials(credentials);
+			this.client = new AmazonGlacierClient(this.credentials);
+			this.sqs = new AmazonSQSClient(this.credentials);
+			this.sns = new AmazonSNSClient(this.credentials);
+		}
 
-		this.setEndpoint(endpoint);
+		if (endpoint != null) {
+			this.setEndpoint(endpoint);
+		}
 	}
 
 	protected void setEndpoint(final URL endpoint) {

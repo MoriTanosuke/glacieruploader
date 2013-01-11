@@ -33,6 +33,7 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 public final class CommandFactory {
 	
 	private static ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>(9);
+	private static AbstractCommand defaultCommand = null;
 	
 	/**
 	 * Adds a command to the list of commands
@@ -51,6 +52,23 @@ public final class CommandFactory {
 	}
 	
 	/**
+	 * Get the currently setted default command
+	 * @return AbstractCommand
+	 */
+	public static AbstractCommand getDefaultCommand() {
+		return defaultCommand;
+	}
+	
+	/**
+	 * Sets the default command.
+	 * This is used when no other command is valid.
+	 * @param command
+	 */
+	public static void setDefaultCommand(AbstractCommand command) {
+		defaultCommand = command;
+	}
+	
+	/**
 	 * Gets the first valid command, based on the
 	 * options specified
 	 * @param options
@@ -62,7 +80,7 @@ public final class CommandFactory {
 				return command;
 			}
 		}
-		return null;
+		return defaultCommand;
 	}
 	
 }

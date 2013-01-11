@@ -44,6 +44,7 @@ import de.kopis.glacier.commands.CreateVaultCommand;
 import de.kopis.glacier.commands.DeleteArchiveCommand;
 import de.kopis.glacier.commands.DeleteVaultCommand;
 import de.kopis.glacier.commands.DownloadArchiveCommand;
+import de.kopis.glacier.commands.HelpCommand;
 import de.kopis.glacier.commands.ReceiveArchivesListCommand;
 import de.kopis.glacier.commands.RequestArchivesListCommand;
 import de.kopis.glacier.commands.TreeHashArchiveCommand;
@@ -89,36 +90,34 @@ public final class GlacierUploader {
 
 	private static void findAndExecCommand(OptionSet options, GlacierUploaderOptionParser optionParser) {
 		try {
+			// Set default
+			CommandFactory.setDefaultCommand(new HelpCommand());
 			
-			final File credentials = options.valueOf(optionParser.CREDENTIALS);
-			final URL endpoint = new URL(options.valueOf(optionParser.ENDPOINT));
-			
-			log.info("Usign end point " + endpoint);
-			
-			// Add all commands to the factory
-			CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
-			CommandFactory.add(new DeleteArchiveCommand(endpoint, credentials));
-			CommandFactory.add(new DeleteVaultCommand(endpoint, credentials));
-			CommandFactory.add(new DownloadArchiveCommand(endpoint, credentials));
-			CommandFactory.add(new ReceiveArchivesListCommand(endpoint, credentials));
-			CommandFactory.add(new RequestArchivesListCommand(endpoint, credentials));
-			CommandFactory.add(new TreeHashArchiveCommand(endpoint, credentials));
-			CommandFactory.add(new UploadArchiveCommand(endpoint, credentials));
-			CommandFactory.add(new UploadMultipartArchiveCommand(endpoint, credentials));
+			if (options.has(optionParser.CREDENTIALS) && options.has(optionParser.ENDPOINT)) {
+				final File credentials = options.valueOf(optionParser.CREDENTIALS);
+				final URL endpoint = new URL(options.valueOf(optionParser.ENDPOINT));
+				
+				log.info("Usign end point " + endpoint);
+				
+				// Add all commands to the factory
+				CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
+				CommandFactory.add(new DeleteArchiveCommand(endpoint, credentials));
+				CommandFactory.add(new DeleteVaultCommand(endpoint, credentials));
+				CommandFactory.add(new DownloadArchiveCommand(endpoint, credentials));
+				CommandFactory.add(new ReceiveArchivesListCommand(endpoint, credentials));
+				CommandFactory.add(new RequestArchivesListCommand(endpoint, credentials));
+				CommandFactory.add(new TreeHashArchiveCommand(endpoint, credentials));
+				CommandFactory.add(new UploadArchiveCommand(endpoint, credentials));
+				CommandFactory.add(new UploadMultipartArchiveCommand(endpoint, credentials));
+				CommandFactory.add(CommandFactory.getDefaultCommand());
+			}
 
 			// Find a valid one
 			AbstractCommand command = CommandFactory.get(options, optionParser);
 
-			if (command != null) {
-				command.exec(options, optionParser);
-			} else {
-				log.info("Ooops, can't determine what you want to do. Check your options.");
-				try {
-					optionParser.printHelpOn(System.out);
-				} catch (final IOException e) {
-					log.error("Can not print help", e);
-				}
-			}
+			// Execute it
+			command.exec(options, optionParser);
+
 		} catch (final IOException e) {
 			log.error("Ooops, something is wrong with the system configuration", e);
 		}
