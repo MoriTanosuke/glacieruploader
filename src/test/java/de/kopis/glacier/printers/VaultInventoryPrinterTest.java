@@ -47,12 +47,13 @@ public class VaultInventoryPrinterTest {
 		final String inventory = readFile("target/test-classes/inventorylisting.txt");
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		new VaultInventoryPrinter(inventory).printInventory(out);
-		assertEquals("ARN:\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup" + line
-				+ "Archive ID:\t\tthisisaverylongrandomstringthatworksasthearchiveid" + line
-				+ "CreationDate:\t2012-08-23T04:14:56Z" + line
-				+ "Description:\ta custom description for your archive" + line
-				+ "Size:\t\t\t123456789 (117.74MB)" + line 
-				+ "SHA:\t\t\t123456789123456789123456789"+ line,	out.toString());
+		assertEquals("ARN:\t\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup" + line
+				+ "------------------------------------------------------------------------------" + line
+				+ "Description:\t\t\ta custom description for your archive" + line
+				+ "Archive ID:\t\t\tthisisaverylongrandomstringthatworksasthearchiveid" + line
+				+ "CreationDate:\t\t\t2012-08-23T04:14:56Z" + line
+				+ "Size:\t\t\t\t123456789 (117.74MB)" + line 
+				+ "SHA:\t\t\t\t123456789123456789123456789"+ line,	out.toString());
 	}
 
 	@Test

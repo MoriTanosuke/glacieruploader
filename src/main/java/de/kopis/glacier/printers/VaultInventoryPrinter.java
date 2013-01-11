@@ -62,7 +62,7 @@ public class VaultInventoryPrinter {
 
 		final JSONObject json = new JSONObject(inventory);
 		final String vaultArn = json.getString("VaultARN");
-		o.println("ARN:\t\t\t" + vaultArn);
+		o.println("ARN:\t\t\t\t" + vaultArn);
 		final JSONArray archives = json.getJSONArray("ArchiveList");
 		for (int i = 0; i < archives.length(); i++) {
 			printArchive(o, (JSONObject) archives.get(i));
@@ -72,11 +72,12 @@ public class VaultInventoryPrinter {
 	}
 
 	private void printArchive(final PrintWriter o, final JSONObject archive) throws JSONException {
-		o.println("Archive ID:\t\t" + archive.get("ArchiveId"));
-		o.println("CreationDate:\t" + archive.get("CreationDate"));
-		o.println("Description:\t" + archive.get("ArchiveDescription"));
-		o.println("Size:\t\t\t" + printArchiveSize(archive));
-		o.println("SHA:\t\t\t" + archive.get("SHA256TreeHash"));
+		o.println("------------------------------------------------------------------------------");
+		o.println("Description:\t\t\t" + archive.get("ArchiveDescription"));
+		o.println("Archive ID:\t\t\t" + archive.get("ArchiveId"));
+		o.println("CreationDate:\t\t\t" + archive.get("CreationDate"));
+		o.println("Size:\t\t\t\t" + printArchiveSize(archive));
+		o.println("SHA:\t\t\t\t" + archive.get("SHA256TreeHash"));
 	}
 
 	public String printArchiveSize(final JSONObject archive) throws JSONException {

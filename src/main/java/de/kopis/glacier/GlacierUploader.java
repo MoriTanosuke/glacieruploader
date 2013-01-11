@@ -93,6 +93,8 @@ public final class GlacierUploader {
 			final File credentials = options.valueOf(optionParser.CREDENTIALS);
 			final URL endpoint = new URL(options.valueOf(optionParser.ENDPOINT));
 			
+			log.info("Usign end point " + endpoint);
+			
 			// Add all commands to the factory
 			CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
 			CommandFactory.add(new DeleteArchiveCommand(endpoint, credentials));

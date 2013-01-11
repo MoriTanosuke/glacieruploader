@@ -61,8 +61,6 @@ public abstract class AbstractCommand {
 	}
 
 	protected void setEndpoint(final URL endpoint) {
-		log.info("Using endpoint " + endpoint);
-
 		client.setEndpoint(endpoint.toExternalForm());
 		// TODO check if this really fixes #13
 		sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
