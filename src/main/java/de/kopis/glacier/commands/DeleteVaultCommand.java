@@ -28,24 +28,25 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.glacier.model.CreateVaultRequest;
+import com.amazonaws.services.glacier.model.CreateVaultResult;
+import com.amazonaws.services.glacier.model.DeleteVaultRequest;
+import com.amazonaws.services.glacier.model.DescribeVaultRequest;
+import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
-public class CommandLineGlacierUploader extends AbstractGlacierCommand {
-
-  public CommandLineGlacierUploader(final URL endpoint, final File credentials) throws IOException {
+public class DeleteVaultCommand extends AbstractCommand {
+  public DeleteVaultCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
   }
 
-  public void upload(final String vaultName, final File uploadFile) {
-    log.info("Uploading " + uploadFile + " to vault " + vaultName + "...");
-    try {
-      log.info("Starting upload of " + uploadFile);
-      final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
-      final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
-      log.info("Uploaded archive " + archiveId);
-    } catch (final IOException e) {
-      System.err.println("Something went wrong while uploading " + uploadFile + ".");
-      e.printStackTrace();
-    }
+  public void deleteVault(final String vaultName) {
+    log.info("Deleting vault " + vaultName + "...");
+
+    final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
+    // TODO check for notifications first?
+    client.deleteVault(deleteVaultRequest);
+    log.info("Vault " + vaultName + " deleted.");
   }
 }

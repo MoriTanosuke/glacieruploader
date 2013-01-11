@@ -37,6 +37,8 @@ import org.junit.Test;
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 
+import de.kopis.glacier.printers.VaultInventoryPrinter;
+
 public class VaultInventoryPrinterTest {
 
   @Test

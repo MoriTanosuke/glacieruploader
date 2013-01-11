@@ -31,9 +31,9 @@ import java.net.URL;
 import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 
-public class GlacierArchiveDownloader extends AbstractGlacierCommand {
+public class DownloadArchiveCommand extends AbstractCommand {
 
-  public GlacierArchiveDownloader(final URL endpoint, final File credentials) throws IOException {
+  public DownloadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
   }
 
@@ -50,11 +50,6 @@ public class GlacierArchiveDownloader extends AbstractGlacierCommand {
     log.info("Archive downloaded to " + targetFile);
   }
 
-  public void delete(final URL endpointUrl, final String vaultName, final String archiveId) {
-    log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
-    final DeleteArchiveRequest deleteArchiveRequest = new DeleteArchiveRequest(vaultName, archiveId);
-    client.deleteArchive(deleteArchiveRequest);
-    log.info("Archive " + archiveId + " deleted from vault " + vaultName + ".");
-  }
+
 
 }

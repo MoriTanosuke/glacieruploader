@@ -30,9 +30,9 @@ import java.net.URL;
 
 import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
 
-public class GlacierArchiveDeleter extends AbstractGlacierCommand {
+public class DeleteArchiveCommand extends AbstractCommand {
 
-  public GlacierArchiveDeleter(final URL endpoint, final File credentials) throws IOException {
+  public DeleteArchiveCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
   }
 
@@ -44,5 +44,12 @@ public class GlacierArchiveDeleter extends AbstractGlacierCommand {
 
     log.info("Archive " + archiveId + " deletion started.");
   }
+  
+  public void delete(final URL endpointUrl, final String vaultName, final String archiveId) {
+	    log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
+	    final DeleteArchiveRequest deleteArchiveRequest = new DeleteArchiveRequest(vaultName, archiveId);
+	    client.deleteArchive(deleteArchiveRequest);
+	    log.info("Archive " + archiveId + " deleted from vault " + vaultName + ".");
+	  }
 
 }

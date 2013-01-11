@@ -36,8 +36,8 @@ import com.amazonaws.services.glacier.model.DeleteVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
-public class GlacierVaultCreator extends AbstractGlacierCommand {
-  public GlacierVaultCreator(final URL endpoint, final File credentials) throws IOException {
+public class CreateVaultCommand extends AbstractCommand {
+  public CreateVaultCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
   }
 
