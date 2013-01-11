@@ -15,11 +15,11 @@ package de.kopis.glacier.printers;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -31,15 +31,14 @@ import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
 public class VaultPrinter {
 
-  public void printVault(final DescribeVaultResult describeVaultResult, final OutputStream o) {
-    final PrintWriter out = new PrintWriter(o);
-    out.println("CreationDate:\t" + describeVaultResult.getCreationDate());
-    out.println("LastInventoryDate:\t" + describeVaultResult.getLastInventoryDate());
-    out.println("NumberOfArchives:\t" + describeVaultResult.getNumberOfArchives());
-    out.println("SizeInBytes:\t\t" + describeVaultResult.getSizeInBytes());
-    out.println("VaultARN:\t\t" + describeVaultResult.getVaultARN());
-    out.println("VaultName:\t\t" + describeVaultResult.getVaultName());
-
-    out.flush();
-  }
+	public void printVault(final DescribeVaultResult describeVaultResult, final OutputStream o) {
+		final PrintWriter out = new PrintWriter(o);
+		out.println("CreationDate:\t" + describeVaultResult.getCreationDate());
+		out.println("LastInventoryDate:\t" + describeVaultResult.getLastInventoryDate());
+		out.println("NumberOfArchives:\t" + describeVaultResult.getNumberOfArchives());
+		out.println("SizeInBytes:\t\t" + describeVaultResult.getSizeInBytes());
+		out.println("VaultARN:\t\t" + describeVaultResult.getVaultARN());
+		out.println("VaultName:\t\t" + describeVaultResult.getVaultName());
+		out.flush();
+	}
 }

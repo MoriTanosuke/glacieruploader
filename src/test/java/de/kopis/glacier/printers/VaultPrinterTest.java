@@ -15,11 +15,11 @@ package de.kopis.glacier.printers;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -34,31 +34,31 @@ import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
 public class VaultPrinterTest {
 
-  private static final String VAULT_NAME = "mytestbackup";
-  private static final String ARN = "arn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup";
-  private static final Long SIZE_IN_BYTES = 123456789L;
-  private static final Long NUMBER_OF_ARCHIVES = 42L;
-  private static final String INVENTORY_DATE = "2012-08-29T02:56:35Z";
-  private static final String CREATION_DATE = INVENTORY_DATE;
+	private static final String VAULT_NAME = "mytestbackup";
+	private static final String ARN = "arn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup";
+	private static final Long SIZE_IN_BYTES = 123456789L;
+	private static final Long NUMBER_OF_ARCHIVES = 42L;
+	private static final String INVENTORY_DATE = "2012-08-29T02:56:35Z";
+	private static final String CREATION_DATE = INVENTORY_DATE;
 
-  @Test
-  public void testPrintVault() {
-    final String line = System.lineSeparator();
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    final DescribeVaultResult describeVaultResult = new DescribeVaultResult();
-    describeVaultResult.setCreationDate(CREATION_DATE);
-    describeVaultResult.setLastInventoryDate(INVENTORY_DATE);
-    describeVaultResult.setNumberOfArchives(NUMBER_OF_ARCHIVES);
-    describeVaultResult.setSizeInBytes(SIZE_IN_BYTES);
-    describeVaultResult.setVaultARN(ARN);
-    describeVaultResult.setVaultName(VAULT_NAME);
-    new VaultPrinter().printVault(describeVaultResult, out);
-    assertEquals(
-        "CreationDate:\t" + CREATION_DATE + line + 
-        "LastInventoryDate:\t" + INVENTORY_DATE + line +
-        "NumberOfArchives:\t" + NUMBER_OF_ARCHIVES + line +
-        "SizeInBytes:\t\t" + SIZE_IN_BYTES + line +
-        "VaultARN:\t\t" + ARN + line + 
-        "VaultName:\t\t" + VAULT_NAME + line, out.toString());
-  }
+	@Test
+	public void testPrintVault() {
+		final String line = System.lineSeparator();
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		final DescribeVaultResult describeVaultResult = new DescribeVaultResult();
+		describeVaultResult.setCreationDate(CREATION_DATE);
+		describeVaultResult.setLastInventoryDate(INVENTORY_DATE);
+		describeVaultResult.setNumberOfArchives(NUMBER_OF_ARCHIVES);
+		describeVaultResult.setSizeInBytes(SIZE_IN_BYTES);
+		describeVaultResult.setVaultARN(ARN);
+		describeVaultResult.setVaultName(VAULT_NAME);
+		new VaultPrinter().printVault(describeVaultResult, out);
+		assertEquals(
+				"CreationDate:\t" + CREATION_DATE + line + 
+				"LastInventoryDate:\t" + INVENTORY_DATE + line +
+				"NumberOfArchives:\t" + NUMBER_OF_ARCHIVES + line +
+				"SizeInBytes:\t\t" + SIZE_IN_BYTES + line +
+				"VaultARN:\t\t" + ARN + line + 
+				"VaultName:\t\t" + VAULT_NAME + line, out.toString());
+	}
 }
