@@ -48,6 +48,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	public final OptionSpec<Void> DELETE_VAULT;
 	public final OptionSpec<File> CALCULATE_HASH;
 	public final OptionSpec<File> MULTIPARTUPLOAD;
+	public final OptionSpec<Integer> PARTSIZE;
 
 	public GlacierUploaderOptionParser(Configuration config) {
 		super();
@@ -63,6 +64,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 		this.CALCULATE_HASH       = this.parseHashFile(config);
 		this.DELETE_ARCHIVE       = this.parseDeleteArchive(config);
 		this.MULTIPARTUPLOAD      = this.parseMultipartUploadFile(config);
+		this.PARTSIZE             = this.parsePartSize(config);
 	}
 	
 	@SuppressWarnings("serial")
@@ -75,7 +77,8 @@ public class GlacierUploaderOptionParser extends OptionParser {
 			)
 			.withRequiredArg()
 			.ofType(String.class);
-		if(config.containsKey("vault")) {
+		
+		if (config.containsKey("vault")) {
 			vaultBuilder.defaultsTo(config.getString("vault"));
 		}
 		return vaultBuilder;
@@ -91,7 +94,8 @@ public class GlacierUploaderOptionParser extends OptionParser {
 			)
 			.withRequiredArg()
 			.ofType(String.class);
-		if(config.containsKey("endpoint")) {
+		
+		if (config.containsKey("endpoint")) {
 			endpointBuilder.defaultsTo(config.getString("endpoint"));
 		}
 		return endpointBuilder;
@@ -143,7 +147,8 @@ public class GlacierUploaderOptionParser extends OptionParser {
 			)
 			.withRequiredArg()
 			.ofType(File.class);
-		if(config.containsKey("credentials")) {
+		
+		if (config.containsKey("credentials")) {
 			credentialsBuilder.defaultsTo(new File(config.getString("credentials")));
 		} else {
 			credentialsBuilder.defaultsTo(new File(System.getProperty("user.home") + "/aws.properties"));
@@ -217,6 +222,19 @@ public class GlacierUploaderOptionParser extends OptionParser {
 			)
 			.withRequiredArg()
 			.ofType(File.class);
+	}
+	
+	@SuppressWarnings("serial")
+	private ArgumentAcceptingOptionSpec<Integer> parsePartSize(Configuration config) {
+		return acceptsAll(
+				new ArrayList<String>() {{
+					add("partsize");
+				}},
+				"sets the size of each part for multipart uploads"
+			)
+			.withOptionalArg()
+			.ofType(Integer.class)
+			.defaultsTo(10485760); // 10 MB.
 	}
 	
 }

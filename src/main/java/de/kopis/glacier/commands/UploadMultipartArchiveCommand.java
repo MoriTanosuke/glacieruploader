@@ -56,15 +56,13 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 	public UploadMultipartArchiveCommand(final URL endpoint, final File credentials) throws IOException {
 		super(endpoint, credentials);
 	}
-	
-	public static String partSize = "1048576"; // 1 MB.
 
 	// from: http://docs.amazonwebservices.com/amazonglacier/latest/dev/uploading-an-archive-mpu-using-java.html
-	public void upload(final String vaultName, final File uploadFile) {
+	public void upload(final String vaultName, final File uploadFile, final Integer partSize) {
 		log.info("Multipart uploading " + uploadFile + " to vault " + vaultName + "...");
 		try {
-			final String uploadId = initiateMultipartUpload(vaultName);
-			final String checksum = uploadParts(uploadId, uploadFile, vaultName);
+			final String uploadId = initiateMultipartUpload(vaultName, partSize);
+			final String checksum = uploadParts(uploadId, uploadFile, vaultName, partSize);
 			final String archiveId = completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
 			
 			log.info("Uploaded archive " + archiveId);
@@ -81,12 +79,12 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 		}
 	}
 	
-	private String initiateMultipartUpload(final String vaultName) {
+	private String initiateMultipartUpload(final String vaultName, final Integer partSize) {
 		// Initiate
 		InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest()
 				.withVaultName(vaultName)
 				.withArchiveDescription("my archive " + (new Date()))
-				.withPartSize(partSize);
+				.withPartSize(partSize.toString());
 		
 		InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
 		
@@ -95,10 +93,10 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 		return result.getUploadId();
 	}
 
-	private String uploadParts(String uploadId, File file, final String vaultName) throws AmazonServiceException, NoSuchAlgorithmException, AmazonClientException, IOException {
+	private String uploadParts(String uploadId, File file, final String vaultName, final Integer partSize) throws AmazonServiceException, NoSuchAlgorithmException, AmazonClientException, IOException {
 		int filePosition = 0;
 		long currentPosition = 0;
-		byte[] buffer = new byte[Integer.valueOf(partSize)];
+		byte[] buffer = new byte[partSize];
 		List<byte[]> binaryChecksums = new LinkedList<byte[]>();
 		
 		FileInputStream fileToUpload = new FileInputStream(file);
@@ -147,7 +145,8 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
 		final String vaultName = options.valueOf(optionParser.VAULT);
 		final File uploadFile = options.valueOf(optionParser.MULTIPARTUPLOAD);
-		this.upload(vaultName, uploadFile);
+		final Integer partSize = options.valueOf(optionParser.PARTSIZE);
+		this.upload(vaultName, uploadFile, partSize);
 	}
 	
 	@Override
