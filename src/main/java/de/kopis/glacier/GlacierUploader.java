@@ -26,24 +26,28 @@ package de.kopis.glacier;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
 import joptsimple.OptionSet;
 
 import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.kopis.glacier.util.TreeHashCalculator;
+import com.amazonaws.services.glacier.TreeHashGenerator;
+
+import de.kopis.glacier.commands.CreateVaultCommand;
+import de.kopis.glacier.commands.DeleteArchiveCommand;
+import de.kopis.glacier.commands.DeleteVaultCommand;
+import de.kopis.glacier.commands.DownloadArchiveCommand;
+import de.kopis.glacier.commands.ListArchivesCommand;
+import de.kopis.glacier.commands.UploadArchiveCommand;
+import de.kopis.glacier.commands.UploadMultipartArchiveCommand;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.commands.*;
 
 public final class GlacierUploader {
   private static final Log log = LogFactory.getLog(GlacierUploader.class);
@@ -109,8 +113,7 @@ public final class GlacierUploader {
         final DeleteVaultCommand vaultCreator = new DeleteVaultCommand(endpointUrl, credentialFile);
         vaultCreator.deleteVault(vaultName);
       } else if (options.has(optionParser.CALCULATE_HASH)) {
-        System.out.println(TreeHashCalculator.toHex(TreeHashCalculator.computeSHA256TreeHash(options
-            .valueOf(optionParser.CALCULATE_HASH))));
+        log.info(TreeHashGenerator.calculateTreeHash(options.valueOf(optionParser.CALCULATE_HASH)));
       } else {
         log.info("Ooops, can't determine what you want to do. Check your options.");
         try {
@@ -122,9 +125,6 @@ public final class GlacierUploader {
     } catch (final IOException e) {
       log.info("Ooops, something is wrong with your setup.");
       log.error("Something is wrong with the system configuration", e);
-    } catch (final NoSuchAlgorithmException e) {
-      log.info("Ooops, something is wrong with your setup. Can not calculate hashsum.");
-      log.error("Something is wrong with the system configuration. Can not calculate hashsum.", e);
     }
   }
 }
