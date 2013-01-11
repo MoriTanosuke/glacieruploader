@@ -15,11 +15,11 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -35,9 +35,6 @@ import joptsimple.OptionSet;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
-import com.amazonaws.services.glacier.model.InitiateJobRequest;
-import com.amazonaws.services.glacier.model.InitiateJobResult;
-import com.amazonaws.services.glacier.model.JobParameters;
 import com.amazonaws.util.json.JSONException;
 
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
@@ -45,40 +42,37 @@ import de.kopis.glacier.printers.VaultInventoryPrinter;
 
 public class ReceiveArchivesListCommand extends AbstractCommand {
 
-  private final VaultInventoryPrinter printer;
+	private final VaultInventoryPrinter printer;
 
-  public ReceiveArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-    printer = new VaultInventoryPrinter();
-  }
+	public ReceiveArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
+		super(endpoint, credentials);
+		printer = new VaultInventoryPrinter();
+	}
 
-  public void retrieveInventoryListing(final String vaultName, final String jobId) {
-    log.info("Retrieving inventory for job id " + jobId + "...");
-    client.setEndpoint(endpointUrl.toExternalForm());
+	public void retrieveInventoryListing(final String vaultName, final String jobId) {
+		log.info("Retrieving inventory for job id " + jobId + "...");
 
-    try {
-      final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
-      final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
-      final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
-      String content = "";
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        content += line;
-      }
-      reader.close();
-      // TODO use dendency injection here
-      printer.setInventory(content);
-      printer.printInventory(System.out);
-    } catch (final AmazonClientException e) {
-      System.err.println(e.getLocalizedMessage());
-      // e.printStackTrace();
-    } catch (final JSONException e) {
-      System.err.println(e.getLocalizedMessage());
-    } catch (final IOException e) {
-      System.err.println(e.getLocalizedMessage());
-      // e.printStackTrace();
-    }
-  }
+		try {
+			final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
+			final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
+			String content = "";
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				content += line;
+			}
+			reader.close();
+			// TODO use dependency injection here
+			printer.setInventory(content);
+			printer.printInventory(System.out);
+		} catch (final AmazonClientException e) {
+			System.err.println(e.getLocalizedMessage());
+		} catch (final JSONException e) {
+			System.err.println(e.getLocalizedMessage());
+		} catch (final IOException e) {
+			System.err.println(e.getLocalizedMessage());
+		}
+	}
 
 	@Override
 	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {

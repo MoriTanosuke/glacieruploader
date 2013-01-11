@@ -22,7 +22,7 @@ public class TreeHashArchiveCommand extends AbstractCommand {
 
 	@Override
 	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-		File file = options.valueOf(optionParser.CALCULATE_HASH);
+		final File file = options.valueOf(optionParser.CALCULATE_HASH);
 		this.calculateTreeHash(file);
 	}
 

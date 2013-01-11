@@ -15,11 +15,11 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -35,18 +35,18 @@ import com.amazonaws.services.glacier.model.DeleteVaultRequest;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class DeleteVaultCommand extends AbstractCommand {
-  public DeleteVaultCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+	public DeleteVaultCommand(final URL endpoint, final File credentials) throws IOException {
+		super(endpoint, credentials);
+	}
 
-  public void deleteVault(final String vaultName) {
-    log.info("Deleting vault " + vaultName + "...");
+	public void deleteVault(final String vaultName) {
+		log.info("Deleting vault " + vaultName + "...");
 
-    final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
-    // TODO check for notifications first?
-    client.deleteVault(deleteVaultRequest);
-    log.info("Vault " + vaultName + " deleted.");
-  }
+		final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
+		// TODO check for notifications first?
+		client.deleteVault(deleteVaultRequest);
+		log.info("Vault " + vaultName + " deleted.");
+	}
 
 	@Override
 	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {

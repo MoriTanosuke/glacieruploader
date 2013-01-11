@@ -1,5 +1,10 @@
 package de.kopis.glacier.commands;
 
+import java.util.ArrayList;
+
+import joptsimple.OptionSet;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+
 /*
  * #%L
  * uploader
@@ -27,5 +32,37 @@ package de.kopis.glacier.commands;
 
 public final class CommandFactory {
 	
+	private static ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>(9);
+	
+	/**
+	 * Adds a command to the list of commands
+	 * @param command
+	 */
+	public static void add(AbstractCommand command) {
+		commands.add(command);
+	}
+	
+	/**
+	 * Removes a command from the list of commands
+	 * @param command
+	 */
+	public static void remove(AbstractCommand command) {
+		commands.remove(command);
+	}
+	
+	/**
+	 * Gets the first valid command, based on the
+	 * options specified
+	 * @param options
+	 * @param optionParser
+	 */
+	public static AbstractCommand get(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		for (AbstractCommand command : commands) {
+			if (command.valid(options, optionParser)) {
+				return command;
+			}
+		}
+		return null;
+	}
 	
 }

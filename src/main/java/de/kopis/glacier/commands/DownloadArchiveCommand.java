@@ -15,11 +15,11 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -36,28 +36,27 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class DownloadArchiveCommand extends AbstractCommand {
 
-  public DownloadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+	public DownloadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+		super(endpoint, credentials);
+	}
 
-  public void download(final String vaultName, final String archiveId, final String targetFile) {
-    final File downloadFile = new File(targetFile);
-    download(vaultName, archiveId, downloadFile);
-  }
+	public void download(final String vaultName, final String archiveId, final String targetFile) {
+		final File downloadFile = new File(targetFile);
+		download(vaultName, archiveId, downloadFile);
+	}
 
-  public void download(final String vaultName, final String archiveId, final File targetFile) {
-    log.info("Downloading archive " + archiveId + " from vault " + vaultName + "...");
-
-    final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
-    atm.download(vaultName, archiveId, targetFile);
-    log.info("Archive downloaded to " + targetFile);
-  }
+	public void download(final String vaultName, final String archiveId, final File targetFile) {
+		log.info("Downloading archive " + archiveId + " from vault " + vaultName + "...");
+		final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
+		atm.download(vaultName, archiveId, targetFile);
+		log.info("Archive downloaded to " + targetFile);
+	}
 
 	@Override
 	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-		String vaultName = options.valueOf(optionParser.VAULT);
-		String archiveId = options.valueOf(optionParser.DOWNLOAD);
-		File targetFile = options.valueOf(optionParser.TARGET_FILE);
+		final String vaultName = options.valueOf(optionParser.VAULT);
+		final String archiveId = options.valueOf(optionParser.DOWNLOAD);
+		final File targetFile = options.valueOf(optionParser.TARGET_FILE);
 		this.download(vaultName, archiveId, targetFile);
 	}
 	

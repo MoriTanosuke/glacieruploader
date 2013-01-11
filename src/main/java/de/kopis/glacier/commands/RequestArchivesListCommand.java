@@ -15,60 +15,51 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 
 import joptsimple.OptionSet;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.services.glacier.model.GetJobOutputRequest;
-import com.amazonaws.services.glacier.model.GetJobOutputResult;
 import com.amazonaws.services.glacier.model.InitiateJobRequest;
 import com.amazonaws.services.glacier.model.InitiateJobResult;
 import com.amazonaws.services.glacier.model.JobParameters;
-import com.amazonaws.util.json.JSONException;
 
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.VaultInventoryPrinter;
-
+	
 public class RequestArchivesListCommand extends AbstractCommand {
 
-  private final VaultInventoryPrinter printer;
+	public RequestArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
+		super(endpoint, credentials);
+	}
 
-  public RequestArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-    printer = new VaultInventoryPrinter();
-  }
+	public void startInventoryListing(final String vaultName) {
+		log.info("Starting inventory listing for vault " + vaultName + "...");
 
-  public void startInventoryListing(final String vaultName) {
-    log.info("Starting inventory listing for vault " + vaultName + "...");
+		try {
+			final InitiateJobRequest initJobRequest = new InitiateJobRequest()
+				.withVaultName(vaultName)
+				.withJobParameters(new JobParameters().withType("inventory-retrieval"));
 
-    try {
-      final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
-          new JobParameters().withType("inventory-retrieval"));
+			final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
+			final String jobId = initJobResult.getJobId();
+			log.info("Inventory Job created with ID=" + jobId);
+		} catch (final AmazonClientException e) {
+			System.err.println(e.getLocalizedMessage());
+		}
 
-      final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
-      final String jobId = initJobResult.getJobId();
-      log.info("Inventory Job created with ID=" + jobId);
-    } catch (final AmazonClientException e) {
-      System.err.println(e.getLocalizedMessage());
-      // e.printStackTrace();
-    }
-
-    // TODO wait for job, but it could take about 4 hours says the SDK...
-  }
+		// TODO wait for job, but it could take about 4 hours says the SDK...
+	}
 
 	@Override
 	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {

@@ -15,11 +15,11 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -41,28 +41,26 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultPrinter;
 
 public class CreateVaultCommand extends AbstractCommand {
-  public CreateVaultCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+	public CreateVaultCommand(final URL endpoint, final File credentials) throws IOException {
+		super(endpoint, credentials);
+	}
 
-  public void createVault(final String vaultName) {
-    log.info("Creating vault " + vaultName + "...");
+	public void createVault(final String vaultName) {
+		log.info("Creating vault " + vaultName + "...");
 
-    try {
-      final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
-      final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
-      log.info("Vault " + vaultName + " created. " + createVaultResult);
-      final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
-      final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
-      new VaultPrinter().printVault(describeVaultResult, System.out);
-    } catch (final AmazonServiceException e) {
-      System.err.println("Couldn't create vault.");
-      e.printStackTrace();
-    } catch (final AmazonClientException e) {
-      System.err.println("Couldn't create vault.");
-      e.printStackTrace();
-    }
-  }
+		try {
+			final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
+			final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
+			log.info("Vault " + vaultName + " created. " + createVaultResult);
+			final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
+			final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
+			new VaultPrinter().printVault(describeVaultResult, System.out);
+		} catch (final AmazonServiceException e) {
+			System.err.println("Couldn't create vault.");
+		} catch (final AmazonClientException e) {
+			System.err.println("Couldn't create vault.");
+		}
+	}
 
 	@Override
 	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {

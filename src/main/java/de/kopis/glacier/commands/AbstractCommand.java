@@ -15,11 +15,11 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -42,35 +42,35 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public abstract class AbstractCommand {
-  protected final Log log;
+	protected final Log log;
 
-  protected final AWSCredentials credentials;
-  protected final AmazonGlacierClient client;
-  protected final AmazonSQSClient sqs;
-  protected final AmazonSNSClient sns;
+	protected final AWSCredentials credentials;
+	protected final AmazonGlacierClient client;
+	protected final AmazonSQSClient sqs;
+	protected final AmazonSNSClient sns;
 
-  public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
-    this.log = LogFactory.getLog(this.getClass());
+	public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
+		this.log = LogFactory.getLog(this.getClass());
 
-    this.credentials = new PropertiesCredentials(credentials);
-    client = new AmazonGlacierClient(this.credentials);
-    sqs = new AmazonSQSClient(this.credentials);
-    sns = new AmazonSNSClient(this.credentials);
+		this.credentials = new PropertiesCredentials(credentials);
+		client = new AmazonGlacierClient(this.credentials);
+		sqs = new AmazonSQSClient(this.credentials);
+		sns = new AmazonSNSClient(this.credentials);
 
-    this.setEndpoint(endpoint);
-  }
+		this.setEndpoint(endpoint);
+	}
 
-  protected void setEndpoint(final URL endpoint) {
-    log.info("Using endpoint " + endpoint);
+	protected void setEndpoint(final URL endpoint) {
+		log.info("Using endpoint " + endpoint);
 
-    client.setEndpoint(endpoint.toExternalForm());
-    // TODO check if this really fixes #13
-    sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
-    sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
-  }
-  
-  public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);
-  
-  public abstract boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser);
+		client.setEndpoint(endpoint.toExternalForm());
+		// TODO check if this really fixes #13
+		sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
+		sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
+	}
+	
+	public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);
+	
+	public abstract boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser);
 
 }

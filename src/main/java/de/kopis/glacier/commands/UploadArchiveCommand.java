@@ -15,11 +15,11 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -36,22 +36,21 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class UploadArchiveCommand extends AbstractCommand {
 
-  public UploadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+	public UploadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+		super(endpoint, credentials);
+	}
 
-  public void upload(final String vaultName, final File uploadFile) {
-    log.info("Starting to upload " + uploadFile + " to vault " + vaultName + "...");
-    try {
-      log.info("Starting upload of " + uploadFile);
-      final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
-      final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
-      log.info("Uploaded archive " + archiveId);
-    } catch (final IOException e) {
-      System.err.println("Something went wrong while uploading " + uploadFile + ".");
-      e.printStackTrace();
-    }
-  }
+	public void upload(final String vaultName, final File uploadFile) {
+		log.info("Starting to upload " + uploadFile + " to vault " + vaultName + "...");
+		try {
+			final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
+			final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
+			log.info("Uploaded archive " + archiveId);
+		} catch (final IOException e) {
+			System.err.println("Something went wrong while uploading " + uploadFile + vaultName + "to vault " +  ".");
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
