@@ -73,13 +73,13 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 			log.info("Checksum is" + checksum);
 			
 		} catch (final IOException e) {
-			System.err.println("Something went wrong while multipart uploading " + uploadFile + ".");
+			System.err.println("Something went wrong while multipart uploading " + uploadFile + "." + e.getLocalizedMessage());
 		} catch (AmazonServiceException e) {
-			System.err.println("Something went wrong at Amazon while uploading " + uploadFile + ".");
+			System.err.println("Something went wrong at Amazon while uploading " + uploadFile + "." + e.getLocalizedMessage());
 		} catch (NoSuchAlgorithmException e) {
 			System.err.println("No such algorithm found " + e.getLocalizedMessage());
 		} catch (AmazonClientException e) {
-			System.err.println("Something went wrong with the Amazon Client.");
+			System.err.println("Something went wrong with the Amazon Client." + e.getLocalizedMessage());
 		}
 	}
 	
