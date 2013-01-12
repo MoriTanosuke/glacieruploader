@@ -6,9 +6,7 @@ A simple java command line application for Amazon Glacier. You can find the late
 How to get it
 =============
 
-Either [download the latest binary][0], or [build from source][5].
-
-You can [download a nightly build][4] from our the CI server.
+Either [build from source][5] or [download a nightly build][4] from our the CI server.
 
 How to run
 ==========
@@ -25,28 +23,28 @@ search for the file in javas `user.home` directory.
 Command-line options
 ====================
 
-Option                                  Description                            
-------                                  -----------                            
--?, -h, --help                          display the help menu                  
--a, --calculate <File>                  calculate hashsum for a file           
--c, --create                            creates a new vault                    
---credentials <File>                    path to your aws credentials file      
-                                          (default: /home/carsten/aws.      
-                                          properties)                          
--d, --delete                            deletes an existing archive            
--e, --endpoint                          URL of the amazon AWS endpoint where   
-                                          your vault is                        
--l, --list-inventory                    retrieve the inventory listing of a    
-                                          vault                                
--m, --multipartupload <File>            start uploading a new archive in       
-                                          chuncks                              
--o, --download                          download an existing archive           
--p, --partsize [Integer]                sets the size of each part for         
-                                          multipart uploads (default: 10485760)
--r, --delete-vault                      deletes an existing vault              
--t, --target <File>                     filename to store downloaded archive   
--u, --upload <File>                     start uploading a new archive          
--v, --vault                             name of your vault   
+    Option                                  Description                            
+    ------                                  -----------                            
+    -?, -h, --help                          display the help menu                  
+    -a, --calculate <File>                  calculate hashsum for a file           
+    -c, --create                            creates a new vault                    
+    --credentials <File>                    path to your aws credentials file      
+                                              (default: /home/carsten/aws.      
+                                              properties)                          
+    -d, --delete                            deletes an existing archive            
+    -e, --endpoint                          URL of the amazon AWS endpoint where   
+                                              your vault is                        
+    -l, --list-inventory                    retrieve the inventory listing of a    
+                                              vault                                
+    -m, --multipartupload <File>            start uploading a new archive in       
+                                              chuncks                              
+    -o, --download                          download an existing archive           
+    -p, --partsize [Integer]                sets the size of each part for         
+                                              multipart uploads (default: 10485760)
+    -r, --delete-vault                      deletes an existing vault              
+    -t, --target <File>                     filename to store downloaded archive   
+    -u, --upload <File>                     start uploading a new archive          
+    -v, --vault                             name of your vault   
 
 Configuration file
 ==================
