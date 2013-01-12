@@ -43,7 +43,7 @@ public class VaultPrinterTest {
 
   @Test
   public void testPrintVault() {
-    final String line = System.getProperty("line.separator");
+    final String line = System.lineSeparator();
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     final DescribeVaultResult describeVaultResult = new DescribeVaultResult();
     describeVaultResult.setCreationDate(CREATION_DATE);

@@ -40,7 +40,7 @@ public class VaultInventoryPrinterTest {
 
   @Test
   public void testPrintInventoryListing() throws JSONException, IOException {
-    final String line = System.getProperty("line.separator");
+    final String line = System.lineSeparator();
     final String inventory = readFile("target/test-classes/inventorylisting.txt");
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     new VaultInventoryPrinter(inventory).printInventory(out);
