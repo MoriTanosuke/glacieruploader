@@ -25,23 +25,28 @@ search for the file in javas `user.home` directory.
 Command-line options
 ====================
 
-    Option                                  Description                            
-    ------                                  -----------                            
-    -a, --calculate <File>                  calculate hashsum for a file           
-    -c, --create                            creates a new vault                    
-    --credentials <File>                    path to your aws credentials file      
-                                              (default: /home/carsten/aws.         
-                                              properties)                          
-    -d, --delete                            deletes an existing archive            
-    -e, --endpoint <URL>                    URL of the amazon AWS endpoint where   
-                                              your vault is                        
-    -l, --list-inventory                    retrieve the inventory listing of a    
-                                              vault                                
-    -o, --download                          download an existing archive           
-    -r, --delete-vault                      deletes an existing vault              
-    -t, --target <File>                     filename to store downloaded archive   
-    -u, --upload <File>                     start uploading a new archive          
-    -v, --vault                             name of your vault   
+Option                                  Description                            
+------                                  -----------                            
+-?, -h, --help                          display the help menu                  
+-a, --calculate <File>                  calculate hashsum for a file           
+-c, --create                            creates a new vault                    
+--credentials <File>                    path to your aws credentials file      
+                                          (default: /home/carsten/aws.      
+                                          properties)                          
+-d, --delete                            deletes an existing archive            
+-e, --endpoint                          URL of the amazon AWS endpoint where   
+                                          your vault is                        
+-l, --list-inventory                    retrieve the inventory listing of a    
+                                          vault                                
+-m, --multipartupload <File>            start uploading a new archive in       
+                                          chuncks                              
+-o, --download                          download an existing archive           
+-p, --partsize [Integer]                sets the size of each part for         
+                                          multipart uploads (default: 10485760)
+-r, --delete-vault                      deletes an existing vault              
+-t, --target <File>                     filename to store downloaded archive   
+-u, --upload <File>                     start uploading a new archive          
+-v, --vault                             name of your vault   
 
 Configuration file
 ==================
@@ -86,6 +91,22 @@ Available since 0.0.3.
     Starting to upload file.zip...
     Using endpoint https://glacier.eu-west-1.amazonaws.com
     Starting upload of file.zip
+    Uploaded archive j7UL7pH46FJGhoAxNVDsdjhHs_GLSKGLd12Dq44dfiyTciW6DSCQubctUFEZ4nKWPrJzv_YoxPVK_TfdAuMCxiQIE3_zEGDg84luI0-tzWMusdfjKHG2ILuhJhK5PySOOaw
+
+This will return an archive id which you can use to retrieve the archive again later.
+
+Multipart Upload archive
+--------------
+
+Available since 0.0.8.
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --multipartupload /path/to/my/file.zip --partsize 10485760
+    
+    Multipart uploading upload file.zip...
+    Using endpoint https://glacier.eu-west-1.amazonaws.com
+    ArchiveID: j7UL7pH46FJGhoAxNVDsdjhHs_GLSKGLd12Dq44dfiyTciW6DSCQubctUFEZ4nKWPrJzv_YoxPVK_TfdAuMCxiQIE3_zEGDg84luI0-tzWMusdfjKHG2ILuhJhK5PySOOaw
+    Part uploaded, checksum: 964a3dea958ad12959450dcc8f28acba0830989d1b8ae72442cebbe6f0d29e3e
+    ...
     Uploaded archive j7UL7pH46FJGhoAxNVDsdjhHs_GLSKGLd12Dq44dfiyTciW6DSCQubctUFEZ4nKWPrJzv_YoxPVK_TfdAuMCxiQIE3_zEGDg84luI0-tzWMusdfjKHG2ILuhJhK5PySOOaw
 
 This will return an archive id which you can use to retrieve the archive again later.

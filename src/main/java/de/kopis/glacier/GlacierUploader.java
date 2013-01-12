@@ -7,6 +7,7 @@ package de.kopis.glacier;
  * $HeadURL:$
  * %%
  * Copyright (C) 2012 Carsten Ringe
+ * Copyright (C) 2013 Deux Huit Huit
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -15,99 +16,110 @@ package de.kopis.glacier;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 
 import joptsimple.OptionSet;
 
 import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.kopis.glacier.util.TreeHashCalculator;
+import de.kopis.glacier.commands.AbstractCommand;
+import de.kopis.glacier.commands.CommandFactory;
+import de.kopis.glacier.commands.CreateVaultCommand;
+import de.kopis.glacier.commands.DeleteArchiveCommand;
+import de.kopis.glacier.commands.DeleteVaultCommand;
+import de.kopis.glacier.commands.DownloadArchiveCommand;
+import de.kopis.glacier.commands.HelpCommand;
+import de.kopis.glacier.commands.ReceiveArchivesListCommand;
+import de.kopis.glacier.commands.RequestArchivesListCommand;
+import de.kopis.glacier.commands.TreeHashArchiveCommand;
+import de.kopis.glacier.commands.UploadArchiveCommand;
+import de.kopis.glacier.commands.UploadMultipartArchiveCommand;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
-public class GlacierUploader {
+public final class GlacierUploader {
+
   private static final Log log = LogFactory.getLog(GlacierUploader.class);
-  private static Configuration config;
 
   public static void main(String[] args) {
-    config = new CompositeConfiguration();
-    ((CompositeConfiguration) config).addConfiguration(new SystemConfiguration());
+    // Get our options
+    final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(setupConfig());
+    final OptionSet options;
+
+    // Parse them
     try {
-      ((CompositeConfiguration) config).addConfiguration(new PropertiesConfiguration(new File(System
-          .getProperty("user.home"), ".glacieruploaderrc")));
-    } catch (ConfigurationException e1) {
-      log.warn("Can not read configuration", e1);
+      options = optionParser.parse(args);
+    } catch (Exception e) {
+      System.err.println("Something went wrong parsing the arguments");
+      return;
     }
 
-    final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(config);
-    final OptionSet options = optionParser.parse(args);
+    // Launch
+    findAndExecCommand(options, optionParser);
+  }
 
+  private static CompositeConfiguration setupConfig() {
+    CompositeConfiguration config = new CompositeConfiguration();
+    config.addConfiguration(new SystemConfiguration());
     try {
-      final File credentialFile = options.valueOf(optionParser.CREDENTIALS);
-      final URL endpointUrl = new URL(options.valueOf(optionParser.ENDPOINT));
-      final String vaultName = options.valueOf(optionParser.VAULT);
+      config.addConfiguration(new PropertiesConfiguration(new File(System.getProperty("user.home"),
+          ".glacieruploaderrc")));
+    } catch (ConfigurationException e) {
+      log.warn("Can not read configuration", e);
+    }
+    return config;
+  }
 
-      if (options.has(optionParser.UPLOAD)) {
-        log.info("Starting to upload " + options.valueOf(optionParser.UPLOAD) + "...");
-        final CommandLineGlacierUploader glacierUploader = new CommandLineGlacierUploader(endpointUrl, credentialFile);
-        glacierUploader.upload(vaultName, options.valueOf(optionParser.UPLOAD));
-      } else if (options.has(optionParser.INVENTORY_LISTING)) {
-        final VaultInventoryLister vaultInventoryLister = new VaultInventoryLister(endpointUrl, credentialFile);
-        if (options.hasArgument(optionParser.INVENTORY_LISTING)) {
-          vaultInventoryLister.retrieveInventoryListing(endpointUrl, vaultName,
-              options.valueOf(optionParser.INVENTORY_LISTING));
-        } else {
-          log.info("Listing inventory for vault " + vaultName + "...");
-          vaultInventoryLister.startInventoryListing(vaultName);
-        }
-      } else if (options.has(optionParser.DOWNLOAD)) {
-        final GlacierArchiveDownloader downloader = new GlacierArchiveDownloader(endpointUrl, credentialFile);
-        downloader.download(vaultName, options.valueOf(optionParser.DOWNLOAD),
-            options.valueOf(optionParser.TARGET_FILE));
-      } else if (options.has(optionParser.DELETE_ARCHIVE)) {
-        final GlacierArchiveDeleter deleter = new GlacierArchiveDeleter(endpointUrl, credentialFile);
-        deleter.delete(vaultName, options.valueOf(optionParser.DELETE_ARCHIVE));
-      } else if (options.has(optionParser.CREATE_VAULT)) {
-        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
-        vaultCreator.createVault(vaultName);
-      } else if (options.has(optionParser.DELETE_VAULT)) {
-        final GlacierVaultCreator vaultCreator = new GlacierVaultCreator(endpointUrl, credentialFile);
-        vaultCreator.deleteVault(vaultName);
-      } else if (options.has(optionParser.CALCULATE_HASH)) {
-        System.out.println(TreeHashCalculator.toHex(TreeHashCalculator.computeSHA256TreeHash(options
-            .valueOf(optionParser.CALCULATE_HASH))));
-      } else {
-        log.info("Ooops, can't determine what you want to do. Check your options.");
-        try {
-          optionParser.printHelpOn(System.err);
-        } catch (final IOException e) {
-          log.error("Can not print help", e);
-        }
+  private static void findAndExecCommand(OptionSet options, GlacierUploaderOptionParser optionParser) {
+    try {
+      // Set default
+      CommandFactory.setDefaultCommand(new HelpCommand());
+      CommandFactory.add(CommandFactory.getDefaultCommand());
+
+      final File credentials = options.valueOf(optionParser.CREDENTIALS);
+      final String string_endpoint = options.valueOf(optionParser.ENDPOINT);
+
+      if (credentials != null && string_endpoint != null) {
+
+        final URL endpoint = new URL(string_endpoint);
+
+        log.info("Using end point: " + string_endpoint);
+
+        // Add all commands to the factory
+        CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
+        CommandFactory.add(new DeleteArchiveCommand(endpoint, credentials));
+        CommandFactory.add(new DeleteVaultCommand(endpoint, credentials));
+        CommandFactory.add(new DownloadArchiveCommand(endpoint, credentials));
+        CommandFactory.add(new ReceiveArchivesListCommand(endpoint, credentials));
+        CommandFactory.add(new RequestArchivesListCommand(endpoint, credentials));
+        CommandFactory.add(new TreeHashArchiveCommand(endpoint, credentials));
+        CommandFactory.add(new UploadArchiveCommand(endpoint, credentials));
+        CommandFactory.add(new UploadMultipartArchiveCommand(endpoint, credentials));
       }
+
+      // Find a valid one
+      AbstractCommand command = CommandFactory.get(options, optionParser);
+
+      // Execute it
+      command.exec(options, optionParser);
+
     } catch (final IOException e) {
-      log.info("Ooops, something is wrong with your setup.");
-      log.error("Something is wrong with the system configuration", e);
-    } catch (final NoSuchAlgorithmException e) {
-      log.info("Ooops, something is wrong with your setup. Can not calculate hashsum.");
-      log.error("Something is wrong with the system configuration. Can not calculate hashsum.", e);
+      log.error("Ooops, something is wrong with the system configuration", e);
     }
   }
 }

@@ -1,5 +1,6 @@
-/target
+target
 aws.properties
-/.settings
-/.classpath
-/.project
+.settings
+.classpath
+.project
+bin
