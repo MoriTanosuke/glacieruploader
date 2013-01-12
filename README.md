@@ -6,9 +6,7 @@ A simple java command line application for Amazon Glacier. You can find the late
 How to get it
 =============
 
-Either [download the latest binary][0], or [build from source][5].
-
-You can [download a nightly build][4] from our the CI server.
+Either [build from source][5] or [download a nightly build][4] from our the CI server.
 
 How to run
 ==========
