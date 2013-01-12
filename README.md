@@ -6,7 +6,7 @@ A simple java command line application for Amazon Glacier. You can find the late
 How to get it
 =============
 
-Either [build from source][5] or [download a nightly build][4] from our the CI server.
+Either [download a binary][0], [download a nightly build][4] or [build the software yourself from sourcecode][5].
 
 [![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.png?branch=fix-regions-archive-download)](https://travis-ci.org/MoriTanosuke/glacieruploader)
 
@@ -177,7 +177,7 @@ License
 This project is distributed under [GNU GPL v3][3].
 
 
-[0]: https://github.com/MoriTanosuke/glacieruploader/downloads
+[0]: http://download.kopis.de.s3-website-eu-west-1.amazonaws.com/index.html
 [1]: https://github.com/MoriTanosuke/glacieruploader/issues
 [2]: https://github.com/MoriTanosuke/glacieruploader/fork
 [3]: http://www.gnu.org/licenses/gpl-3.0.html
