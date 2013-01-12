@@ -8,6 +8,8 @@ How to get it
 
 Either [build from source][5] or [download a nightly build][4] from our the CI server.
 
+[![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.png?branch=fix-regions-archive-download)](https://travis-ci.org/MoriTanosuke/glacieruploader)
+
 How to run
 ==========
 
