@@ -66,12 +66,12 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
     log.info("Multipart uploading " + uploadFile + " to vault " + vaultName + " with part size " + size);
     try {
-      final String uploadId = initiateMultipartUpload(vaultName, partSize);
-      final String checksum = uploadParts(uploadId, uploadFile, vaultName, partSize);
-      final String archiveId = completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
+      final String uploadId = this.initiateMultipartUpload(vaultName, partSize);
+      final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
+      final String archiveId = this.completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
 
       log.info("Uploaded archive " + archiveId);
-      log.info("Checksum is" + checksum);
+      log.info("Checksum is " + checksum);
 
     } catch (final IOException e) {
       log.error("Something went wrong while multipart uploading " + uploadFile + "." + e.getLocalizedMessage(), e);
@@ -86,8 +86,10 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
   private String initiateMultipartUpload(final String vaultName, final Integer partSize) {
     // Initiate
-    InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest().withVaultName(vaultName)
-        .withArchiveDescription("my archive " + (new Date())).withPartSize(partSize.toString());
+    InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest()
+    	.withVaultName(vaultName)
+        .withArchiveDescription("my archive " + (new Date()))
+        .withPartSize(partSize.toString());
 
     InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
 
@@ -106,6 +108,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     FileInputStream fileToUpload = new FileInputStream(file);
     String contentRange;
     int read = 0;
+    int counter = 1;
     while (currentPosition < file.length()) {
       read = fileToUpload.read(buffer, filePosition, buffer.length);
       if (read == -1) {
@@ -124,9 +127,10 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
           .withUploadId(uploadId);
 
       UploadMultipartPartResult partResult = client.uploadMultipartPart(partRequest);
-      log.info("Part uploaded, checksum: " + partResult.getChecksum());
+      log.info(String.format("Part %d (%s) uploaded, checksum: %s", counter, contentRange, partResult.getChecksum()));
 
       currentPosition = currentPosition + read;
+      counter++;
     }
     String checksum = TreeHashGenerator.calculateTreeHash(binaryChecksums);
     return checksum;
