@@ -69,6 +69,13 @@ public class GlacierUploaderOptionParser extends OptionParser {
 		this.HELP = this.parseHelp(config);
 	}
 
+	public String formatEndpointUrl(String endpoint) {
+		if (endpoint.startsWith("https://")) {
+			return endpoint;
+		}
+		return String.format("https://glacier.%s.amazonaws.com", endpoint);
+	}
+	
 	@SuppressWarnings("serial")
 	private ArgumentAcceptingOptionSpec<String> parseVault(Configuration config) {
 		ArgumentAcceptingOptionSpec<String> vaultBuilder = acceptsAll(new ArrayList<String>() {
@@ -91,7 +98,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 				add("endpoint");
 				add("e");
 			}
-		}, "URL of the amazon AWS endpoint where your vault is").withRequiredArg().ofType(String.class);
+		}, "URL or Region handle of the amazon AWS endpoint where your vault is").withRequiredArg().ofType(String.class);
 
 		if (config.containsKey("endpoint")) {
 			endpointBuilder.defaultsTo(config.getString("endpoint"));
