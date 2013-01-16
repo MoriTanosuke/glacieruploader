@@ -92,11 +92,11 @@ public final class GlacierUploader {
       CommandFactory.add(CommandFactory.getDefaultCommand());
 
       final File credentials = options.valueOf(optionParser.CREDENTIALS);
-      final String string_endpoint = optionParser.formatEndpointUrl(options.valueOf(optionParser.ENDPOINT));
+      final String string_endpoint = options.valueOf(optionParser.ENDPOINT);
 
       if (credentials != null && string_endpoint != null) {
 
-        final URL endpoint = new URL(string_endpoint);
+        final URL endpoint = new URL(optionParser.formatEndpointUrl(string_endpoint));
 
         log.info("Using end point: " + string_endpoint);
 

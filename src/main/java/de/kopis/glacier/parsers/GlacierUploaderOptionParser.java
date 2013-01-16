@@ -70,6 +70,9 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	public String formatEndpointUrl(String endpoint) {
+		if (endpoint == null) {
+			return null;
+		}
 		if (endpoint.startsWith("https://")) {
 			return endpoint;
 		}
