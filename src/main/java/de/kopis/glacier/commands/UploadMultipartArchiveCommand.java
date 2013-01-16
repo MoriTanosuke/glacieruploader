@@ -67,10 +67,16 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     try {
       final String uploadId = this.initiateMultipartUpload(vaultName, partSize, uploadFile.getName());
       final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
-      final String archiveId = this.completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
+      final CompleteMultipartUploadResult result = this.completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
 
-      log.info("Uploaded archive ID: " + archiveId);
-      log.info("Checksum: " + checksum);
+      log.info("Uploaded Archive ID: " + result.getArchiveId());
+      log.info("Local Checksum: " + checksum);
+      log.info("Remote Checksum: " + result.getChecksum());
+      if (checksum.equals(result.getChecksum())) {
+    	  log.info("Checksums are identical, upload succeded.");
+      } else {
+    	  log.error("Checksums are different, upload failed.");
+      }
 
     } catch (final IOException e) {
       log.error("Something went wrong while multipart uploading " + uploadFile + "." + e.getLocalizedMessage(), e);
@@ -92,7 +98,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
     InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
 
-    log.info("ArchiveID: " + result.getUploadId());
+    log.info("Upload ID (token): " + result.getUploadId());
 
     return result.getUploadId();
   }
@@ -135,13 +141,14 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     return checksum;
   }
 
-  private String completeMultiPartUpload(String uploadId, File file, final String vaultName, String checksum)
+  private CompleteMultipartUploadResult completeMultiPartUpload(String uploadId, File file, final String vaultName, String checksum)
       throws NoSuchAlgorithmException, IOException {
     CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest().withVaultName(vaultName)
         .withUploadId(uploadId).withChecksum(checksum).withArchiveSize(String.valueOf(file.length()));
 
     CompleteMultipartUploadResult compResult = client.completeMultipartUpload(compRequest);
-    return compResult.getLocation();
+    
+    return compResult;
   }
 
   @Override
