@@ -73,7 +73,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
       log.info("Local Checksum: " + checksum);
       log.info("Remote Checksum: " + result.getChecksum());
       if (checksum.equals(result.getChecksum())) {
-    	  log.info("Checksums are identical, upload succeded.");
+    	  log.info("Checksums are identical, upload succeeded.");
       } else {
     	  log.error("Checksums are different, upload failed.");
       }
