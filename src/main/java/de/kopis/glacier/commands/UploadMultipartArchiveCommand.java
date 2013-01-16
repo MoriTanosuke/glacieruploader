@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,14 +63,14 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     final String humanReadableSize = HumanReadableSize.parse(partSize);
     final String size = partSize + " (" + humanReadableSize + ")";
 
-    log.info("Multipart uploading " + uploadFile + " to vault " + vaultName + " with part size " + size);
+    log.info("Multipart uploading " + uploadFile.getName() + " to vault " + vaultName + " with part size " + size);
     try {
-      final String uploadId = this.initiateMultipartUpload(vaultName, partSize);
+      final String uploadId = this.initiateMultipartUpload(vaultName, partSize, uploadFile.getName());
       final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
       final String archiveId = this.completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
 
-      log.info("Uploaded archive " + archiveId);
-      log.info("Checksum is " + checksum);
+      log.info("Uploaded archive ID: " + archiveId);
+      log.info("Checksum: " + checksum);
 
     } catch (final IOException e) {
       log.error("Something went wrong while multipart uploading " + uploadFile + "." + e.getLocalizedMessage(), e);
@@ -84,11 +83,11 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     }
   }
 
-  private String initiateMultipartUpload(final String vaultName, final Integer partSize) {
+  private String initiateMultipartUpload(final String vaultName, final Integer partSize, final String fileName) {
     // Initiate
     InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest()
     	.withVaultName(vaultName)
-        .withArchiveDescription("my archive " + (new Date()))
+        .withArchiveDescription(fileName)
         .withPartSize(partSize.toString());
 
     InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
