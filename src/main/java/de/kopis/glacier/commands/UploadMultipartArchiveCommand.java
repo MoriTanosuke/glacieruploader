@@ -60,10 +60,10 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
   // from:
   // http://docs.amazonwebservices.com/amazonglacier/latest/dev/uploading-an-archive-mpu-using-java.html
   public void upload(final String vaultName, final File uploadFile, final Integer partSize) {
-    final String humanReadableSize = HumanReadableSize.parse(partSize);
-    final String size = partSize + " (" + humanReadableSize + ")";
+    final String hPartSize = HumanReadableSize.parse(partSize);
+    final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
-    log.info("Multipart uploading " + uploadFile.getName() + " to vault " + vaultName + " with part size " + size);
+    log.info(String.format("Multipart uploading %s (%s) to vault %s with part size %s (%s).", uploadFile.getName(), hTotalSize, vaultName, partSize, hPartSize));
     try {
       final String uploadId = this.initiateMultipartUpload(vaultName, partSize, uploadFile.getName());
       final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
