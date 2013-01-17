@@ -33,7 +33,11 @@ import java.util.regex.Pattern;
  */
 
 public class HumanReadableSize {
-
+	
+  public static String parse(final Long size) throws IllegalArgumentException {
+	    return parse(size.toString());
+  }
+	
   public static String parse(final Integer size) throws IllegalArgumentException {
     return parse(size.toString());
   }

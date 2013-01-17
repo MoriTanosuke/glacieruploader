@@ -27,6 +27,8 @@ package de.kopis.glacier.commands;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import joptsimple.OptionSet;
 
@@ -54,8 +56,13 @@ public class UploadArchiveCommand extends AbstractCommand {
   @Override
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
     final String vaultName = options.valueOf(optionParser.VAULT);
-    final File uploadFile = options.valueOf(optionParser.UPLOAD);
-    this.upload(vaultName, uploadFile);
+    final List<File> optionsFiles = options.valuesOf(optionParser.UPLOAD);
+    final List<String> nonOptions = options.nonOptionArguments();
+    final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
+    
+    for (File uploadFile : files) {
+    	this.upload(vaultName, uploadFile);
+    }
   }
 
   @Override
