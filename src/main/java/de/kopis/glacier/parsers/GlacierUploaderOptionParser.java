@@ -26,6 +26,7 @@ package de.kopis.glacier.parsers;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
@@ -77,6 +78,22 @@ public class GlacierUploaderOptionParser extends OptionParser {
 			return endpoint;
 		}
 		return String.format("https://glacier.%s.amazonaws.com", endpoint);
+	}
+	
+	public ArrayList<File> mergeNonOptionsFiles(List<File> optionsFiles, List<String> nonOptions) {
+		final ArrayList<File> files = new ArrayList<File>(optionsFiles);
+	    
+	    if (nonOptions.size() > 0) {
+	    	// Adds non options to the list in order
+	    	// to be able to use * in filenames
+	    	for (String nonOption : nonOptions) {
+	    		File file = new File(nonOption);
+	    		if (file.exists() && file.isFile()) {
+	    			files.add(file);
+	    		}
+	    	}
+	    }
+	    return files;
 	}
 	
 	@SuppressWarnings("serial")
@@ -212,7 +229,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 				add("multipartupload");
 				add("m");
 			}
-		}, "start uploading a new archive in chuncks").withRequiredArg().ofType(File.class);
+		}, "start uploading a new archive in chuncks").withRequiredArg().ofType(File.class).withValuesSeparatedBy(' ');
 	}
 
 	@SuppressWarnings("serial")
@@ -222,7 +239,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 				add("partsize");
 				add("p");
 			}
-		}, "sets the size of each part for multipart uploads (must be a power of 2)").withOptionalArg().ofType(Integer.class).defaultsTo(16777216);
+		}, "sets the size of each part for multipart uploads (must be a power of 2)").withRequiredArg().ofType(Integer.class).defaultsTo(4096 ^ 2);
 		// 16 MB.
 	}
 

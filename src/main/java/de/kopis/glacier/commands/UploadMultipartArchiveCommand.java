@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -114,6 +115,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     String contentRange;
     int read = 0;
     int counter = 1;
+    int total = (int) Math.ceil(file.length() / (double)partSize);
     while (currentPosition < file.length()) {
       read = fileToUpload.read(buffer, filePosition, buffer.length);
       if (read == -1) {
@@ -127,12 +129,15 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
       binaryChecksums.add(binaryChecksum);
 
       // Upload part.
-      UploadMultipartPartRequest partRequest = new UploadMultipartPartRequest().withVaultName(vaultName)
-          .withBody(new ByteArrayInputStream(bytesRead)).withChecksum(checksum).withRange(contentRange)
+      UploadMultipartPartRequest partRequest = new UploadMultipartPartRequest()
+          .withVaultName(vaultName)
+          .withBody(new ByteArrayInputStream(bytesRead))
+          .withChecksum(checksum)
+          .withRange(contentRange)
           .withUploadId(uploadId);
 
       UploadMultipartPartResult partResult = client.uploadMultipartPart(partRequest);
-      log.info(String.format("Part %d (%s) uploaded, checksum: %s", counter, contentRange, partResult.getChecksum()));
+      log.info(String.format("Part %d/%d (%s) uploaded, checksum: %s", counter, total, contentRange, partResult.getChecksum()));
 
       currentPosition = currentPosition + read;
       counter++;
@@ -144,7 +149,9 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
   private CompleteMultipartUploadResult completeMultiPartUpload(String uploadId, File file, final String vaultName, String checksum)
       throws NoSuchAlgorithmException, IOException {
     CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest().withVaultName(vaultName)
-        .withUploadId(uploadId).withChecksum(checksum).withArchiveSize(String.valueOf(file.length()));
+        .withUploadId(uploadId)
+        .withChecksum(checksum)
+        .withArchiveSize(String.valueOf(file.length()));
 
     CompleteMultipartUploadResult compResult = client.completeMultipartUpload(compRequest);
     
@@ -154,9 +161,14 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
   @Override
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
     final String vaultName = options.valueOf(optionParser.VAULT);
-    final File uploadFile = options.valueOf(optionParser.MULTIPARTUPLOAD);
+    final List<File> optionsFiles = options.valuesOf(optionParser.MULTIPARTUPLOAD);
     final Integer partSize = options.valueOf(optionParser.PARTSIZE);
-    this.upload(vaultName, uploadFile, partSize);
+    final List<String> nonOptions = options.nonOptionArguments();
+    final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
+    
+    for (File uploadFile : files) {
+    	this.upload(vaultName, uploadFile, partSize);
+    }
   }
 
   @Override
