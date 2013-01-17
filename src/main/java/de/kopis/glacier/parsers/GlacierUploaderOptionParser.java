@@ -239,7 +239,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 				add("partsize");
 				add("p");
 			}
-		}, "sets the size of each part for multipart uploads (must be a power of 2)").withRequiredArg().ofType(Integer.class).defaultsTo(4096 ^ 2);
+		}, "sets the size of each part for multipart uploads (must be a power of 2)").withRequiredArg().ofType(Integer.class).defaultsTo((int)Math.pow(4096, 2));
 		// 16 MB.
 	}
 
