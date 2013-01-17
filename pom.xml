@@ -18,6 +18,18 @@
 		</license>
 	</licenses>
 
+	<developers>
+		<developer>
+			<id>MoriTanosuke</id>
+			<name>Carsten</name>
+			<email>carsten@kopis.de</email>
+			<url>http://www.kopis.de/</url>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
 	<scm>
 		<connection>scm:git:${git.origin}</connection>
 		<developerConnection>scm:git:${git.origin}</developerConnection>
@@ -143,7 +155,8 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -179,4 +192,15 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<name>glacieruploader</name>
+	<url>https://github.com/MoriTanosuke/glacieruploader</url>
+	<description>Simple command line tool to upload archives to Amazon Glacier.</description>
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/MoriTanosuke/glacieruploader/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Travis</system>
+		<url>https://travis-ci.org/MoriTanosuke/glacieruploader</url>
+	</ciManagement>
 </project>
