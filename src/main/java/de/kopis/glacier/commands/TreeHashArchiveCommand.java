@@ -15,11 +15,11 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
+ * License along with this program.	If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -36,23 +36,27 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public class TreeHashArchiveCommand extends AbstractCommand {
 
-  public TreeHashArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+	public TreeHashArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+		super(endpoint, credentials);
+	}
 
-  public void calculateTreeHash(File file) {
-    log.info(TreeHashGenerator.calculateTreeHash(file));
-  }
+	public void calculateTreeHash(File file) {
+		if (file.exists()) {
+			log.info(TreeHashGenerator.calculateTreeHash(file));
+		} else {
+			log.error(String.format("File '%s' not found", file.getAbsolutePath()));
+		}
+	}
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final File file = options.valueOf(optionParser.CALCULATE_HASH);
-    this.calculateTreeHash(file);
-  }
+	@Override
+	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		final File file = options.valueOf(optionParser.CALCULATE_HASH);
+		this.calculateTreeHash(file);
+	}
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.CALCULATE_HASH);
-  }
+	@Override
+	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+		return options.has(optionParser.CALCULATE_HASH);
+	}
 
 }

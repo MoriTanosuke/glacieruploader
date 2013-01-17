@@ -96,7 +96,7 @@ public final class GlacierUploader {
 
       if (credentials != null && string_endpoint != null) {
 
-        final URL endpoint = new URL(string_endpoint);
+        final URL endpoint = new URL(optionParser.formatEndpointUrl(string_endpoint));
 
         log.info("Using end point: " + string_endpoint);
 

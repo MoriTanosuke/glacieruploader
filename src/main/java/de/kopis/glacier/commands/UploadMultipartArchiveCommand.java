@@ -31,8 +31,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,17 +61,23 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
   // from:
   // http://docs.amazonwebservices.com/amazonglacier/latest/dev/uploading-an-archive-mpu-using-java.html
   public void upload(final String vaultName, final File uploadFile, final Integer partSize) {
-    final String humanReadableSize = HumanReadableSize.parse(partSize);
-    final String size = partSize + " (" + humanReadableSize + ")";
+    final String hPartSize = HumanReadableSize.parse(partSize);
+    final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
-    log.info("Multipart uploading " + uploadFile + " to vault " + vaultName + " with part size " + size);
+    log.info(String.format("Multipart uploading %s (%s) to vault %s with part size %s (%s).", uploadFile.getName(), hTotalSize, vaultName, partSize, hPartSize));
     try {
-      final String uploadId = initiateMultipartUpload(vaultName, partSize);
-      final String checksum = uploadParts(uploadId, uploadFile, vaultName, partSize);
-      final String archiveId = completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
+      final String uploadId = this.initiateMultipartUpload(vaultName, partSize, uploadFile.getName());
+      final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
+      final CompleteMultipartUploadResult result = this.completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
 
-      log.info("Uploaded archive " + archiveId);
-      log.info("Checksum is" + checksum);
+      log.info("Uploaded Archive ID: " + result.getArchiveId());
+      log.info("Local Checksum: " + checksum);
+      log.info("Remote Checksum: " + result.getChecksum());
+      if (checksum.equals(result.getChecksum())) {
+    	  log.info("Checksums are identical, upload succeeded.");
+      } else {
+    	  log.error("Checksums are different, upload failed.");
+      }
 
     } catch (final IOException e) {
       log.error("Something went wrong while multipart uploading " + uploadFile + "." + e.getLocalizedMessage(), e);
@@ -84,14 +90,16 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     }
   }
 
-  private String initiateMultipartUpload(final String vaultName, final Integer partSize) {
+  private String initiateMultipartUpload(final String vaultName, final Integer partSize, final String fileName) {
     // Initiate
-    InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest().withVaultName(vaultName)
-        .withArchiveDescription("my archive " + (new Date())).withPartSize(partSize.toString());
+    InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest()
+    	.withVaultName(vaultName)
+        .withArchiveDescription(fileName)
+        .withPartSize(partSize.toString());
 
     InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
 
-    log.info("ArchiveID: " + result.getUploadId());
+    log.info("Upload ID (token): " + result.getUploadId());
 
     return result.getUploadId();
   }
@@ -106,6 +114,8 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     FileInputStream fileToUpload = new FileInputStream(file);
     String contentRange;
     int read = 0;
+    int counter = 1;
+    int total = (int) Math.ceil(file.length() / (double)partSize);
     while (currentPosition < file.length()) {
       read = fileToUpload.read(buffer, filePosition, buffer.length);
       if (read == -1) {
@@ -119,34 +129,46 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
       binaryChecksums.add(binaryChecksum);
 
       // Upload part.
-      UploadMultipartPartRequest partRequest = new UploadMultipartPartRequest().withVaultName(vaultName)
-          .withBody(new ByteArrayInputStream(bytesRead)).withChecksum(checksum).withRange(contentRange)
+      UploadMultipartPartRequest partRequest = new UploadMultipartPartRequest()
+          .withVaultName(vaultName)
+          .withBody(new ByteArrayInputStream(bytesRead))
+          .withChecksum(checksum)
+          .withRange(contentRange)
           .withUploadId(uploadId);
 
       UploadMultipartPartResult partResult = client.uploadMultipartPart(partRequest);
-      log.info("Part uploaded, checksum: " + partResult.getChecksum());
+      log.info(String.format("Part %d/%d (%s) uploaded, checksum: %s", counter, total, contentRange, partResult.getChecksum()));
 
       currentPosition = currentPosition + read;
+      counter++;
     }
     String checksum = TreeHashGenerator.calculateTreeHash(binaryChecksums);
     return checksum;
   }
 
-  private String completeMultiPartUpload(String uploadId, File file, final String vaultName, String checksum)
+  private CompleteMultipartUploadResult completeMultiPartUpload(String uploadId, File file, final String vaultName, String checksum)
       throws NoSuchAlgorithmException, IOException {
     CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest().withVaultName(vaultName)
-        .withUploadId(uploadId).withChecksum(checksum).withArchiveSize(String.valueOf(file.length()));
+        .withUploadId(uploadId)
+        .withChecksum(checksum)
+        .withArchiveSize(String.valueOf(file.length()));
 
     CompleteMultipartUploadResult compResult = client.completeMultipartUpload(compRequest);
-    return compResult.getLocation();
+    
+    return compResult;
   }
 
   @Override
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
     final String vaultName = options.valueOf(optionParser.VAULT);
-    final File uploadFile = options.valueOf(optionParser.MULTIPARTUPLOAD);
+    final List<File> optionsFiles = options.valuesOf(optionParser.MULTIPARTUPLOAD);
     final Integer partSize = options.valueOf(optionParser.PARTSIZE);
-    this.upload(vaultName, uploadFile, partSize);
+    final List<String> nonOptions = options.nonOptionArguments();
+    final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
+    
+    for (File uploadFile : files) {
+    	this.upload(vaultName, uploadFile, partSize);
+    }
   }
 
   @Override
