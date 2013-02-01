@@ -64,19 +64,21 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     final String hPartSize = HumanReadableSize.parse(partSize);
     final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
-    log.info(String.format("Multipart uploading %s (%s) to vault %s with part size %s (%s).", uploadFile.getName(), hTotalSize, vaultName, partSize, hPartSize));
+    log.info(String.format("Multipart uploading %s (%s) to vault %s with part size %s (%s).", uploadFile.getName(),
+        hTotalSize, vaultName, partSize, hPartSize));
     try {
       final String uploadId = this.initiateMultipartUpload(vaultName, partSize, uploadFile.getName());
       final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
-      final CompleteMultipartUploadResult result = this.completeMultiPartUpload(uploadId, uploadFile, vaultName, checksum);
+      final CompleteMultipartUploadResult result = this.completeMultiPartUpload(uploadId, uploadFile, vaultName,
+          checksum);
 
       log.info("Uploaded Archive ID: " + result.getArchiveId());
       log.info("Local Checksum: " + checksum);
       log.info("Remote Checksum: " + result.getChecksum());
       if (checksum.equals(result.getChecksum())) {
-    	  log.info("Checksums are identical, upload succeeded.");
+        log.info("Checksums are identical, upload succeeded.");
       } else {
-    	  log.error("Checksums are different, upload failed.");
+        log.error("Checksums are different, upload failed.");
       }
 
     } catch (final IOException e) {
@@ -92,10 +94,8 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
   private String initiateMultipartUpload(final String vaultName, final Integer partSize, final String fileName) {
     // Initiate
-    InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest()
-    	.withVaultName(vaultName)
-        .withArchiveDescription(fileName)
-        .withPartSize(partSize.toString());
+    InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest().withVaultName(vaultName)
+        .withArchiveDescription(fileName).withPartSize(partSize.toString());
 
     InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
 
@@ -106,55 +106,60 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
   private String uploadParts(String uploadId, File file, final String vaultName, final Integer partSize)
       throws AmazonServiceException, NoSuchAlgorithmException, AmazonClientException, IOException {
-    int filePosition = 0;
-    long currentPosition = 0;
-    byte[] buffer = new byte[partSize];
-    List<byte[]> binaryChecksums = new LinkedList<byte[]>();
+    String checksum = "";
+    FileInputStream fileToUpload = null;
 
-    FileInputStream fileToUpload = new FileInputStream(file);
-    String contentRange;
-    int read = 0;
-    int counter = 1;
-    int total = (int) Math.ceil(file.length() / (double)partSize);
-    while (currentPosition < file.length()) {
-      read = fileToUpload.read(buffer, filePosition, buffer.length);
-      if (read == -1) {
-        break;
+    try {
+      int filePosition = 0;
+      long currentPosition = 0;
+      byte[] buffer = new byte[partSize];
+      List<byte[]> binaryChecksums = new LinkedList<byte[]>();
+      fileToUpload = new FileInputStream(file);
+      String contentRange;
+      int read = 0;
+      int counter = 1;
+      int total = (int) Math.ceil(file.length() / (double) partSize);
+      while (currentPosition < file.length()) {
+        read = fileToUpload.read(buffer, filePosition, buffer.length);
+        if (read == -1) {
+          break;
+        }
+        byte[] bytesRead = Arrays.copyOf(buffer, read);
+
+        contentRange = String.format("bytes %s-%s/*", currentPosition, currentPosition + read - 1);
+        checksum = TreeHashGenerator.calculateTreeHash(new ByteArrayInputStream(bytesRead));
+        byte[] binaryChecksum = BinaryUtils.fromHex(checksum);
+        binaryChecksums.add(binaryChecksum);
+
+        // Upload part.
+        UploadMultipartPartRequest partRequest = new UploadMultipartPartRequest().withVaultName(vaultName)
+            .withBody(new ByteArrayInputStream(bytesRead)).withChecksum(checksum).withRange(contentRange)
+            .withUploadId(uploadId);
+
+        UploadMultipartPartResult partResult = client.uploadMultipartPart(partRequest);
+        log.info(String.format("Part %d/%d (%s) uploaded, checksum: %s", counter, total, contentRange,
+            partResult.getChecksum()));
+
+        currentPosition = currentPosition + read;
+        counter++;
       }
-      byte[] bytesRead = Arrays.copyOf(buffer, read);
-
-      contentRange = String.format("bytes %s-%s/*", currentPosition, currentPosition + read - 1);
-      String checksum = TreeHashGenerator.calculateTreeHash(new ByteArrayInputStream(bytesRead));
-      byte[] binaryChecksum = BinaryUtils.fromHex(checksum);
-      binaryChecksums.add(binaryChecksum);
-
-      // Upload part.
-      UploadMultipartPartRequest partRequest = new UploadMultipartPartRequest()
-          .withVaultName(vaultName)
-          .withBody(new ByteArrayInputStream(bytesRead))
-          .withChecksum(checksum)
-          .withRange(contentRange)
-          .withUploadId(uploadId);
-
-      UploadMultipartPartResult partResult = client.uploadMultipartPart(partRequest);
-      log.info(String.format("Part %d/%d (%s) uploaded, checksum: %s", counter, total, contentRange, partResult.getChecksum()));
-
-      currentPosition = currentPosition + read;
-      counter++;
+      checksum = TreeHashGenerator.calculateTreeHash(binaryChecksums);
+    } finally {
+      if (fileToUpload != null) {
+        fileToUpload.close();
+      }
     }
-    String checksum = TreeHashGenerator.calculateTreeHash(binaryChecksums);
+
     return checksum;
   }
 
-  private CompleteMultipartUploadResult completeMultiPartUpload(String uploadId, File file, final String vaultName, String checksum)
-      throws NoSuchAlgorithmException, IOException {
+  private CompleteMultipartUploadResult completeMultiPartUpload(String uploadId, File file, final String vaultName,
+      String checksum) throws NoSuchAlgorithmException, IOException {
     CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest().withVaultName(vaultName)
-        .withUploadId(uploadId)
-        .withChecksum(checksum)
-        .withArchiveSize(String.valueOf(file.length()));
+        .withUploadId(uploadId).withChecksum(checksum).withArchiveSize(String.valueOf(file.length()));
 
     CompleteMultipartUploadResult compResult = client.completeMultipartUpload(compRequest);
-    
+
     return compResult;
   }
 
@@ -165,9 +170,9 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     final Integer partSize = options.valueOf(optionParser.PARTSIZE);
     final List<String> nonOptions = options.nonOptionArguments();
     final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
-    
+
     for (File uploadFile : files) {
-    	this.upload(vaultName, uploadFile, partSize);
+      this.upload(vaultName, uploadFile, partSize);
     }
   }
 

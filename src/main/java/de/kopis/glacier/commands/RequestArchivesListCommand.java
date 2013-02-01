@@ -52,7 +52,7 @@ public class RequestArchivesListCommand extends AbstractCommand {
 
       final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
       final String jobId = initJobResult.getJobId();
-      log.info("Inventory Job created with ID" + System.lineSeparator() + jobId);
+      log.info("Inventory Job created with ID" + System.getProperty("line.separator") + jobId);
     } catch (final AmazonClientException e) {
       log.error(e.getLocalizedMessage(), e);
     }
