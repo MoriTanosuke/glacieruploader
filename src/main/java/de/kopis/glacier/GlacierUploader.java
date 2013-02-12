@@ -77,9 +77,13 @@ public final class GlacierUploader {
     CompositeConfiguration config = new CompositeConfiguration();
     config.addConfiguration(new SystemConfiguration());
     try {
-      config.addConfiguration(new PropertiesConfiguration(new File(System.getProperty("user.home"),
-          ".glacieruploaderrc")));
-    } catch (ConfigurationException e) {
+      File configFile = new File(System.getProperty("user.home"),".glacieruploaderrc");
+      if (configFile.exists() && configFile.canRead()) {
+        config.addConfiguration(new PropertiesConfiguration(configFile));
+      } else {
+        log.warn(String.format("Config file '%s' not found", configFile.getCanonicalPath()));
+      }
+    } catch (Exception e) {
       log.warn("Can not read configuration", e);
     }
     return config;
