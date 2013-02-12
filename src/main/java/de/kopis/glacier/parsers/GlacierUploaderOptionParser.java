@@ -52,7 +52,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	public final OptionSpec<Integer> PARTSIZE;
 	public final OptionSpec<Void> HELP;
 
-	public GlacierUploaderOptionParser(Configuration config) {
+	public GlacierUploaderOptionParser(final Configuration config) {
 		super();
 		this.VAULT = this.parseVault(config);
 		this.ENDPOINT = this.parseEndpoint(config);
@@ -82,22 +82,22 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	
 	public ArrayList<File> mergeNonOptionsFiles(List<File> optionsFiles, List<String> nonOptions) {
 		final ArrayList<File> files = new ArrayList<File>(optionsFiles);
-	    
-	    if (nonOptions.size() > 0) {
-	    	// Adds non options to the list in order
-	    	// to be able to use * in filenames
-	    	for (String nonOption : nonOptions) {
-	    		File file = new File(nonOption);
-	    		if (file.exists() && file.isFile()) {
-	    			files.add(file);
-	    		}
-	    	}
-	    }
-	    return files;
+		
+		if (nonOptions.size() > 0) {
+			// Adds non options to the list in order
+			// to be able to use * in filenames
+			for (String nonOption : nonOptions) {
+				File file = new File(nonOption);
+				if (file.exists() && file.isFile()) {
+					files.add(file);
+				}
+			}
+		}
+		return files;
 	}
 	
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<String> parseVault(Configuration config) {
+	private ArgumentAcceptingOptionSpec<String> parseVault(final Configuration config) {
 		ArgumentAcceptingOptionSpec<String> vaultBuilder = acceptsAll(new ArrayList<String>() {
 			{
 				add("vault");
@@ -112,7 +112,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<String> parseEndpoint(Configuration config) {
+	private ArgumentAcceptingOptionSpec<String> parseEndpoint(final Configuration config) {
 		ArgumentAcceptingOptionSpec<String> endpointBuilder = acceptsAll(new ArrayList<String>() {
 			{
 				add("endpoint");
@@ -127,7 +127,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<File> parseUploadFile(Configuration config) {
+	private ArgumentAcceptingOptionSpec<File> parseUploadFile(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("upload");
@@ -137,7 +137,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<String> parseInventory(Configuration config) {
+	private ArgumentAcceptingOptionSpec<String> parseInventory(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("list-inventory");
@@ -147,7 +147,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<String> parseDownload(Configuration config) {
+	private ArgumentAcceptingOptionSpec<String> parseDownload(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("download");
@@ -157,7 +157,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<File> parseCredentials(Configuration config) {
+	private ArgumentAcceptingOptionSpec<File> parseCredentials(final Configuration config) {
 		ArgumentAcceptingOptionSpec<File> credentialsBuilder = acceptsAll(new ArrayList<String>() {
 			{
 				add("credentials");
@@ -173,7 +173,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private OptionSpecBuilder parseCreateVault(Configuration config) {
+	private OptionSpecBuilder parseCreateVault(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("create");
@@ -183,7 +183,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private OptionSpecBuilder parseDeleteVault(Configuration config) {
+	private OptionSpecBuilder parseDeleteVault(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("delete-vault");
@@ -193,7 +193,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<File> parseTargetFile(Configuration config) {
+	private ArgumentAcceptingOptionSpec<File> parseTargetFile(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("target");
@@ -203,7 +203,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<File> parseHashFile(Configuration config) {
+	private ArgumentAcceptingOptionSpec<File> parseHashFile(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("calculate");
@@ -213,7 +213,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<String> parseDeleteArchive(Configuration config) {
+	private ArgumentAcceptingOptionSpec<String> parseDeleteArchive(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("delete");
@@ -223,7 +223,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<File> parseMultipartUploadFile(Configuration config) {
+	private ArgumentAcceptingOptionSpec<File> parseMultipartUploadFile(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("multipartupload");
@@ -233,7 +233,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<Integer> parsePartSize(Configuration config) {
+	private ArgumentAcceptingOptionSpec<Integer> parsePartSize(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("partsize");
@@ -244,7 +244,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private OptionSpecBuilder parseHelp(Configuration config) {
+	private OptionSpecBuilder parseHelp(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("help");
