@@ -121,7 +121,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 		}, "URL or Region handle of the amazon AWS endpoint where your vault is").withRequiredArg().ofType(String.class);
 
 		if (config.containsKey("endpoint")) {
-			endpointBuilder.defaultsTo(config.getString("endpoint"));
+			endpointBuilder.defaultsTo(formatEndpointUrl(config.getString("endpoint")));
 		}
 		return endpointBuilder;
 	}
@@ -219,7 +219,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 				add("delete");
 				add("d");
 			}
-		}, "deletes an existing archive").withOptionalArg().ofType(String.class);
+		}, "deletes an existing archive").withRequiredArg().ofType(String.class);
 	}
 
 	@SuppressWarnings("serial")

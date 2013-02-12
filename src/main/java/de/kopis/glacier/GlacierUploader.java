@@ -32,7 +32,6 @@ import java.net.URL;
 import joptsimple.OptionSet;
 
 import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.commons.logging.Log;
@@ -74,7 +73,7 @@ public final class GlacierUploader {
   }
 
   private static CompositeConfiguration setupConfig() {
-    CompositeConfiguration config = new CompositeConfiguration();
+    final CompositeConfiguration config = new CompositeConfiguration();
     config.addConfiguration(new SystemConfiguration());
     try {
       File configFile = new File(System.getProperty("user.home"),".glacieruploaderrc");

@@ -58,7 +58,7 @@ public class DeleteArchiveCommand extends AbstractCommand {
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.DELETE_ARCHIVE) && options.has(optionParser.VAULT);
+    return options.has(optionParser.DELETE_ARCHIVE) && options.hasArgument(optionParser.DELETE_ARCHIVE);
   }
 
 }
