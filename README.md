@@ -6,7 +6,7 @@ A simple java command line application for Amazon Glacier. You can find the late
 How to get it
 =============
 
-Either [download a binary][0], [download a nightly build][4] or [build the software yourself from sourcecode][5].
+Either [download a binary][0] or [build the software yourself from sourcecode][5].
 
 [![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.png?branch=fix-regions-archive-download)](https://travis-ci.org/MoriTanosuke/glacieruploader)
 
