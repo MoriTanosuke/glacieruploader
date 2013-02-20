@@ -62,7 +62,6 @@ public class DownloadArchiveCommand extends AbstractCommand {
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.DOWNLOAD) && options.has(optionParser.VAULT)
-        && options.has(optionParser.TARGET_FILE);
+    return options.has(optionParser.DOWNLOAD) && options.has(optionParser.TARGET_FILE);
   }
 }
