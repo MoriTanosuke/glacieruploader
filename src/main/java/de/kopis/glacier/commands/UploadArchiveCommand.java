@@ -67,6 +67,6 @@ public class UploadArchiveCommand extends AbstractCommand {
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.UPLOAD) && options.has(optionParser.VAULT);
+    return options.has(optionParser.UPLOAD);
   }
 }

@@ -70,6 +70,6 @@ public class CreateVaultCommand extends AbstractCommand {
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.CREATE_VAULT) && options.has(optionParser.VAULT);
+    return options.has(optionParser.CREATE_VAULT);
   }
 }
