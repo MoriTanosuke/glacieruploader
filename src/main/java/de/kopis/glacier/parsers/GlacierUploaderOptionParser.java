@@ -49,8 +49,9 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	public final OptionSpec<Void> DELETE_VAULT;
 	public final OptionSpec<File> CALCULATE_HASH;
 	public final OptionSpec<File> MULTIPARTUPLOAD;
-	public final OptionSpec<Integer> PARTSIZE;
+	public final OptionSpec<Long> PARTSIZE;
 	public final OptionSpec<Void> HELP;
+	public final OptionSpec<String> ABORT_UPLOAD;
 
 	public GlacierUploaderOptionParser(final Configuration config) {
 		super();
@@ -68,6 +69,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 		this.MULTIPARTUPLOAD = this.parseMultipartUploadFile(config);
 		this.PARTSIZE = this.parsePartSize(config);
 		this.HELP = this.parseHelp(config);
+		this.ABORT_UPLOAD = this.parseAbortUpload(config);
 	}
 
 	public String formatEndpointUrl(String endpoint) {
@@ -233,13 +235,13 @@ public class GlacierUploaderOptionParser extends OptionParser {
 	}
 
 	@SuppressWarnings("serial")
-	private ArgumentAcceptingOptionSpec<Integer> parsePartSize(final Configuration config) {
+	private ArgumentAcceptingOptionSpec<Long> parsePartSize(final Configuration config) {
 		return acceptsAll(new ArrayList<String>() {
 			{
 				add("partsize");
 				add("p");
 			}
-		}, "sets the size of each part for multipart uploads (must be a power of 2)").withRequiredArg().ofType(Integer.class).defaultsTo((int)Math.pow(4096, 2));
+		}, "sets the size of each part for multipart uploads (must be a power of 2)").withRequiredArg().ofType(Long.class).defaultsTo((long)Math.pow(4096, 2));
 		// 16 MB.
 	}
 
@@ -252,5 +254,15 @@ public class GlacierUploaderOptionParser extends OptionParser {
 				add("?");
 			}
 		}, "display the help menu");
+	}
+
+	@SuppressWarnings("serial")
+	private ArgumentAcceptingOptionSpec<String> parseAbortUpload(final Configuration config) {
+		return acceptsAll(new ArrayList<String>() {
+			{
+				add("abort-upload");
+				add("x");
+			}
+		}, "aborts an existing upload request - requires upload id").withRequiredArg().ofType(String.class);
 	}
 }

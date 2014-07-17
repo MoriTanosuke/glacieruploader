@@ -41,6 +41,7 @@ import joptsimple.OptionSet;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.TreeHashGenerator;
+import com.amazonaws.services.glacier.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.glacier.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.glacier.model.CompleteMultipartUploadResult;
 import com.amazonaws.services.glacier.model.InitiateMultipartUploadRequest;
@@ -54,13 +55,15 @@ import de.kopis.glacier.printers.HumanReadableSize;
 
 public class UploadMultipartArchiveCommand extends AbstractCommand {
 
+  private static final int MAX_BUFFER_SIZE = 1024 * 1024 * 64;
+  
   public UploadMultipartArchiveCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
   }
 
   // from:
   // http://docs.amazonwebservices.com/amazonglacier/latest/dev/uploading-an-archive-mpu-using-java.html
-  public void upload(final String vaultName, final File uploadFile, final Integer partSize) {
+  public void upload(final String vaultName, final File uploadFile, final Long partSize) {
     final String hPartSize = HumanReadableSize.parse(partSize);
     final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
@@ -92,7 +95,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     }
   }
 
-  private String initiateMultipartUpload(final String vaultName, final Integer partSize, final String fileName) {
+  private String initiateMultipartUpload(final String vaultName, final Long partSize, final String fileName) {
     // Initiate
     InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest().withVaultName(vaultName)
         .withArchiveDescription(fileName).withPartSize(partSize.toString());
@@ -104,7 +107,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     return result.getUploadId();
   }
 
-  private String uploadParts(String uploadId, File file, final String vaultName, final Integer partSize)
+  private String uploadParts(String uploadId, File file, final String vaultName, final Long partSize)
       throws AmazonServiceException, NoSuchAlgorithmException, AmazonClientException, IOException {
     String checksum = "";
     FileInputStream fileToUpload = null;
@@ -112,7 +115,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     try {
       int filePosition = 0;
       long currentPosition = 0;
-      byte[] buffer = new byte[partSize];
+      byte[] buffer = new byte[(partSize >= MAX_BUFFER_SIZE) ? MAX_BUFFER_SIZE : partSize.intValue()];
       List<byte[]> binaryChecksums = new LinkedList<byte[]>();
       fileToUpload = new FileInputStream(file);
       String contentRange;
@@ -123,7 +126,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         read = fileToUpload.read(buffer, filePosition, buffer.length);
         if (read == -1) {
           break;
-        }
+         }
         byte[] bytesRead = Arrays.copyOf(buffer, read);
 
         contentRange = String.format("bytes %s-%s/*", currentPosition, currentPosition + read - 1);
@@ -144,6 +147,9 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         counter++;
       }
       checksum = TreeHashGenerator.calculateTreeHash(binaryChecksums);
+    } catch (Exception ex) {
+      final AbortMultipartUploadRequest abortRequest = new AbortMultipartUploadRequest().withUploadId(uploadId).withVaultName(vaultName);
+      client.abortMultipartUpload(abortRequest);
     } finally {
       if (fileToUpload != null) {
         fileToUpload.close();
@@ -167,7 +173,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
     final String vaultName = options.valueOf(optionParser.VAULT);
     final List<File> optionsFiles = options.valuesOf(optionParser.MULTIPARTUPLOAD);
-    final Integer partSize = options.valueOf(optionParser.PARTSIZE);
+    final Long partSize = options.valueOf(optionParser.PARTSIZE);
     final List<String> nonOptions = options.nonOptionArguments();
     final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
 
