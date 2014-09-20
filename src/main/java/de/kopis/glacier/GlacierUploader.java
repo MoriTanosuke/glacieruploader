@@ -37,6 +37,7 @@ import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.kopis.glacier.commands.AbortMultipartArchiveUploadCommand;
 import de.kopis.glacier.commands.AbstractCommand;
 import de.kopis.glacier.commands.CommandFactory;
 import de.kopis.glacier.commands.CreateVaultCommand;
@@ -113,6 +114,7 @@ public final class GlacierUploader {
         CommandFactory.add(new TreeHashArchiveCommand(endpoint, credentials));
         CommandFactory.add(new UploadArchiveCommand(endpoint, credentials));
         CommandFactory.add(new UploadMultipartArchiveCommand(endpoint, credentials));
+        CommandFactory.add(new AbortMultipartArchiveUploadCommand(endpoint, credentials));
       }
 
       // Find a valid one
