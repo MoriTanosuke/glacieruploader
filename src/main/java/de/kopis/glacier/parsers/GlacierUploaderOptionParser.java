@@ -231,7 +231,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
 				add("multipartupload");
 				add("m");
 			}
-		}, "start uploading a new archive in chuncks").withRequiredArg().ofType(File.class).withValuesSeparatedBy(' ');
+		}, "start uploading a new archive in chuncks").withRequiredArg().ofType(File.class);
 	}
 
 	@SuppressWarnings("serial")
