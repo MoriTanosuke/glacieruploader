@@ -73,7 +73,7 @@ public final class GlacierUploader {
     findAndExecCommand(options, optionParser);
   }
 
-  private static CompositeConfiguration setupConfig() {
+  public static CompositeConfiguration setupConfig() {
     final CompositeConfiguration config = new CompositeConfiguration();
     config.addConfiguration(new SystemConfiguration());
     try {
