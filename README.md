@@ -43,7 +43,8 @@ Command-line options
     -o, --download                          download an existing archive           
     -p, --partsize [Integer]                sets the size of each part for         
                                               multipart uploads (default: 10485760)
-    -r, --delete-vault                      deletes an existing vault              
+    -r, --delete-vault                      deletes an existing vault
+    -s, --list-vaults                       lists all available vaults 
     -t, --target <File>                     filename to store downloaded archive   
     -u, --upload <File>                     start uploading a new archive          
     -v, --vault                             name of your vault   
@@ -161,6 +162,19 @@ Available since 0.0.3.
     Retrieving inventory for job id 8yM9rC4RvSKW5QlXdsglkjJHDFGPMSQyZA2CjhpIWgw2AE4lyyIU87uZz2d-b8eoKrCbGehR4vj5dfHiKPA9Zj5...
     Using endpoint https://glacier.eu-west-1.amazonaws.com
 
+List all vaults
+-----------------
+
+Available since 0.0.8
+
+java -jar glacieruploader.jar --endpoint eu-west-1 -s 
+INFO  Using end point: eu-west-1
+INFO  Listing all vaults...
+CreationDate:		2012-08-22T06:33:34.574Z
+LastInventoryDate:	2014-12-05T16:38:22.250Z
+NumberOfArchives:	12
+SizeInBytes:		15358796835
+VaultARN:		arn:aws:glacier:eu-west-1:123456789:vaults/myvault
 
 This is not working for me. What should I do?
 =============================================
