@@ -167,14 +167,12 @@ List all vaults
 
 Available since 0.0.8
 
-java -jar glacieruploader.jar --endpoint eu-west-1 -s 
-INFO  Using end point: eu-west-1
-INFO  Listing all vaults...
-CreationDate:		2012-08-22T06:33:34.574Z
-LastInventoryDate:	2014-12-05T16:38:22.250Z
-NumberOfArchives:	12
-SizeInBytes:		15358796835
-VaultARN:		arn:aws:glacier:eu-west-1:123456789:vaults/myvault
+    java -jar glacieruploader.jar --endpoint eu-west-1 -s 
+    CreationDate:		2012-08-22T06:33:34.574Z
+    LastInventoryDate:	2014-12-05T16:38:22.250Z
+    NumberOfArchives:	12
+    SizeInBytes:		15358796835
+    VaultARN:		arn:aws:glacier:eu-west-1:123456789:vaults/myvault
 
 This is not working for me. What should I do?
 =============================================
