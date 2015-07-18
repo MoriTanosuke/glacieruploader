@@ -39,6 +39,7 @@ public class VaultPrinter {
         out.println("NumberOfArchives:\t" + output.getNumberOfArchives());
         out.println("SizeInBytes:\t\t" + output.getSizeInBytes());
         out.println("VaultARN:\t\t" + output.getVaultARN());
+        out.println();
         out.flush();
     }
 
