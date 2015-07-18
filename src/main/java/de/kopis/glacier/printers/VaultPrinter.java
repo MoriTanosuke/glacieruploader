@@ -24,21 +24,32 @@ package de.kopis.glacier.printers;
  * #L%
  */
 
+import com.amazonaws.services.glacier.model.DescribeVaultOutput;
+import com.amazonaws.services.glacier.model.DescribeVaultResult;
+
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import com.amazonaws.services.glacier.model.DescribeVaultResult;
-
 public class VaultPrinter {
 
-  public void printVault(final DescribeVaultResult describeVaultResult, final OutputStream o) {
-    final PrintWriter out = new PrintWriter(o);
-    out.println("CreationDate:\t" + describeVaultResult.getCreationDate());
-    out.println("LastInventoryDate:\t" + describeVaultResult.getLastInventoryDate());
-    out.println("NumberOfArchives:\t" + describeVaultResult.getNumberOfArchives());
-    out.println("SizeInBytes:\t\t" + describeVaultResult.getSizeInBytes());
-    out.println("VaultARN:\t\t" + describeVaultResult.getVaultARN());
-    out.println("VaultName:\t\t" + describeVaultResult.getVaultName());
-    out.flush();
-  }
+    public void printVault(final DescribeVaultOutput output, OutputStream o) {
+        final PrintWriter out = new PrintWriter(o);
+        out.println("CreationDate:\t" + output.getCreationDate());
+        out.println("LastInventoryDate:\t" + output.getLastInventoryDate());
+        out.println("NumberOfArchives:\t" + output.getNumberOfArchives());
+        out.println("SizeInBytes:\t\t" + output.getSizeInBytes());
+        out.println("VaultARN:\t\t" + output.getVaultARN());
+        out.flush();
+    }
+
+    public void printVault(final DescribeVaultResult describeVaultResult, final OutputStream o) {
+        final PrintWriter out = new PrintWriter(o);
+        out.println("CreationDate:\t" + describeVaultResult.getCreationDate());
+        out.println("LastInventoryDate:\t" + describeVaultResult.getLastInventoryDate());
+        out.println("NumberOfArchives:\t" + describeVaultResult.getNumberOfArchives());
+        out.println("SizeInBytes:\t\t" + describeVaultResult.getSizeInBytes());
+        out.println("VaultARN:\t\t" + describeVaultResult.getVaultARN());
+        out.println("VaultName:\t\t" + describeVaultResult.getVaultName());
+        out.flush();
+    }
 }

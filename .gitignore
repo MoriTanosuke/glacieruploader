@@ -5,3 +5,4 @@ aws.properties
 .project
 bin
 .idea
+*.iml
