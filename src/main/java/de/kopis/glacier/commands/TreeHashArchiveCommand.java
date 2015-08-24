@@ -44,11 +44,11 @@ public class TreeHashArchiveCommand extends AbstractCommand {
         if (file.exists()) {
             String hash = TreeHashGenerator.calculateTreeHash(file);
             log.info(hash);
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "TreeHash created: " + hash);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "TreeHash created: " + hash, null);
         } else {
             String msg = String.format("File '%s' not found", file.getAbsolutePath());
             log.error(msg);
-            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + msg);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + msg, null);
         }
         return result;
     }

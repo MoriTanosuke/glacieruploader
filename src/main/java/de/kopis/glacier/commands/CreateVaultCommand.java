@@ -58,10 +58,10 @@ public class CreateVaultCommand extends AbstractCommand {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             new VaultPrinter().printVault(describeVaultResult, baos);
             final String description = baos.toString();
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, description);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, description, describeVaultResult);
         } catch (AmazonClientException e) {
             log.error("Couldn't create vault.");
-            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), null, e);
         }
         return result;
     }

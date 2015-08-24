@@ -25,11 +25,19 @@ package de.kopis.glacier.printers;
  */
 
 import de.kopis.glacier.commands.CommandResult;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.OutputStream;
+import java.io.PrintWriter;
 
 public class JsonCommandResultPrinter {
+    private static final Log log = LogFactory.getLog(JsonCommandResultPrinter.class);
+
     public void print(OutputStream out, CommandResult result) {
         //TODO create JSON representation of CommandResult
+        final PrintWriter pw = new PrintWriter(out);
+        pw.write("{status: " + result.getStatus() + ", message: '" + result.getMessage() + "', originalMessage: " + result.getOriginalMessage() + "}");
+        pw.flush();
     }
 }

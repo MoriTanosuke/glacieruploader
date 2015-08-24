@@ -82,7 +82,7 @@ public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
         log.info("Aborting upload to vault " + vaultName + " with upload id " + uploadId + ".");
         client.abortMultipartUpload(abortRequest);
         log.info("Assumed success!");
-        return Optional.of(new CommandResult(CommandResultStatus.SUCCESS, "Multipart Upload aborted"));
+        return Optional.of(new CommandResult(CommandResultStatus.SUCCESS, "Multipart Upload aborted", null));
     }
 
 }

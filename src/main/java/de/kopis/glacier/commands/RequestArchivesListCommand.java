@@ -53,7 +53,7 @@ public class RequestArchivesListCommand extends AbstractCommand {
             final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
             final String jobId = initJobResult.getJobId();
             log.info("Inventory Job created with ID" + System.getProperty("line.separator") + jobId);
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Inventory job created with ID " + jobId);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Inventory job created with ID " + jobId, initJobResult);
         } catch (final AmazonClientException e) {
             log.error(e.getLocalizedMessage(), e);
             result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);

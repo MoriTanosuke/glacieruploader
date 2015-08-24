@@ -32,10 +32,8 @@ import com.amazonaws.services.glacier.model.ListVaultsResult;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -60,12 +58,7 @@ public class ListVaultCommand extends AbstractCommand {
             final ListVaultsRequest listVaultsRequest = new ListVaultsRequest();
             final ListVaultsResult listVaultsResult = client.listVaults(listVaultsRequest);
             final List<DescribeVaultOutput> vaults = listVaultsResult.getVaultList();
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            for (DescribeVaultOutput vault : vaults) {
-                new VaultPrinter().printVault(vault, baos);
-            }
-            final String description = baos.toString();
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, description);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Vault listing complete.", vaults);
         } catch (AmazonClientException e) {
             log.error("Can't list vaults.", e);
             result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);

@@ -46,7 +46,7 @@ public class DeleteVaultCommand extends AbstractCommand {
         client.deleteVault(deleteVaultRequest);
         log.info("Vault " + vaultName + " deleted.");
 
-        return new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Vault deleted.");
+        return new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Vault deleted.", null);
     }
 
     @Override

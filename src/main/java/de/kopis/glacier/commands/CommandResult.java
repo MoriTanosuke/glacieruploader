@@ -35,17 +35,19 @@ public class CommandResult {
     }
 
     private final String message;
+    private final Object originalMessage;
     private final CommandResultStatus status;
     private Exception exception;
 
-    public CommandResult(CommandResultStatus failure, String s, AmazonClientException exception) {
-        this(failure, s);
+    public CommandResult(CommandResultStatus failure, String message, Object originalMessage, AmazonClientException exception) {
+        this(failure, message, originalMessage);
         this.exception = exception;
     }
 
-    public CommandResult(CommandResultStatus status, String message) {
+    public CommandResult(CommandResultStatus status, String message, Object originalMessage) {
         this.status = status;
         this.message = message;
+        this.originalMessage = originalMessage;
     }
 
     public Exception getException() {
@@ -54,6 +56,10 @@ public class CommandResult {
 
     public String getMessage() {
         return message;
+    }
+
+    public Object getOriginalMessage() {
+        return originalMessage;
     }
 
     public CommandResultStatus getStatus() {

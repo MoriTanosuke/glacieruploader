@@ -62,7 +62,7 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
             final VaultInventoryPrinter printer = new VaultInventoryPrinter();
             printer.setInventory(content);
             printer.printInventory(baos);
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, baos.toString());
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, baos.toString(), jobOutputResult);
         } catch (AmazonClientException e) {
             // This is the error we get when the job is not yet available for
             // download. Should print a better error message to the user.
@@ -72,7 +72,7 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
             result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
         } catch (JSONException | IOException e) {
             log.error(e.getLocalizedMessage(), e);
-            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage());
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), null);
         }
 
         return result;

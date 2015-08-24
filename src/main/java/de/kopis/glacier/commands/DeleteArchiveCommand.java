@@ -46,7 +46,7 @@ public class DeleteArchiveCommand extends AbstractCommand {
         client.deleteArchive(deleteRequest);
 
         log.info("Archive " + archiveId + " deletion started from vault " + vaultName + ".");
-        return new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Archive deleted.");
+        return new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Archive deleted.", null);
     }
 
     @Override
