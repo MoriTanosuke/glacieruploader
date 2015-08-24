@@ -27,12 +27,13 @@ package de.kopis.glacier.commands;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
-import com.amazonaws.util.json.JSONException;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.VaultInventoryPrinter;
 import joptsimple.OptionSet;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Optional;
 
@@ -57,22 +58,18 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
                 content += line;
             }
             reader.close();
-            // TODO use dependency injection here
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            final VaultInventoryPrinter printer = new VaultInventoryPrinter();
-            printer.setInventory(content);
-            printer.printInventory(baos);
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, baos.toString(), jobOutputResult);
+            final String json = marshall(jobOutputResult);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Archive listing received", Optional.of(json));
         } catch (AmazonClientException e) {
             // This is the error we get when the job is not yet available for
             // download. Should print a better error message to the user.
             log.error("Can not retrieve job output, maybe the job is not yet ready. Take a look at the following error message:\n" + e.getLocalizedMessage());
             //TODO move this into logfile only
             log.error(e.getLocalizedMessage(), e);
-            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
-        } catch (JSONException | IOException e) {
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), Optional.empty(), Optional.of(e));
+        } catch (IOException e) {
             log.error(e.getLocalizedMessage(), e);
-            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), null);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), Optional.empty());
         }
 
         return result;

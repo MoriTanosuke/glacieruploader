@@ -53,10 +53,13 @@ public class RequestArchivesListCommand extends AbstractCommand {
             final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
             final String jobId = initJobResult.getJobId();
             log.info("Inventory Job created with ID" + System.getProperty("line.separator") + jobId);
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Inventory job created with ID " + jobId, initJobResult);
+
+            //TODO extract this
+            final String json = marshall(initJobResult);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Inventory job created with ID " + jobId, Optional.of(json));
         } catch (final AmazonClientException e) {
             log.error(e.getLocalizedMessage(), e);
-            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), Optional.empty(), Optional.of(e));
         }
 
         // TODO wait for job, but it could take about 4 hours says the SDK...

@@ -203,6 +203,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
             this.upload(vaultName, uploadFile, partSize);
         }
 
+        //TODO no CommandResult here?
         return Optional.empty();
     }
 

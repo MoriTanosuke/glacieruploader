@@ -30,10 +30,8 @@ import com.amazonaws.services.glacier.model.CreateVaultResult;
 import com.amazonaws.services.glacier.model.DescribeVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultResult;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -55,13 +53,11 @@ public class CreateVaultCommand extends AbstractCommand {
             final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
             final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
 
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            new VaultPrinter().printVault(describeVaultResult, baos);
-            final String description = baos.toString();
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, description, describeVaultResult);
+            final String json = marshall(describeVaultResult);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Vault created", Optional.of(json));
         } catch (AmazonClientException e) {
             log.error("Couldn't create vault.");
-            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), null, e);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), Optional.empty(), Optional.of(e));
         }
         return result;
     }

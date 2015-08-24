@@ -26,6 +26,8 @@ package de.kopis.glacier.commands;
 
 import com.amazonaws.AmazonClientException;
 
+import java.util.Optional;
+
 public class CommandResult {
 
     public enum CommandResultStatus {
@@ -35,22 +37,25 @@ public class CommandResult {
     }
 
     private final String message;
-    private final Object originalMessage;
+    /**
+     * JSON representation of original Amazon Glacier response.
+     */
+    private Optional<String> originalMessage;
     private final CommandResultStatus status;
-    private Exception exception;
+    private Optional<? extends AmazonClientException> exception;
 
-    public CommandResult(CommandResultStatus failure, String message, Object originalMessage, AmazonClientException exception) {
+    public CommandResult(CommandResultStatus failure, String message, Optional<String> originalMessage, Optional<? extends AmazonClientException> exception) {
         this(failure, message, originalMessage);
         this.exception = exception;
     }
 
-    public CommandResult(CommandResultStatus status, String message, Object originalMessage) {
+    public CommandResult(CommandResultStatus status, String message, Optional<String> originalMessage) {
         this.status = status;
         this.message = message;
         this.originalMessage = originalMessage;
     }
 
-    public Exception getException() {
+    public Optional<? extends AmazonClientException> getException() {
         return exception;
     }
 
@@ -58,7 +63,7 @@ public class CommandResult {
         return message;
     }
 
-    public Object getOriginalMessage() {
+    public Optional<String> getOriginalMessage() {
         return originalMessage;
     }
 

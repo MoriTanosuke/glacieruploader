@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Optional;
 
 public class JsonCommandResultPrinter {
     private static final Log log = LogFactory.getLog(JsonCommandResultPrinter.class);
@@ -37,7 +38,13 @@ public class JsonCommandResultPrinter {
     public void print(OutputStream out, CommandResult result) {
         //TODO create JSON representation of CommandResult
         final PrintWriter pw = new PrintWriter(out);
-        pw.write("{status: " + result.getStatus() + ", message: '" + result.getMessage() + "', originalMessage: " + result.getOriginalMessage() + "}");
+        pw.write("{status: " + result.getStatus() + ", message: '" + result.getMessage() + "'");
+
+        final Optional<String> originalMessage = result.getOriginalMessage();
+        if (originalMessage.isPresent()) {
+            pw.write(", originalMessage: " + originalMessage.get());
+        }
+        pw.write("}");
         pw.flush();
     }
 }

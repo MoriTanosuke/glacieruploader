@@ -25,6 +25,7 @@ package de.kopis.glacier.commands;
  */
 
 import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.services.dynamodbv2.datamodeling.JsonMarshaller;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
@@ -73,6 +74,11 @@ public abstract class AbstractCommand {
         // TODO check if this really fixes #13
         sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
         sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
+    }
+
+
+    protected <T> String marshall(T initJobResult) {
+        return new JsonMarshaller<T>().marshall(initJobResult);
     }
 
     public abstract Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser);

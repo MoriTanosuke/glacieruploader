@@ -63,6 +63,7 @@ public class UploadArchiveCommand extends AbstractCommand {
             this.upload(vaultName, uploadFile);
         }
 
+        //TODO no CommandResult here?
         return Optional.empty();
     }
 

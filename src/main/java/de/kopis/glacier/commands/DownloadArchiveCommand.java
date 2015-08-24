@@ -49,7 +49,7 @@ public class DownloadArchiveCommand extends AbstractCommand {
         final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
         atm.download(vaultName, archiveId, targetFile);
         log.info("Archive downloaded to " + targetFile);
-        return new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Archive downloaded to " + targetFile, null);
+        return new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Archive downloaded to " + targetFile, Optional.empty());
     }
 
     @Override

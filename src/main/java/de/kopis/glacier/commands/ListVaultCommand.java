@@ -58,10 +58,11 @@ public class ListVaultCommand extends AbstractCommand {
             final ListVaultsRequest listVaultsRequest = new ListVaultsRequest();
             final ListVaultsResult listVaultsResult = client.listVaults(listVaultsRequest);
             final List<DescribeVaultOutput> vaults = listVaultsResult.getVaultList();
-            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Vault listing complete.", vaults);
+            final String json = marshall(vaults);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Vault listing complete.", Optional.of(json));
         } catch (AmazonClientException e) {
             log.error("Can't list vaults.", e);
-            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), Optional.empty(), Optional.of(e));
         }
         return result;
     }
