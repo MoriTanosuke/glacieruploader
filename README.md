@@ -1,4 +1,4 @@
-glacieruploader
+glacieruploader [![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.svg?branch=optional-command-responses)](https://travis-ci.org/MoriTanosuke/glacieruploader)
 ===============
 
 A simple java command line application for Amazon Glacier. You can find the latest version at [https://github.com/MoriTanosuke/glacieruploader/][6].
@@ -7,8 +7,6 @@ How to get it
 =============
 
 Either [download a binary][0] or [build the software yourself from sourcecode][5].
-
-[![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.png?branch=fix-regions-archive-download)](https://travis-ci.org/MoriTanosuke/glacieruploader)
 
 How to run
 ==========
