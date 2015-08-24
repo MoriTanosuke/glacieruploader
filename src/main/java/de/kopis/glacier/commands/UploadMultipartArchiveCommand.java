@@ -33,7 +33,6 @@ import com.amazonaws.services.s3.internal.InputSubstream;
 import com.amazonaws.services.s3.internal.RepeatableFileInputStream;
 import com.amazonaws.util.BinaryUtils;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.CommandResult;
 import de.kopis.glacier.printers.HumanReadableSize;
 import joptsimple.OptionSet;
 

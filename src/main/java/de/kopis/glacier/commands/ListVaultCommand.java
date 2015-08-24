@@ -32,7 +32,6 @@ import com.amazonaws.services.glacier.model.ListVaultsResult;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.CommandResult;
 import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
 

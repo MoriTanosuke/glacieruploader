@@ -25,7 +25,6 @@ package de.kopis.glacier.commands;
  */
 
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.CommandResult;
 import joptsimple.OptionSet;
 
 import java.io.File;

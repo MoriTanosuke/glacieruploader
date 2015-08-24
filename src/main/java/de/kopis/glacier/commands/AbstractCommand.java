@@ -29,7 +29,6 @@ import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.CommandResult;
 import joptsimple.OptionSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

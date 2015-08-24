@@ -31,7 +31,6 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.model.AbortMultipartUploadRequest;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.CommandResult;
 import joptsimple.OptionSet;
 
 import java.io.File;
@@ -39,7 +38,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 
-import static de.kopis.glacier.printers.CommandResult.CommandResultStatus;
+import static de.kopis.glacier.commands.CommandResult.CommandResultStatus;
 
 /**
  * Abort Multipart Archive Upload Command.

@@ -26,7 +26,6 @@ package de.kopis.glacier.commands;
 
 import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import de.kopis.glacier.printers.CommandResult;
 import joptsimple.OptionSet;
 
 import java.io.File;
