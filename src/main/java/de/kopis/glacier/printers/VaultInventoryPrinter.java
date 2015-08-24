@@ -24,12 +24,12 @@ package de.kopis.glacier.printers;
  * #L%
  */
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-
 import com.amazonaws.util.json.JSONArray;
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
+
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 public class VaultInventoryPrinter {
   private String inventory;
@@ -61,7 +61,7 @@ public class VaultInventoryPrinter {
     }
 
     o.flush();
-  }
+    }
 
   private void printArchive(final PrintWriter o, final JSONObject archive) throws JSONException {
     o.println("------------------------------------------------------------------------------");

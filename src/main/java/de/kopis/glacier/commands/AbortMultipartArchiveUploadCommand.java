@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.kopis.glacier.commands;
 
@@ -27,59 +27,63 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
-import joptsimple.OptionSet;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.model.AbortMultipartUploadRequest;
-
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
+import joptsimple.OptionSet;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+
+import static de.kopis.glacier.printers.CommandResult.CommandResultStatus;
 
 /**
  * Abort Multipart Archive Upload Command.
- * 
+ *
  * @author Kendal Montgomery <theWizK@yahoo.com>
- * @version 1.0
+ * @author Carsten Ringe <carsten@kopis.de>
+ * @version 1.1
  */
 public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
 
-	public AbortMultipartArchiveUploadCommand(final URL endpoint, final File credentials) throws IOException {
-		super(endpoint, credentials);
-	}
+    public AbortMultipartArchiveUploadCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+    }
 
-	/* (non-Javadoc)
-	 * @see de.kopis.glacier.commands.AbstractCommand#exec(joptsimple.OptionSet, de.kopis.glacier.parsers.GlacierUploaderOptionParser)
-	 */
-	@Override
-	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-	  final String vaultName = options.valueOf(optionParser.VAULT);
-	  final String uploadId = options.valueOf(optionParser.ABORT_UPLOAD);
-	  try {
-        abortUpload(vaultName, uploadId);
-	  } catch (AmazonServiceException e) {
-	    log.error("Something went wrong at Amazon while aborting the multipart upload with id " + uploadId + ". " + e.getLocalizedMessage(), e);
-	  } catch (AmazonClientException e) {
-	    log.error("Something went wrong with the Amazon Client. " + e.getLocalizedMessage(), e);
-	  }
-	}
+    @Override
+    public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String uploadId = options.valueOf(optionParser.ABORT_UPLOAD);
+        Optional<CommandResult> result = Optional.empty();
+        try {
+            result = abortUpload(vaultName, uploadId);
+        } catch (AmazonServiceException e) {
+            log.error("Something went wrong at Amazon while aborting the multipart upload with id " + uploadId + ". " + e.getLocalizedMessage(), e);
+        } catch (AmazonClientException e) {
+            log.error("Something went wrong with the Amazon Client. " + e.getLocalizedMessage(), e);
+        }
 
-	/* (non-Javadoc)
-	 * @see de.kopis.glacier.commands.AbstractCommand#valid(joptsimple.OptionSet, de.kopis.glacier.parsers.GlacierUploaderOptionParser)
-	 */
-	@Override
-	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-	    return options.has(optionParser.ABORT_UPLOAD) && options.hasArgument(optionParser.ABORT_UPLOAD);
-	}
-	
-	public void abortUpload(final String vaultName, final String uploadId) {
-      final AbortMultipartUploadRequest abortRequest = new AbortMultipartUploadRequest().withUploadId(uploadId).withVaultName(vaultName);
-	  log.info("Aborting upload to vault " + vaultName + " with upload id " + uploadId + ".");
-      client.abortMultipartUpload(abortRequest);
-      log.info("Assumed success!");
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see de.kopis.glacier.commands.AbstractCommand#valid(joptsimple.OptionSet, de.kopis.glacier.parsers.GlacierUploaderOptionParser)
+     */
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.ABORT_UPLOAD) && options.hasArgument(optionParser.ABORT_UPLOAD);
+    }
+
+    public Optional<CommandResult> abortUpload(final String vaultName, final String uploadId) {
+        final AbortMultipartUploadRequest abortRequest = new AbortMultipartUploadRequest().withUploadId(uploadId).withVaultName(vaultName);
+        log.info("Aborting upload to vault " + vaultName + " with upload id " + uploadId + ".");
+        client.abortMultipartUpload(abortRequest);
+        log.info("Assumed success!");
+        return Optional.of(new CommandResult(CommandResultStatus.SUCCESS, "Multipart Upload aborted"));
     }
 
 }

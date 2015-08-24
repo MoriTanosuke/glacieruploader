@@ -1,8 +1,8 @@
 package de.kopis.glacier.printers;
 
-import static org.junit.Assert.assertArrayEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
 
 /*
  * #%L
@@ -30,33 +30,33 @@ import org.junit.Test;
  */
 
 public class HumanReadableSizeTest {
-  @Test
-  public void sanitizeMissingSizeIndicator() {
-    assertArrayEquals(new String[] { "123456789", "B" }, HumanReadableSize.sanitize("123456789"));
-  }
+    @Test
+    public void sanitizeMissingSizeIndicator() {
+        assertArrayEquals(new String[]{"123456789", "B"}, HumanReadableSize.sanitize("123456789"));
+    }
 
-  @Test
-  public void sanitizeBytes() {
-    assertArrayEquals(new String[] { "123456789", "B" }, HumanReadableSize.sanitize("123456789 B"));
-  }
+    @Test
+    public void sanitizeBytes() {
+        assertArrayEquals(new String[]{"123456789", "B"}, HumanReadableSize.sanitize("123456789 B"));
+    }
 
-  @Test
-  public void sanitizeKilobytes() {
-    assertArrayEquals(new String[] { "123456789", "kB" }, HumanReadableSize.sanitize("123456789kB"));
-  }
+    @Test
+    public void sanitizeKilobytes() {
+        assertArrayEquals(new String[]{"123456789", "kB"}, HumanReadableSize.sanitize("123456789kB"));
+    }
 
-  @Test
-  public void sanitizeMegabytes() {
-    assertArrayEquals(new String[] { "123456789", "MB" }, HumanReadableSize.sanitize("123456789MB"));
-  }
+    @Test
+    public void sanitizeMegabytes() {
+        assertArrayEquals(new String[]{"123456789", "MB"}, HumanReadableSize.sanitize("123456789MB"));
+    }
 
-  @Test
-  public void sanitizeGigabytes() {
-    assertArrayEquals(new String[] { "123456789", "GB" }, HumanReadableSize.sanitize("123456789	 GB"));
-  }
+    @Test
+    public void sanitizeGigabytes() {
+        assertArrayEquals(new String[]{"123456789", "GB"}, HumanReadableSize.sanitize("123456789	 GB"));
+    }
 
-  @Test
-  public void sanitizeKilTerabytes() {
-    assertArrayEquals(new String[] { "123456789", "TB" }, HumanReadableSize.sanitize("123456789TB"));
-  }
+    @Test
+    public void sanitizeKilTerabytes() {
+        assertArrayEquals(new String[]{"123456789", "TB"}, HumanReadableSize.sanitize("123456789TB"));
+    }
 }

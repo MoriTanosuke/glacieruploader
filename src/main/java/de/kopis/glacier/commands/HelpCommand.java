@@ -24,13 +24,14 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
+import joptsimple.OptionSet;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import joptsimple.OptionSet;
-
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import java.util.Optional;
 
 public class HelpCommand extends AbstractCommand {
 
@@ -40,20 +41,21 @@ public class HelpCommand extends AbstractCommand {
 
   public HelpCommand(final URL endpoint, final File credentials) throws IOException {
     super(endpoint, credentials);
-  }
+    }
 
   @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+  public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
     if (!options.has(optionParser.HELP)) {
       log.info("Ooops, can't determine what you want to do. Check your options. " + System.getProperty("line.separator") +
-      		"Do not forget that --vault and --endpoint are mandatory for all commands." + System.getProperty("line.separator") );
+              "Do not forget that --vault and --endpoint are mandatory for all commands." + System.getProperty("line.separator"));
     }
     try {
       optionParser.printHelpOn(System.out);
     } catch (final IOException e) {
       log.error("Can not print help", e);
     }
-  }
+    return Optional.empty();
+    }
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {

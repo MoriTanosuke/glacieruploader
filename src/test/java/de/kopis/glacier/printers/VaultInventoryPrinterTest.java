@@ -24,49 +24,48 @@ package de.kopis.glacier.printers;
  * #L%
  */
 
-import static org.junit.Assert.assertEquals;
+import com.amazonaws.util.json.JSONException;
+import com.amazonaws.util.json.JSONObject;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.junit.Test;
-
-import com.amazonaws.util.json.JSONException;
-import com.amazonaws.util.json.JSONObject;
+import static org.junit.Assert.assertEquals;
 
 public class VaultInventoryPrinterTest {
 
-  @Test
-  public void testPrintInventoryListing() throws JSONException, IOException {
-    final String line = System.getProperty("line.separator");
-    final String inventory = readFile("target/test-classes/inventorylisting.txt");
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    new VaultInventoryPrinter(inventory).printInventory(out);
-    assertEquals("ARN:\t\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup" + line
-        + "------------------------------------------------------------------------------" + line
-        + "Description:\t\t\ta custom description for your archive" + line
-        + "Archive ID:\t\t\tthisisaverylongrandomstringthatworksasthearchiveid" + line
-        + "CreationDate:\t\t\t2012-08-23T04:14:56Z" + line + "Size:\t\t\t\t123456789 (117.74MB)" + line
-        + "SHA:\t\t\t\t123456789123456789123456789" + line, out.toString());
-  }
-
-  @Test
-  public void printArchiveSize() throws JSONException {
-    assertEquals("123456789 (117.74MB)",
-        new VaultInventoryPrinter().printArchiveSize(new JSONObject("{Size:123456789}")));
-  }
-
-  private String readFile(final String filename) throws IOException {
-    String contents = "";
-    final BufferedReader in = new BufferedReader(new FileReader(filename));
-    String line = null;
-    while ((line = in.readLine()) != null) {
-      contents += line;
+    @Test
+    public void testPrintInventoryListing() throws JSONException, IOException {
+        final String line = System.getProperty("line.separator");
+        final String inventory = readFile("target/test-classes/inventorylisting.txt");
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new VaultInventoryPrinter(inventory).printInventory(out);
+        assertEquals("ARN:\t\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup" + line
+                + "------------------------------------------------------------------------------" + line
+                + "Description:\t\t\ta custom description for your archive" + line
+                + "Archive ID:\t\t\tthisisaverylongrandomstringthatworksasthearchiveid" + line
+                + "CreationDate:\t\t\t2012-08-23T04:14:56Z" + line + "Size:\t\t\t\t123456789 (117.74MB)" + line
+                + "SHA:\t\t\t\t123456789123456789123456789" + line, out.toString());
     }
-    in.close();
-    return contents;
-  }
+
+    @Test
+    public void printArchiveSize() throws JSONException {
+        assertEquals("123456789 (117.74MB)",
+                new VaultInventoryPrinter().printArchiveSize(new JSONObject("{Size:123456789}")));
+    }
+
+    private String readFile(final String filename) throws IOException {
+        String contents = "";
+        final BufferedReader in = new BufferedReader(new FileReader(filename));
+        String line = null;
+        while ((line = in.readLine()) != null) {
+            contents += line;
+        }
+        in.close();
+        return contents;
+    }
 
 }

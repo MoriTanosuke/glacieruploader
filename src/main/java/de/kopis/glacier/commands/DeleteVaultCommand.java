@@ -24,38 +24,40 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import com.amazonaws.services.glacier.model.DeleteVaultRequest;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
+import joptsimple.OptionSet;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import joptsimple.OptionSet;
-
-import com.amazonaws.services.glacier.model.DeleteVaultRequest;
-
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import java.util.Optional;
 
 public class DeleteVaultCommand extends AbstractCommand {
-  public DeleteVaultCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+    public DeleteVaultCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+    }
 
-  public void deleteVault(final String vaultName) {
-    log.info("Deleting vault " + vaultName + "...");
+    public CommandResult deleteVault(final String vaultName) {
+        log.info("Deleting vault " + vaultName + "...");
 
-    final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
-    // TODO check for notifications first?
-    client.deleteVault(deleteVaultRequest);
-    log.info("Vault " + vaultName + " deleted.");
-  }
+        final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
+        // TODO check for notifications first?
+        client.deleteVault(deleteVaultRequest);
+        log.info("Vault " + vaultName + " deleted.");
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    String vaultName = options.valueOf(optionParser.VAULT);
-    this.deleteVault(vaultName);
-  }
+        return new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Vault deleted.");
+    }
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.DELETE_VAULT);
-  }
+    @Override
+    public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        String vaultName = options.valueOf(optionParser.VAULT);
+        return Optional.ofNullable(this.deleteVault(vaultName));
+    }
+
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.DELETE_VAULT);
+    }
 }

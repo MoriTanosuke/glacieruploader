@@ -24,50 +24,54 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
-import joptsimple.OptionSet;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.model.InitiateJobRequest;
 import com.amazonaws.services.glacier.model.InitiateJobResult;
 import com.amazonaws.services.glacier.model.JobParameters;
-
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
+import joptsimple.OptionSet;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
 
 public class RequestArchivesListCommand extends AbstractCommand {
 
-  public RequestArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
-
-  public void startInventoryListing(final String vaultName) {
-    log.info("Starting inventory listing for vault " + vaultName + "...");
-
-    try {
-      final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
-          new JobParameters().withType("inventory-retrieval"));
-
-      final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
-      final String jobId = initJobResult.getJobId();
-      log.info("Inventory Job created with ID" + System.getProperty("line.separator") + jobId);
-    } catch (final AmazonClientException e) {
-      log.error(e.getLocalizedMessage(), e);
+    public RequestArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
     }
 
-    // TODO wait for job, but it could take about 4 hours says the SDK...
-  }
+    private CommandResult startInventoryListing(final String vaultName) {
+        log.info("Starting inventory listing for vault " + vaultName + "...");
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    this.startInventoryListing(vaultName);
-  }
+        CommandResult result = null;
+        try {
+            final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
+                    new JobParameters().withType("inventory-retrieval"));
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.INVENTORY_LISTING) && !options.hasArgument(optionParser.INVENTORY_LISTING);
-  }
+            final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
+            final String jobId = initJobResult.getJobId();
+            log.info("Inventory Job created with ID" + System.getProperty("line.separator") + jobId);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Inventory job created with ID " + jobId);
+        } catch (final AmazonClientException e) {
+            log.error(e.getLocalizedMessage(), e);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
+        }
+
+        // TODO wait for job, but it could take about 4 hours says the SDK...
+        return result;
+    }
+
+    @Override
+    public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        return Optional.ofNullable(this.startInventoryListing(vaultName));
+    }
+
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.INVENTORY_LISTING) && !options.hasArgument(optionParser.INVENTORY_LISTING);
+    }
 }

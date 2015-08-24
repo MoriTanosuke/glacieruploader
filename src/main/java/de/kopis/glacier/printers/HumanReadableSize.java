@@ -33,68 +33,68 @@ import java.util.regex.Pattern;
  */
 
 public class HumanReadableSize {
-	
-  public static String parse(final Long size) throws IllegalArgumentException {
-	    return parse(size.toString());
-  }
-	
-  public static String parse(final Integer size) throws IllegalArgumentException {
-    return parse(size.toString());
-  }
 
-  public static String parse(final String size) throws IllegalArgumentException {
-    final String[] sanitizedSize = sanitize(size);
-    double sizeAsDouble = 0;
-    try {
-      // parse as US value, because WTF? java default?
-      sizeAsDouble = NumberFormat.getInstance(Locale.US).parse(sanitizedSize[0]).doubleValue();
-    } catch (final ParseException e) {
-      throw new IllegalArgumentException("Can not parse Number", e);
-    }
-    String humanReadableSize = "";
-    String sizeClass = sanitizedSize[1];
-    if (sizeAsDouble >= 1024) {
-      sizeClass = getLargerSizeClass(sanitizedSize[1]);
-      humanReadableSize = parse(sizeAsDouble / 1024.0 + " " + sizeClass);
-    } else {
-      humanReadableSize = round(Double.toString(sizeAsDouble), 2, BigDecimal.ROUND_UP) + sizeClass;
-    }
-    return humanReadableSize;
-  }
-
-  private static String getLargerSizeClass(final String oldSizeClass) {
-    String newSizeClass = "B";
-    if ("B".equals(oldSizeClass)) {
-      newSizeClass = "kB";
-    } else if ("kB".equals(oldSizeClass)) {
-      newSizeClass = "MB";
-    } else if ("MB".equals(oldSizeClass)) {
-      newSizeClass = "GB";
-    } else if ("GB".equals(oldSizeClass)) {
-      newSizeClass = "TB";
-    } else if ("TB".equals(oldSizeClass)) {
-      newSizeClass = "PT";
-    }
-    return newSizeClass;
-  }
-
-  public static String[] sanitize(final String size) {
-    final Pattern patternClass = Pattern.compile("([0-9.]+)\\s*?([kMGTP]?B)");
-    final Matcher m = patternClass.matcher(size);
-    String[] s = new String[] { size, "B" };
-    if (m.find()) {
-      final String pureSize = m.group(1);
-      final String sizeClass = m.group(2);
-      s = new String[] { pureSize, sizeClass };
+    public static String parse(final Long size) throws IllegalArgumentException {
+        return parse(size.toString());
     }
 
-    return s;
-  }
+    public static String parse(final Integer size) throws IllegalArgumentException {
+        return parse(size.toString());
+    }
 
-  private static String round(final String unrounded, final int precision, final int roundingMode) {
-    final BigDecimal bd = new BigDecimal(unrounded);
-    final BigDecimal rounded = bd.setScale(precision, roundingMode);
-    return rounded.toString();
-  }
+    public static String parse(final String size) throws IllegalArgumentException {
+        final String[] sanitizedSize = sanitize(size);
+        double sizeAsDouble = 0;
+        try {
+            // parse as US value, because WTF? java default?
+            sizeAsDouble = NumberFormat.getInstance(Locale.US).parse(sanitizedSize[0]).doubleValue();
+        } catch (final ParseException e) {
+            throw new IllegalArgumentException("Can not parse Number", e);
+        }
+        String humanReadableSize = "";
+        String sizeClass = sanitizedSize[1];
+        if (sizeAsDouble >= 1024) {
+            sizeClass = getLargerSizeClass(sanitizedSize[1]);
+            humanReadableSize = parse(sizeAsDouble / 1024.0 + " " + sizeClass);
+        } else {
+            humanReadableSize = round(Double.toString(sizeAsDouble), 2, BigDecimal.ROUND_UP) + sizeClass;
+        }
+        return humanReadableSize;
+    }
+
+    private static String getLargerSizeClass(final String oldSizeClass) {
+        String newSizeClass = "B";
+        if ("B".equals(oldSizeClass)) {
+            newSizeClass = "kB";
+        } else if ("kB".equals(oldSizeClass)) {
+            newSizeClass = "MB";
+        } else if ("MB".equals(oldSizeClass)) {
+            newSizeClass = "GB";
+        } else if ("GB".equals(oldSizeClass)) {
+            newSizeClass = "TB";
+        } else if ("TB".equals(oldSizeClass)) {
+            newSizeClass = "PT";
+        }
+        return newSizeClass;
+    }
+
+    public static String[] sanitize(final String size) {
+        final Pattern patternClass = Pattern.compile("([0-9.]+)\\s*?([kMGTP]?B)");
+        final Matcher m = patternClass.matcher(size);
+        String[] s = new String[]{size, "B"};
+        if (m.find()) {
+            final String pureSize = m.group(1);
+            final String sizeClass = m.group(2);
+            s = new String[]{pureSize, sizeClass};
+        }
+
+        return s;
+    }
+
+    private static String round(final String unrounded, final int precision, final int roundingMode) {
+        final BigDecimal bd = new BigDecimal(unrounded);
+        final BigDecimal rounded = bd.setScale(precision, roundingMode);
+        return rounded.toString();
+    }
 
 }

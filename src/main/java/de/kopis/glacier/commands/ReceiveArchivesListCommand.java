@@ -24,65 +24,70 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-
-import joptsimple.OptionSet;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
 import com.amazonaws.util.json.JSONException;
-
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
 import de.kopis.glacier.printers.VaultInventoryPrinter;
+import joptsimple.OptionSet;
+
+import java.io.*;
+import java.net.URL;
+import java.util.Optional;
 
 public class ReceiveArchivesListCommand extends AbstractCommand {
 
-  private final VaultInventoryPrinter printer;
 
-  public ReceiveArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-    printer = new VaultInventoryPrinter();
-  }
-
-  public void retrieveInventoryListing(final String vaultName, final String jobId) {
-    log.info("Retrieving inventory for job id " + jobId + "...");
-
-    try {
-      final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
-      final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
-      final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
-      String content = "";
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        content += line;
-      }
-      reader.close();
-      // TODO use dependency injection here
-      printer.setInventory(content);
-      printer.printInventory(System.out);
-    } catch (final AmazonClientException e) {
-      log.error(e.getLocalizedMessage(), e);
-    } catch (final JSONException e) {
-      log.error(e.getLocalizedMessage(), e);
-    } catch (final IOException e) {
-      log.error(e.getLocalizedMessage(), e);
+    public ReceiveArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
     }
-  }
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    final String jobId = options.valueOf(optionParser.INVENTORY_LISTING);
-    this.retrieveInventoryListing(vaultName, jobId);
-  }
+    public CommandResult retrieveInventoryListing(final String vaultName, final String jobId) {
+        log.info("Retrieving inventory for job id " + jobId + "...");
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.INVENTORY_LISTING) && options.hasArgument(optionParser.INVENTORY_LISTING);
-  }
+        CommandResult result = null;
+        try {
+            final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
+            final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
+            String content = "";
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                content += line;
+            }
+            reader.close();
+            // TODO use dependency injection here
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final VaultInventoryPrinter printer = new VaultInventoryPrinter();
+            printer.setInventory(content);
+            printer.printInventory(baos);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, baos.toString());
+        } catch (AmazonClientException e) {
+            // This is the error we get when the job is not yet available for
+            // download. Should print a better error message to the user.
+            log.error("Can not retrieve job output, maybe the job is not yet ready. Take a look at the following error message:\n" + e.getLocalizedMessage());
+            //TODO move this into logfile only
+            log.error(e.getLocalizedMessage(), e);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
+        } catch (JSONException | IOException e) {
+            log.error(e.getLocalizedMessage(), e);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String jobId = options.valueOf(optionParser.INVENTORY_LISTING);
+        return Optional.ofNullable(this.retrieveInventoryListing(vaultName, jobId));
+    }
+
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.INVENTORY_LISTING) && options.hasArgument(optionParser.INVENTORY_LISTING);
+    }
 }

@@ -25,18 +25,23 @@ package de.kopis.glacier.commands;
  */
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.model.DescribeVaultOutput;
 import com.amazonaws.services.glacier.model.ListVaultsRequest;
 import com.amazonaws.services.glacier.model.ListVaultsResult;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sqs.AmazonSQSClient;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
 import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 public class ListVaultCommand extends AbstractCommand {
 
@@ -44,26 +49,34 @@ public class ListVaultCommand extends AbstractCommand {
         super(endpoint, credentials);
     }
 
-    private void listVaults() {
+    public ListVaultCommand(final URL endpoint, AmazonGlacierClient client, AmazonSQSClient sqs, AmazonSNSClient sns) {
+        super(endpoint, client, sqs, sns);
+    }
+
+    private CommandResult listVaults() {
         log.info("Listing all vaults...");
 
+        CommandResult result = null;
         try {
             final ListVaultsRequest listVaultsRequest = new ListVaultsRequest();
             final ListVaultsResult listVaultsResult = client.listVaults(listVaultsRequest);
             final List<DescribeVaultOutput> vaults = listVaultsResult.getVaultList();
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             for (DescribeVaultOutput vault : vaults) {
-                new VaultPrinter().printVault(vault, System.out);
+                new VaultPrinter().printVault(vault, baos);
             }
-        } catch(AmazonServiceException e) {
+            final String description = baos.toString();
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, description);
+        } catch (AmazonClientException e) {
             log.error("Can't list vaults.", e);
-        } catch(AmazonClientException e) {
-            log.error("Can't list vaults.", e);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
         }
+        return result;
     }
 
     @Override
-    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        listVaults();
+    public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return Optional.ofNullable(listVaults());
     }
 
     @Override

@@ -1,9 +1,9 @@
 package de.kopis.glacier.commands;
 
-import java.util.ArrayList;
-
-import joptsimple.OptionSet;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import joptsimple.OptionSet;
+
+import java.util.ArrayList;
 
 /*
  * #%L
@@ -32,58 +32,58 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 
 public final class CommandFactory {
 
-  private static ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>(9);
-  private static AbstractCommand defaultCommand = null;
+    private static ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>(9);
+    private static AbstractCommand defaultCommand = null;
 
-  /**
-   * Adds a command to the list of commands
-   * 
-   * @param command
-   */
-  public static void add(AbstractCommand command) {
-    commands.add(command);
-  }
-
-  /**
-   * Removes a command from the list of commands
-   * 
-   * @param command
-   */
-  public static void remove(AbstractCommand command) {
-    commands.remove(command);
-  }
-
-  /**
-   * Get the currently setted default command
-   * 
-   * @return AbstractCommand
-   */
-  public static AbstractCommand getDefaultCommand() {
-    return defaultCommand;
-  }
-
-  /**
-   * Sets the default command. This is used when no other command is valid.
-   * 
-   * @param command
-   */
-  public static void setDefaultCommand(AbstractCommand command) {
-    defaultCommand = command;
-  }
-
-  /**
-   * Gets the first valid command, based on the options specified
-   * 
-   * @param options
-   * @param optionParser
-   */
-  public static AbstractCommand get(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    for (AbstractCommand command : commands) {
-      if (command.valid(options, optionParser)) {
-        return command;
-      }
+    /**
+     * Adds a command to the list of commands
+     *
+     * @param command
+     */
+    public static void add(AbstractCommand command) {
+        commands.add(command);
     }
-    return defaultCommand;
-  }
+
+    /**
+     * Removes a command from the list of commands
+     *
+     * @param command
+     */
+    public static void remove(AbstractCommand command) {
+        commands.remove(command);
+    }
+
+    /**
+     * Get the currently setted default command
+     *
+     * @return AbstractCommand
+     */
+    public static AbstractCommand getDefaultCommand() {
+        return defaultCommand;
+    }
+
+    /**
+     * Sets the default command. This is used when no other command is valid.
+     *
+     * @param command
+     */
+    public static void setDefaultCommand(AbstractCommand command) {
+        defaultCommand = command;
+    }
+
+    /**
+     * Gets the first valid command, based on the options specified
+     *
+     * @param options
+     * @param optionParser
+     */
+    public static AbstractCommand get(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        for (AbstractCommand command : commands) {
+            if (command.valid(options, optionParser)) {
+                return command;
+            }
+        }
+        return defaultCommand;
+    }
 
 }

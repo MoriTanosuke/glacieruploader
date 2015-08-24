@@ -24,52 +24,57 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
-import joptsimple.OptionSet;
-
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.model.CreateVaultRequest;
 import com.amazonaws.services.glacier.model.CreateVaultResult;
 import com.amazonaws.services.glacier.model.DescribeVaultRequest;
 import com.amazonaws.services.glacier.model.DescribeVaultResult;
-
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
 import de.kopis.glacier.printers.VaultPrinter;
+import joptsimple.OptionSet;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
 
 public class CreateVaultCommand extends AbstractCommand {
-  public CreateVaultCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
-
-  public void createVault(final String vaultName) {
-    log.info("Creating vault " + vaultName + "...");
-
-    try {
-      final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
-      final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
-      log.info("Vault " + vaultName + " created. " + createVaultResult);
-      final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
-      final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
-      new VaultPrinter().printVault(describeVaultResult, System.out);
-    } catch (final AmazonServiceException e) {
-      log.error("Couldn't create vault.");
-    } catch (final AmazonClientException e) {
-      log.error("Couldn't create vault.");
+    public CreateVaultCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
     }
-  }
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    this.createVault(vaultName);
-  }
+    public CommandResult createVault(final String vaultName) {
+        log.info("Creating vault " + vaultName + "...");
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.CREATE_VAULT);
-  }
+        CommandResult result = null;
+        try {
+            final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
+            final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
+            log.info("Vault " + vaultName + " created. " + createVaultResult);
+            final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
+            final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
+
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            new VaultPrinter().printVault(describeVaultResult, baos);
+            final String description = baos.toString();
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, description);
+        } catch (AmazonClientException e) {
+            log.error("Couldn't create vault.");
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + e.getMessage(), e);
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        return Optional.ofNullable(this.createVault(vaultName));
+    }
+
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.CREATE_VAULT);
+    }
 }

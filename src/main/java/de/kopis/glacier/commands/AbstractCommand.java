@@ -24,55 +24,60 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
-import joptsimple.OptionSet;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
-
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
+import joptsimple.OptionSet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
 
 public abstract class AbstractCommand {
-  protected final Log log;
+    protected final Log log;
+    protected final Log cliLog = LogFactory.getLog("de.kopis.glacier.commandline");
 
-  protected AWSCredentials credentials = null;
-  protected AmazonGlacierClient client = null;
-  protected AmazonSQSClient sqs = null;
-  protected AmazonSNSClient sns = null;
+    protected AmazonGlacierClient client = null;
+    protected AmazonSQSClient sqs = null;
+    protected AmazonSNSClient sns = null;
 
-  public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
-    this.log = LogFactory.getLog(this.getClass());
-
-    if (credentials != null) {
-      this.credentials = new PropertiesCredentials(credentials);
-      this.client = new AmazonGlacierClient(this.credentials);
-      this.sqs = new AmazonSQSClient(this.credentials);
-      this.sns = new AmazonSNSClient(this.credentials);
+    public AbstractCommand(final URL endpoint) {
+        log = LogFactory.getLog(getClass());
+        if (endpoint != null) {
+            this.setEndpoint(endpoint);
+        }
     }
 
-    if (endpoint != null) {
-      this.setEndpoint(endpoint);
+    public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
+        this(endpoint);
+        final PropertiesCredentials creds = new PropertiesCredentials(credentials);
+        this.client = new AmazonGlacierClient(creds);
+        this.sqs = new AmazonSQSClient(creds);
+        this.sns = new AmazonSNSClient(creds);
     }
-  }
 
-  protected void setEndpoint(final URL endpoint) {
-    client.setEndpoint(endpoint.toExternalForm());
-    // TODO check if this really fixes #13
-    sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
-    sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
-  }
+    public AbstractCommand(final URL endpoint, AmazonGlacierClient client, AmazonSQSClient sqs, AmazonSNSClient sns) {
+        this(endpoint);
+        this.client = client;
+        this.sqs = sqs;
+        this.sns = sns;
+    }
 
-  public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);
+    protected void setEndpoint(final URL endpoint) {
+        client.setEndpoint(endpoint.toExternalForm());
+        // TODO check if this really fixes #13
+        sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
+        sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
+    }
 
-  public abstract boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser);
+    public abstract Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser);
+
+    public abstract boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser);
 
 }

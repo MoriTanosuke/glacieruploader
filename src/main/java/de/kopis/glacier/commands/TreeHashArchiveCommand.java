@@ -24,39 +24,45 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import com.amazonaws.services.glacier.TreeHashGenerator;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
+import joptsimple.OptionSet;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import joptsimple.OptionSet;
-
-import com.amazonaws.services.glacier.TreeHashGenerator;
-
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import java.util.Optional;
 
 public class TreeHashArchiveCommand extends AbstractCommand {
 
-	public TreeHashArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-		super(endpoint, credentials);
-	}
+    public TreeHashArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+    }
 
-	public void calculateTreeHash(File file) {
-		if (file.exists()) {
-			log.info(TreeHashGenerator.calculateTreeHash(file));
-		} else {
-			log.error(String.format("File '%s' not found", file.getAbsolutePath()));
-		}
-	}
+    public CommandResult calculateTreeHash(File file) {
+        CommandResult result = null;
+        if (file.exists()) {
+            String hash = TreeHashGenerator.calculateTreeHash(file);
+            log.info(hash);
+            result = new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "TreeHash created: " + hash);
+        } else {
+            String msg = String.format("File '%s' not found", file.getAbsolutePath());
+            log.error(msg);
+            result = new CommandResult(CommandResult.CommandResultStatus.FAILURE, "Can not create vault: " + msg);
+        }
+        return result;
+    }
 
-	@Override
-	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-		final File file = options.valueOf(optionParser.CALCULATE_HASH);
-		this.calculateTreeHash(file);
-	}
+    @Override
+    public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final File file = options.valueOf(optionParser.CALCULATE_HASH);
+        return Optional.ofNullable(this.calculateTreeHash(file));
+    }
 
-	@Override
-	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-		return options.has(optionParser.CALCULATE_HASH);
-	}
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.CALCULATE_HASH);
+    }
 
 }

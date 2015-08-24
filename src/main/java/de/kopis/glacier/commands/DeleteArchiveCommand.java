@@ -24,41 +24,42 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.CommandResult;
+import joptsimple.OptionSet;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import joptsimple.OptionSet;
-
-import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
-
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import java.util.Optional;
 
 public class DeleteArchiveCommand extends AbstractCommand {
 
-  public DeleteArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+    public DeleteArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+    }
 
-  public void delete(final String vaultName, final String archiveId) {
-    log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
+    public CommandResult delete(final String vaultName, final String archiveId) {
+        log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
 
-    final DeleteArchiveRequest deleteRequest = new DeleteArchiveRequest(vaultName, archiveId);
-    client.deleteArchive(deleteRequest);
+        final DeleteArchiveRequest deleteRequest = new DeleteArchiveRequest(vaultName, archiveId);
+        client.deleteArchive(deleteRequest);
 
-    log.info("Archive " + archiveId + " deletion started from vault " + vaultName + ".");
-  }
+        log.info("Archive " + archiveId + " deletion started from vault " + vaultName + ".");
+        return new CommandResult(CommandResult.CommandResultStatus.SUCCESS, "Archive deleted.");
+    }
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    final String archiveId = options.valueOf(optionParser.DELETE_ARCHIVE);
-    this.delete(vaultName, archiveId);
-  }
+    @Override
+    public Optional<CommandResult> exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String archiveId = options.valueOf(optionParser.DELETE_ARCHIVE);
+        return Optional.ofNullable(this.delete(vaultName, archiveId));
+    }
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.DELETE_ARCHIVE) && options.hasArgument(optionParser.DELETE_ARCHIVE);
-  }
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.DELETE_ARCHIVE) && options.hasArgument(optionParser.DELETE_ARCHIVE);
+    }
 
 }
