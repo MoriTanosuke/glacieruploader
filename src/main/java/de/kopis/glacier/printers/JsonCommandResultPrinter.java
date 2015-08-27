@@ -24,6 +24,8 @@ package de.kopis.glacier.printers;
  * #L%
  */
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import de.kopis.glacier.commands.CommandResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +41,15 @@ public class JsonCommandResultPrinter {
         //TODO create JSON representation of CommandResult
         final PrintWriter pw = new PrintWriter(out);
         pw.write("{status: '" + result.getStatus() + "', message: '" + result.getMessage() + "'");
+
+        Optional<? extends AmazonClientException> ex = result.getException();
+        if (ex.isPresent()) {
+            AmazonClientException exception = ex.get();
+            // if we have am AmazonServiceException, add the RequestID for reference
+            if (exception instanceof AmazonServiceException) {
+                pw.write(", requestId: '" + ((AmazonServiceException) exception).getRequestId() + "'");
+            }
+        }
 
         final Optional<String> originalMessage = result.getOriginalMessage();
         if (originalMessage.isPresent()) {

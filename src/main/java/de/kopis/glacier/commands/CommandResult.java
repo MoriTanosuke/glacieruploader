@@ -44,8 +44,8 @@ public class CommandResult {
     private final CommandResultStatus status;
     private Optional<? extends AmazonClientException> exception;
 
-    public CommandResult(CommandResultStatus failure, String message, Optional<String> originalMessage, Optional<? extends AmazonClientException> exception) {
-        this(failure, message, originalMessage);
+    public CommandResult(CommandResultStatus status, String message, Optional<String> originalMessage, Optional<? extends AmazonClientException> exception) {
+        this(status, message, originalMessage);
         this.exception = exception;
     }
 
