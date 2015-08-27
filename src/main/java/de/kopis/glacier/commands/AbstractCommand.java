@@ -47,29 +47,30 @@ public abstract class AbstractCommand {
     protected AmazonSQSClient sqs = null;
     protected AmazonSNSClient sns = null;
 
-    public AbstractCommand(final URL endpoint) {
+    private AbstractCommand() {
         log = LogFactory.getLog(getClass());
-        if (endpoint != null) {
-            this.setEndpoint(endpoint);
-        }
     }
 
     public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
-        this(endpoint);
+        this();
+        log.debug("Using credentials " + credentials);
         final PropertiesCredentials creds = new PropertiesCredentials(credentials);
         this.client = new AmazonGlacierClient(creds);
         this.sqs = new AmazonSQSClient(creds);
         this.sns = new AmazonSNSClient(creds);
+        this.setEndpoint(endpoint);
     }
 
     public AbstractCommand(final URL endpoint, AmazonGlacierClient client, AmazonSQSClient sqs, AmazonSNSClient sns) {
-        this(endpoint);
+        this();
         this.client = client;
         this.sqs = sqs;
         this.sns = sns;
+        this.setEndpoint(endpoint);
     }
 
     protected void setEndpoint(final URL endpoint) {
+        log.debug("Using endpoint: " + endpoint);
         client.setEndpoint(endpoint.toExternalForm());
         // TODO check if this really fixes #13
         sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));

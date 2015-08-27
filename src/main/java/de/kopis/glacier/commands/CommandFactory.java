@@ -69,6 +69,7 @@ public final class CommandFactory {
      */
     public static void setDefaultCommand(AbstractCommand command) {
         defaultCommand = command;
+        add(command);
     }
 
     /**

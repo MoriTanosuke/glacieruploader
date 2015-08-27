@@ -27,8 +27,10 @@ package de.kopis.glacier;
 
 import de.kopis.glacier.commands.*;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.JsonCommandResultPrinter;
 import joptsimple.OptionSet;
 import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.commons.logging.Log;
@@ -37,12 +39,15 @@ import org.apache.commons.logging.LogFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Optional;
 
 public final class GlacierUploader {
 
     private static final Log log = LogFactory.getLog(GlacierUploader.class);
 
     public static void main(String[] args) {
+        log.debug("program args: " + Arrays.deepToString(args));
         // Get our options
         final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(setupConfig());
         final OptionSet options;
@@ -64,51 +69,64 @@ public final class GlacierUploader {
         config.addConfiguration(new SystemConfiguration());
         try {
             File configFile = new File(System.getProperty("user.home"), ".glacieruploaderrc");
-            if (configFile.exists() && configFile.canRead()) {
-                config.addConfiguration(new PropertiesConfiguration(configFile));
-            } else {
-                log.warn(String.format("Config file '%s' not found", configFile.getCanonicalPath()));
-            }
+            addConfigFile(config, configFile);
+            File localConfigFile = new File(".", ".glacieruploaderrc");
+            addConfigFile(config, localConfigFile);
         } catch (Exception e) {
             log.warn("Can not read configuration", e);
         }
         return config;
     }
 
+    private static void addConfigFile(CompositeConfiguration config, File configFile) throws ConfigurationException, IOException {
+        if (configFile.exists() && configFile.canRead()) {
+            config.addConfiguration(new PropertiesConfiguration(configFile));
+        } else {
+            log.warn(String.format("Config file '%s' not found", configFile.getCanonicalPath()));
+        }
+    }
+
     private static void findAndExecCommand(OptionSet options, GlacierUploaderOptionParser optionParser) {
         try {
-            // Set default
-            CommandFactory.setDefaultCommand(new HelpCommand());
-            CommandFactory.add(CommandFactory.getDefaultCommand());
 
             final File credentials = options.valueOf(optionParser.CREDENTIALS);
             final String string_endpoint = options.valueOf(optionParser.ENDPOINT);
+            final String format = options.valueOf(optionParser.FORMAT);
 
-            if (credentials != null && string_endpoint != null) {
+            final URL endpoint = new URL(optionParser.formatEndpointUrl(string_endpoint));
 
-                final URL endpoint = new URL(optionParser.formatEndpointUrl(string_endpoint));
+            log.info("Using end point: " + string_endpoint);
 
-                log.info("Using end point: " + string_endpoint);
-
-                // Add all commands to the factory
-                CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
-                CommandFactory.add(new ListVaultCommand(endpoint, credentials));
-                CommandFactory.add(new DeleteArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new DeleteVaultCommand(endpoint, credentials));
-                CommandFactory.add(new DownloadArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new ReceiveArchivesListCommand(endpoint, credentials));
-                CommandFactory.add(new RequestArchivesListCommand(endpoint, credentials));
-                CommandFactory.add(new TreeHashArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new UploadArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new UploadMultipartArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new AbortMultipartArchiveUploadCommand(endpoint, credentials));
-            }
+            // Add all commands to the factory
+            CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
+            CommandFactory.add(new ListVaultCommand(endpoint, credentials));
+            CommandFactory.add(new DeleteArchiveCommand(endpoint, credentials));
+            CommandFactory.add(new DeleteVaultCommand(endpoint, credentials));
+            CommandFactory.add(new DownloadArchiveCommand(endpoint, credentials));
+            CommandFactory.add(new ReceiveArchivesListCommand(endpoint, credentials));
+            CommandFactory.add(new RequestArchivesListCommand(endpoint, credentials));
+            CommandFactory.add(new TreeHashArchiveCommand(endpoint, credentials));
+            CommandFactory.add(new UploadArchiveCommand(endpoint, credentials));
+            CommandFactory.add(new UploadMultipartArchiveCommand(endpoint, credentials));
+            CommandFactory.add(new AbortMultipartArchiveUploadCommand(endpoint, credentials));
+            // Set default
+            CommandFactory.setDefaultCommand(new HelpCommand(endpoint, credentials));
 
             // Find a valid one
             AbstractCommand command = CommandFactory.get(options, optionParser);
 
             // Execute it
-            command.exec(options, optionParser);
+            Optional<CommandResult> result = command.exec(options, optionParser);
+            if (result.isPresent()) {
+                // TODO print result using format
+                JsonCommandResultPrinter printer;
+                switch (format) {
+                    default:
+                        printer = new JsonCommandResultPrinter();
+                        break;
+                }
+                printer.print(System.out, result.get());
+            }
 
         } catch (final IOException e) {
             log.error("Ooops, something is wrong with the system configuration", e);

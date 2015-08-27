@@ -52,6 +52,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
     public final OptionSpec<Long> PARTSIZE;
     public final OptionSpec<Void> HELP;
     public final OptionSpec<String> ABORT_UPLOAD;
+    public final OptionSpec<String> FORMAT;
 
     public GlacierUploaderOptionParser(final Configuration config) {
         super();
@@ -71,6 +72,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
         this.PARTSIZE = this.parsePartSize(config);
         this.HELP = this.parseHelp(config);
         this.ABORT_UPLOAD = this.parseAbortUpload(config);
+        this.FORMAT = this.format(config);
     }
 
     public String formatEndpointUrl(String endpoint) {
@@ -259,5 +261,13 @@ public class GlacierUploaderOptionParser extends OptionParser {
                 add("x");
             }
         }, "aborts an existing upload request - requires upload id").withRequiredArg().ofType(String.class);
+    }
+
+    private OptionSpec<String> format(Configuration config) {
+        return acceptsAll(new ArrayList<String>() {
+            {
+                add("format");
+            }
+        }, "print command results using this format").withRequiredArg().ofType(String.class).defaultsTo("json");
     }
 }
