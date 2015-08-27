@@ -38,7 +38,7 @@ public class JsonCommandResultPrinter {
     public void print(OutputStream out, CommandResult result) {
         //TODO create JSON representation of CommandResult
         final PrintWriter pw = new PrintWriter(out);
-        pw.write("{status: " + result.getStatus() + ", message: '" + result.getMessage() + "'");
+        pw.write("{status: '" + result.getStatus() + "', message: '" + result.getMessage() + "'");
 
         final Optional<String> originalMessage = result.getOriginalMessage();
         if (originalMessage.isPresent()) {
