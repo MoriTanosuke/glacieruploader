@@ -101,7 +101,7 @@ Multipart Upload archive
 
 Available since 0.0.8.
 
-    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --multipartupload /path/to/my/file.zip --partsize 10485760
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --multipartupload /path/to/my/file.zip --partsize 8388608
     
     Multipart uploading upload file.zip...
     Using endpoint https://glacier.eu-west-1.amazonaws.com
