@@ -112,6 +112,9 @@ Available since 0.0.8.
 
 This will return an archive id which you can use to retrieve the archive again later.
 
+For a discussion about the *partsize* see 
+https://forums.aws.amazon.com/message.jspa?messageID=482320
+
 Download archive
 ----------------
 
