@@ -49,6 +49,8 @@ Command-line options
     -u, --upload <File>                     start uploading a new archive          
     -v, --vault                             name of your vault   
 
+If you have issues with command line parameters containing an `-`, put the parameter in quotes (`"`).
+
 Configuration file
 ==================
 
