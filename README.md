@@ -8,7 +8,7 @@ How to get it
 
 Either [download a binary][0] or [build the software yourself from sourcecode][5].
 
-[![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.png?branch=fix-regions-archive-download)](https://travis-ci.org/MoriTanosuke/glacieruploader)
+[![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.svg?branch=fix-50)](https://travis-ci.org/MoriTanosuke/glacieruploader)
 
 How to run
 ==========
