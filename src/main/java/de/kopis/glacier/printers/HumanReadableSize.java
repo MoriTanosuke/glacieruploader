@@ -1,8 +1,11 @@
 package de.kopis.glacier.printers;
 
+import org.apache.log4j.Logger;
+
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,32 +36,37 @@ import java.util.regex.Pattern;
  */
 
 public class HumanReadableSize {
-	
+  private static final Logger LOG = Logger.getLogger(HumanReadableSize.class);
+
   public static String parse(final Long size) throws IllegalArgumentException {
-	    return parse(size.toString());
+    return parse(size.toString());
   }
-	
+
   public static String parse(final Integer size) throws IllegalArgumentException {
     return parse(size.toString());
   }
 
   public static String parse(final String size) throws IllegalArgumentException {
+    LOG.debug("Parsing '" + size + "'");
     final String[] sanitizedSize = sanitize(size);
-    double sizeAsDouble = 0;
+    BigDecimal sizeAsNumber = null;
     try {
       // parse as US value, because WTF? java default?
-      sizeAsDouble = NumberFormat.getInstance(Locale.US).parse(sanitizedSize[0]).doubleValue();
+      Number parsed = NumberFormat.getInstance(Locale.US).parse(sanitizedSize[0]);
+      sizeAsNumber = new BigDecimal(parsed.toString());
     } catch (final ParseException e) {
       throw new IllegalArgumentException("Can not parse Number", e);
     }
+    LOG.debug("Parsed as number: " + sizeAsNumber);
     String humanReadableSize = "";
     String sizeClass = sanitizedSize[1];
-    if (sizeAsDouble >= 1024) {
+    if (sizeAsNumber.longValue() >= 1024L) {
       sizeClass = getLargerSizeClass(sanitizedSize[1]);
-      humanReadableSize = parse(sizeAsDouble / 1024.0 + " " + sizeClass);
+      humanReadableSize = parse(sizeAsNumber.divide(new BigDecimal("1024")) + " " + sizeClass);
     } else {
-      humanReadableSize = round(Double.toString(sizeAsDouble), 2, BigDecimal.ROUND_UP) + sizeClass;
+      humanReadableSize = round(new BigDecimal(sizeAsNumber.toString()), 2, BigDecimal.ROUND_UP) + sizeClass;
     }
+    LOG.debug("Parsed: " + humanReadableSize);
     return humanReadableSize;
   }
 
@@ -75,10 +83,12 @@ public class HumanReadableSize {
     } else if ("TB".equals(oldSizeClass)) {
       newSizeClass = "PT";
     }
+    LOG.debug("previous sizeClass: " + oldSizeClass + " new sizeClass: " + newSizeClass);
     return newSizeClass;
   }
 
   public static String[] sanitize(final String size) {
+    LOG.debug("Sanitizing '" + size + "'");
     final Pattern patternClass = Pattern.compile("([0-9.]+)\\s*?([kMGTP]?B)");
     final Matcher m = patternClass.matcher(size);
     String[] s = new String[] { size, "B" };
@@ -88,13 +98,14 @@ public class HumanReadableSize {
       s = new String[] { pureSize, sizeClass };
     }
 
+    LOG.debug("Sanitized: " + Arrays.deepToString(s));
     return s;
   }
 
-  private static String round(final String unrounded, final int precision, final int roundingMode) {
-    final BigDecimal bd = new BigDecimal(unrounded);
-    final BigDecimal rounded = bd.setScale(precision, roundingMode);
+  private static String round(final BigDecimal unrounded, final int precision, final int roundingMode) {
+    LOG.debug("Rounding '" + unrounded + "' to " + precision + " precision");
+    final BigDecimal rounded = unrounded.setScale(precision, roundingMode);
+    LOG.debug("Rounded: " + rounded);
     return rounded.toString();
   }
-
 }

@@ -1,6 +1,7 @@
 package de.kopis.glacier.printers;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -58,5 +59,20 @@ public class HumanReadableSizeTest {
   @Test
   public void sanitizeKilTerabytes() {
     assertArrayEquals(new String[] { "123456789", "TB" }, HumanReadableSize.sanitize("123456789TB"));
+  }
+
+  @Test
+  public void terabyteLargeSizeFailed() {
+    assertEquals("68.44TB", HumanReadableSize.parse("75240135239680"));
+  }
+
+  @Test
+  public void gigabyteLargeSizeFailed() {
+    assertEquals("68.44GB", HumanReadableSize.parse("73476694570"));
+  }
+
+  @Test
+  public void megabyteLargeSizeFailed() {
+    assertEquals("68.44MB", HumanReadableSize.parse("71754584"));
   }
 }
