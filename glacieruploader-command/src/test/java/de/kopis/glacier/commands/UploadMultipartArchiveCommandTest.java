@@ -31,9 +31,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.kopis.glacier.GlacierUploader;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
+import org.apache.commons.configuration.CompositeConfiguration;
 import org.junit.Test;
 
 public class UploadMultipartArchiveCommandTest {
@@ -43,9 +43,9 @@ public class UploadMultipartArchiveCommandTest {
         tempFile.deleteOnExit();
         System.out.println("Using temp file: " + tempFile.getAbsolutePath());
 
-        // set up the option parse like in real code
-        // not possible to test it in the real class though without mocking the whole world :-(
-        final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(GlacierUploader.setupConfig());
+        // use a dummy configuration
+        final CompositeConfiguration dummyConfig = new CompositeConfiguration();
+        final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(dummyConfig);
         final OptionSet options = optionParser.parse("-m", tempFile.getAbsolutePath());
         final List<File> optionsFiles = options.valuesOf(optionParser.MULTIPARTUPLOAD);
         final List<String> nonOptions = options.nonOptionArguments();

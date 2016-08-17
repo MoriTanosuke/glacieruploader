@@ -14,6 +14,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>de.kopis.glacier</groupId>
+            <artifactId>glacieruploader-command</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.kopis.glacier</groupId>
+            <artifactId>glacieruploader-parsers</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
@@ -37,11 +48,6 @@
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
             <version>4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk</artifactId>
-            <version>1.9.6</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

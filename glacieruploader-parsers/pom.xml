@@ -10,30 +10,18 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>glacieruploader-command</artifactId>
+    <artifactId>glacieruploader-parsers</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>de.kopis.glacier</groupId>
-            <artifactId>glacieruploader-printers</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.kopis.glacier</groupId>
-            <artifactId>glacieruploader-parsers</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk</artifactId>
-            <version>1.9.6</version>
-        </dependency>
-
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
             <version>4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.9</version>
         </dependency>
 
         <dependency>

@@ -56,6 +56,8 @@
     </properties>
 
     <modules>
+        <module>glacieruploader-printers</module>
+        <module>glacieruploader-parsers</module>
         <module>glacieruploader-impl</module>
         <module>glacieruploader-command</module>
     </modules>
