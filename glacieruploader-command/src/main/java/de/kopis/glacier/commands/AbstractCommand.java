@@ -35,11 +35,10 @@ import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 public abstract class AbstractCommand {
-  protected final Log log;
+  protected final Logger log;
 
   protected AWSCredentials credentials = null;
   protected AmazonGlacierClient client = null;
@@ -47,7 +46,7 @@ public abstract class AbstractCommand {
   protected AmazonSNSClient sns = null;
 
   public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
-    this.log = LogFactory.getLog(this.getClass());
+    this.log = Logger.getLogger(this.getClass());
 
     if (credentials != null) {
       this.credentials = new PropertiesCredentials(credentials);
