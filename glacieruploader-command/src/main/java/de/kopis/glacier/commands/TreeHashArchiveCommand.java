@@ -32,27 +32,27 @@ import joptsimple.OptionSet;
 
 public class TreeHashArchiveCommand extends AbstractCommand {
 
-	public TreeHashArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-		super(endpoint, credentials);
-	}
+    public TreeHashArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+    }
 
-	public void calculateTreeHash(File file) {
-		if (file.exists()) {
-			log.info(TreeHashGenerator.calculateTreeHash(file));
-		} else {
-			log.error(String.format("File '%s' not found", file.getAbsolutePath()));
-		}
-	}
+    public void calculateTreeHash(File file) {
+        if (file.exists()) {
+            log.info(TreeHashGenerator.calculateTreeHash(file));
+        } else {
+            log.error(String.format("File '%s' not found", file.getAbsolutePath()));
+        }
+    }
 
-	@Override
-	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-		final File file = options.valueOf(optionParser.CALCULATE_HASH);
-		this.calculateTreeHash(file);
-	}
+    @Override
+    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final File file = options.valueOf(optionParser.CALCULATE_HASH);
+        this.calculateTreeHash(file);
+    }
 
-	@Override
-	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-		return options.has(optionParser.CALCULATE_HASH);
-	}
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.CALCULATE_HASH);
+    }
 
 }

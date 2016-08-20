@@ -32,32 +32,32 @@ import joptsimple.OptionSet;
 
 public class DownloadArchiveCommand extends AbstractCommand {
 
-  public DownloadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+    public DownloadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+    }
 
-  public void download(final String vaultName, final String archiveId, final String targetFile) {
-    final File downloadFile = new File(targetFile);
-    download(vaultName, archiveId, downloadFile);
-  }
+    public void download(final String vaultName, final String archiveId, final String targetFile) {
+        final File downloadFile = new File(targetFile);
+        download(vaultName, archiveId, downloadFile);
+    }
 
-  public void download(final String vaultName, final String archiveId, final File targetFile) {
-    log.info("Downloading archive " + archiveId + " from vault " + vaultName + "...");
-    final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
-    atm.download(vaultName, archiveId, targetFile);
-    log.info("Archive downloaded to " + targetFile);
-  }
+    public void download(final String vaultName, final String archiveId, final File targetFile) {
+        log.info("Downloading archive " + archiveId + " from vault " + vaultName + "...");
+        final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
+        atm.download(vaultName, archiveId, targetFile);
+        log.info("Archive downloaded to " + targetFile);
+    }
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    final String archiveId = options.valueOf(optionParser.DOWNLOAD);
-    final File targetFile = options.valueOf(optionParser.TARGET_FILE);
-    this.download(vaultName, archiveId, targetFile);
-  }
+    @Override
+    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String archiveId = options.valueOf(optionParser.DOWNLOAD);
+        final File targetFile = options.valueOf(optionParser.TARGET_FILE);
+        this.download(vaultName, archiveId, targetFile);
+    }
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.DOWNLOAD) && options.has(optionParser.TARGET_FILE);
-  }
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.DOWNLOAD) && options.has(optionParser.TARGET_FILE);
+    }
 }

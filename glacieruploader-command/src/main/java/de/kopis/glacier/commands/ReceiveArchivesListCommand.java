@@ -38,47 +38,47 @@ import joptsimple.OptionSet;
 
 public class ReceiveArchivesListCommand extends AbstractCommand {
 
-  private final VaultInventoryPrinter printer;
+    private final VaultInventoryPrinter printer;
 
-  public ReceiveArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-    printer = new VaultInventoryPrinter();
-  }
-
-  public void retrieveInventoryListing(final String vaultName, final String jobId) {
-    log.info("Retrieving inventory for job id " + jobId + "...");
-
-    try {
-      final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
-      final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
-      final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
-      String content = "";
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        content += line;
-      }
-      reader.close();
-      // TODO use dependency injection here
-      printer.setInventory(content);
-      printer.printInventory(System.out);
-    } catch (final AmazonClientException e) {
-      log.error(e.getLocalizedMessage(), e);
-    } catch (final JSONException e) {
-      log.error(e.getLocalizedMessage(), e);
-    } catch (final IOException e) {
-      log.error(e.getLocalizedMessage(), e);
-    }
+    public ReceiveArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+        printer = new VaultInventoryPrinter();
     }
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    final String jobId = options.valueOf(optionParser.INVENTORY_LISTING);
-    this.retrieveInventoryListing(vaultName, jobId);
-  }
+    public void retrieveInventoryListing(final String vaultName, final String jobId) {
+        log.info("Retrieving inventory for job id " + jobId + "...");
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.INVENTORY_LISTING) && options.hasArgument(optionParser.INVENTORY_LISTING);
-  }
+        try {
+            final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
+            final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
+            String content = "";
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                content += line;
+            }
+            reader.close();
+            // TODO use dependency injection here
+            printer.setInventory(content);
+            printer.printInventory(System.out);
+        } catch (final AmazonClientException e) {
+            log.error(e.getLocalizedMessage(), e);
+        } catch (final JSONException e) {
+            log.error(e.getLocalizedMessage(), e);
+        } catch (final IOException e) {
+            log.error(e.getLocalizedMessage(), e);
+        }
+    }
+
+    @Override
+    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String jobId = options.valueOf(optionParser.INVENTORY_LISTING);
+        this.retrieveInventoryListing(vaultName, jobId);
+    }
+
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.INVENTORY_LISTING) && options.hasArgument(optionParser.INVENTORY_LISTING);
+    }
 }

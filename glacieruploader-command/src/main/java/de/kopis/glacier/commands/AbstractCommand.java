@@ -36,37 +36,37 @@ import joptsimple.OptionSet;
 import org.apache.log4j.Logger;
 
 public abstract class AbstractCommand {
-  protected final Logger log;
+    protected final Logger log;
 
-  protected AWSCredentials credentials = null;
-  protected AmazonGlacierClient client = null;
-  protected AmazonSQSClient sqs = null;
-  protected AmazonSNSClient sns = null;
+    protected AWSCredentials credentials = null;
+    protected AmazonGlacierClient client = null;
+    protected AmazonSQSClient sqs = null;
+    protected AmazonSNSClient sns = null;
 
-  public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
-    this.log = Logger.getLogger(this.getClass());
+    public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
+        this.log = Logger.getLogger(this.getClass());
 
-    if (credentials != null) {
-      this.credentials = new PropertiesCredentials(credentials);
-      this.client = new AmazonGlacierClient(this.credentials);
-      this.sqs = new AmazonSQSClient(this.credentials);
-      this.sns = new AmazonSNSClient(this.credentials);
+        if (credentials != null) {
+            this.credentials = new PropertiesCredentials(credentials);
+            this.client = new AmazonGlacierClient(this.credentials);
+            this.sqs = new AmazonSQSClient(this.credentials);
+            this.sns = new AmazonSNSClient(this.credentials);
+        }
+
+        if (endpoint != null) {
+            this.setEndpoint(endpoint);
+        }
     }
 
-    if (endpoint != null) {
-      this.setEndpoint(endpoint);
-    }
-    }
-
-  protected void setEndpoint(final URL endpoint) {
-    client.setEndpoint(endpoint.toExternalForm());
-    // TODO check if this really fixes #13
-    sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
-    sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
+    protected void setEndpoint(final URL endpoint) {
+        client.setEndpoint(endpoint.toExternalForm());
+        // TODO check if this really fixes #13
+        sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
+        sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
     }
 
-  public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);
+    public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);
 
-  public abstract boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser);
+    public abstract boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser);
 
 }

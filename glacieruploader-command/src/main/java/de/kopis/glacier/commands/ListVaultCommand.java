@@ -37,9 +37,11 @@ import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
 
 public class ListVaultCommand extends AbstractCommand {
+    private final VaultPrinter vaultPrinter;
 
     public ListVaultCommand(final URL endpoint, final File credentials) throws IOException {
         super(endpoint, credentials);
+        vaultPrinter = new VaultPrinter();
     }
 
     private void listVaults() {
@@ -50,7 +52,7 @@ public class ListVaultCommand extends AbstractCommand {
             final ListVaultsResult listVaultsResult = client.listVaults(listVaultsRequest);
             final List<DescribeVaultOutput> vaults = listVaultsResult.getVaultList();
             for (DescribeVaultOutput vault : vaults) {
-                new VaultPrinter().printVault(vault, System.out);
+                vaultPrinter.printVault(vault, System.out);
             }
         } catch (AmazonServiceException e) {
             log.error("Can't list vaults.", e);

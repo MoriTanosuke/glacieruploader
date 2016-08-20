@@ -30,50 +30,50 @@ import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 
 public class VaultInventoryPrinter {
-  private String inventory;
+    private String inventory;
 
-  public VaultInventoryPrinter() {
-  }
-
-  public VaultInventoryPrinter(final String inventory) {
-    this.inventory = inventory;
-  }
-
-  public String getInventory() {
-    return inventory;
-  }
-
-  public void setInventory(final String inventory) {
-    this.inventory = inventory;
-  }
-
-  public void printInventory(final OutputStream out) throws JSONException {
-    final PrintWriter o = new PrintWriter(out);
-
-    final JSONObject json = new JSONObject(inventory);
-    final String vaultArn = json.getString("VaultARN");
-    o.println("ARN:\t\t\t\t" + vaultArn);
-    final JSONArray archives = json.getJSONArray("ArchiveList");
-    for (int i = 0; i < archives.length(); i++) {
-      printArchive(o, (JSONObject) archives.get(i));
+    public VaultInventoryPrinter() {
     }
 
-    o.flush();
+    public VaultInventoryPrinter(final String inventory) {
+        this.inventory = inventory;
     }
 
-  private void printArchive(final PrintWriter o, final JSONObject archive) throws JSONException {
-    o.println("------------------------------------------------------------------------------");
-    o.println("Description:\t\t\t" + archive.get("ArchiveDescription"));
-    o.println("Archive ID:\t\t\t" + archive.get("ArchiveId"));
-    o.println("CreationDate:\t\t\t" + archive.get("CreationDate"));
-    o.println("Size:\t\t\t\t" + printArchiveSize(archive));
-    o.println("SHA:\t\t\t\t" + archive.get("SHA256TreeHash"));
-  }
+    public String getInventory() {
+        return inventory;
+    }
 
-  public String printArchiveSize(final JSONObject archive) throws JSONException {
-    final String size = archive.getString("Size");
-    final String humanReadableSize = HumanReadableSize.parse(size);
-    return size + " (" + humanReadableSize + ")";
-  }
+    public void setInventory(final String inventory) {
+        this.inventory = inventory;
+    }
+
+    public void printInventory(final OutputStream out) throws JSONException {
+        final PrintWriter o = new PrintWriter(out);
+
+        final JSONObject json = new JSONObject(inventory);
+        final String vaultArn = json.getString("VaultARN");
+        o.println("ARN:\t\t\t\t" + vaultArn);
+        final JSONArray archives = json.getJSONArray("ArchiveList");
+        for (int i = 0; i < archives.length(); i++) {
+            printArchive(o, (JSONObject) archives.get(i));
+        }
+
+        o.flush();
+    }
+
+    private void printArchive(final PrintWriter o, final JSONObject archive) throws JSONException {
+        o.println("------------------------------------------------------------------------------");
+        o.println("Description:\t\t\t" + archive.get("ArchiveDescription"));
+        o.println("Archive ID:\t\t\t" + archive.get("ArchiveId"));
+        o.println("CreationDate:\t\t\t" + archive.get("CreationDate"));
+        o.println("Size:\t\t\t\t" + printArchiveSize(archive));
+        o.println("SHA:\t\t\t\t" + archive.get("SHA256TreeHash"));
+    }
+
+    public String printArchiveSize(final JSONObject archive) throws JSONException {
+        final String size = archive.getString("Size");
+        final String humanReadableSize = HumanReadableSize.parse(size);
+        return size + " (" + humanReadableSize + ")";
+    }
 
 }

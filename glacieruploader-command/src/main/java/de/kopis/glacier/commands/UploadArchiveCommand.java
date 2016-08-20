@@ -34,35 +34,35 @@ import joptsimple.OptionSet;
 
 public class UploadArchiveCommand extends AbstractCommand {
 
-  public UploadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
-
-  public void upload(final String vaultName, final File uploadFile) {
-    log.info("Starting to upload " + uploadFile + " to vault " + vaultName + "...");
-    try {
-      final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
-      final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
-      log.info("Uploaded archive " + archiveId);
-    } catch (final IOException e) {
-      log.error("Something went wrong while uploading " + uploadFile + vaultName + "to vault " + ".", e);
-    }
+    public UploadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
     }
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    final List<File> optionsFiles = options.valuesOf(optionParser.UPLOAD);
-    final List<String> nonOptions = options.nonOptionArguments();
-    final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
-
-    for (File uploadFile : files) {
-      this.upload(vaultName, uploadFile);
+    public void upload(final String vaultName, final File uploadFile) {
+        log.info("Starting to upload " + uploadFile + " to vault " + vaultName + "...");
+        try {
+            final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
+            final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
+            log.info("Uploaded archive " + archiveId);
+        } catch (final IOException e) {
+            log.error("Something went wrong while uploading " + uploadFile + vaultName + "to vault " + ".", e);
+        }
     }
+
+    @Override
+    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        final List<File> optionsFiles = options.valuesOf(optionParser.UPLOAD);
+        final List<String> nonOptions = options.nonOptionArguments();
+        final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
+
+        for (File uploadFile : files) {
+            this.upload(vaultName, uploadFile);
+        }
     }
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.UPLOAD);
-  }
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.UPLOAD);
+    }
 }

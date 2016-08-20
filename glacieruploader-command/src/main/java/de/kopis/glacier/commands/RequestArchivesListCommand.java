@@ -35,35 +35,35 @@ import joptsimple.OptionSet;
 
 public class RequestArchivesListCommand extends AbstractCommand {
 
-  public RequestArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
-
-  public void startInventoryListing(final String vaultName) {
-    log.info("Starting inventory listing for vault " + vaultName + "...");
-
-    try {
-      final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
-              new JobParameters().withType("inventory-retrieval"));
-
-      final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
-      final String jobId = initJobResult.getJobId();
-      log.info("Inventory Job created with ID" + System.getProperty("line.separator") + jobId);
-    } catch (final AmazonClientException e) {
-      log.error(e.getLocalizedMessage(), e);
+    public RequestArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
     }
 
-    // TODO wait for job, but it could take about 4 hours says the SDK...
+    public void startInventoryListing(final String vaultName) {
+        log.info("Starting inventory listing for vault " + vaultName + "...");
+
+        try {
+            final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
+                    new JobParameters().withType("inventory-retrieval"));
+
+            final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
+            final String jobId = initJobResult.getJobId();
+            log.info("Inventory Job created with ID" + System.getProperty("line.separator") + jobId);
+        } catch (final AmazonClientException e) {
+            log.error(e.getLocalizedMessage(), e);
+        }
+
+        // TODO wait for job, but it could take about 4 hours says the SDK...
     }
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    this.startInventoryListing(vaultName);
-  }
+    @Override
+    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        this.startInventoryListing(vaultName);
+    }
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.INVENTORY_LISTING) && !options.hasArgument(optionParser.INVENTORY_LISTING);
-  }
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.INVENTORY_LISTING) && !options.hasArgument(optionParser.INVENTORY_LISTING);
+    }
 }

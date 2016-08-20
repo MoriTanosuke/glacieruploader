@@ -1,6 +1,3 @@
-/**
- *
- */
 package de.kopis.glacier.commands;
 
 /*

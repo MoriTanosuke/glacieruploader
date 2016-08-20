@@ -32,29 +32,29 @@ import joptsimple.OptionSet;
 
 public class DeleteArchiveCommand extends AbstractCommand {
 
-  public DeleteArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-    super(endpoint, credentials);
-  }
+    public DeleteArchiveCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+    }
 
-  public void delete(final String vaultName, final String archiveId) {
-    log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
+    public void delete(final String vaultName, final String archiveId) {
+        log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
 
-    final DeleteArchiveRequest deleteRequest = new DeleteArchiveRequest(vaultName, archiveId);
-    client.deleteArchive(deleteRequest);
+        final DeleteArchiveRequest deleteRequest = new DeleteArchiveRequest(vaultName, archiveId);
+        client.deleteArchive(deleteRequest);
 
-    log.info("Archive " + archiveId + " deletion started from vault " + vaultName + ".");
-  }
+        log.info("Archive " + archiveId + " deletion started from vault " + vaultName + ".");
+    }
 
-  @Override
-  public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    final String vaultName = options.valueOf(optionParser.VAULT);
-    final String archiveId = options.valueOf(optionParser.DELETE_ARCHIVE);
-    this.delete(vaultName, archiveId);
-  }
+    @Override
+    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String archiveId = options.valueOf(optionParser.DELETE_ARCHIVE);
+        this.delete(vaultName, archiveId);
+    }
 
-  @Override
-  public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.DELETE_ARCHIVE) && options.hasArgument(optionParser.DELETE_ARCHIVE);
-  }
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.DELETE_ARCHIVE) && options.hasArgument(optionParser.DELETE_ARCHIVE);
+    }
 
 }
