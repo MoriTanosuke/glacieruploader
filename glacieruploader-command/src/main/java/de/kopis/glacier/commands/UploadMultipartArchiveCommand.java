@@ -2,12 +2,9 @@ package de.kopis.glacier.commands;
 
 /*
  * #%L
- * uploader
- * $Id:$
- * $HeadURL:$
+ * glacieruploader-command
  * %%
- * Copyright (C) 2012 Carsten Ringe
- * Copyright (C) 2013 Deux Huit Huit
+ * Copyright (C) 2012 - 2016 Carsten Ringe
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -16,11 +13,11 @@ package de.kopis.glacier.commands;
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public 
- * License along with this program.	If not, see
+ * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
@@ -119,7 +116,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
    *    http://aws.amazon.com/apache2.0
    */
   private String uploadParts(String uploadId, File file, final String vaultName, final Long partSize)
-      throws AmazonServiceException, NoSuchAlgorithmException, AmazonClientException, IOException {
+          throws NoSuchAlgorithmException, AmazonClientException, IOException {
     FileInputStream fileToUpload = null;
     String checksum = "";
     try {

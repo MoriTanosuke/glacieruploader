@@ -2,11 +2,9 @@ package de.kopis.glacier.commands;
 
 /*
  * #%L
- * glacieruploader
- * $Id:$
- * $HeadURL:$
+ * glacieruploader-command
  * %%
- * Copyright (C) 2012 - 2015 Carsten Ringe
+ * Copyright (C) 2012 - 2016 Carsten Ringe
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as

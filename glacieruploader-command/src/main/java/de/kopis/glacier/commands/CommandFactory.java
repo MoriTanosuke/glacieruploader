@@ -1,18 +1,10 @@
 package de.kopis.glacier.commands;
 
-import java.util.ArrayList;
-
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import joptsimple.OptionSet;
-
 /*
  * #%L
- * uploader
- * $Id:$
- * $HeadURL:$
+ * glacieruploader-command
  * %%
- * Copyright (C) 2012 Carsten Ringe
- * Copyright (C) 2013 Deux Huit Huit
+ * Copyright (C) 2012 - 2016 Carsten Ringe
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -29,6 +21,11 @@ import joptsimple.OptionSet;
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
+import java.util.ArrayList;
+
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import joptsimple.OptionSet;
 
 public final class CommandFactory {
 
