@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.kopis.glacier.commands;
 
@@ -37,45 +37,45 @@ import joptsimple.OptionSet;
 
 /**
  * Abort Multipart Archive Upload Command.
- * 
+ *
  * @author Kendal Montgomery <theWizK@yahoo.com>
  * @version 1.0
  */
 public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
 
-	public AbortMultipartArchiveUploadCommand(final URL endpoint, final File credentials) throws IOException {
-		super(endpoint, credentials);
-	}
+    public AbortMultipartArchiveUploadCommand(final URL endpoint, final File credentials) throws IOException {
+        super(endpoint, credentials);
+    }
 
-	/* (non-Javadoc)
-	 * @see de.kopis.glacier.commands.AbstractCommand#exec(joptsimple.OptionSet, de.kopis.glacier.parsers.GlacierUploaderOptionParser)
-	 */
-	@Override
-	public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-	  final String vaultName = options.valueOf(optionParser.VAULT);
-	  final String uploadId = options.valueOf(optionParser.ABORT_UPLOAD);
-	  try {
-        abortUpload(vaultName, uploadId);
-	  } catch (AmazonServiceException e) {
-	    log.error("Something went wrong at Amazon while aborting the multipart upload with id " + uploadId + ". " + e.getLocalizedMessage(), e);
-	  } catch (AmazonClientException e) {
-	    log.error("Something went wrong with the Amazon Client. " + e.getLocalizedMessage(), e);
-	  }
-	}
+    /* (non-Javadoc)
+     * @see de.kopis.glacier.commands.AbstractCommand#exec(joptsimple.OptionSet, de.kopis.glacier.parsers.GlacierUploaderOptionParser)
+     */
+    @Override
+    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String uploadId = options.valueOf(optionParser.ABORT_UPLOAD);
+        try {
+            abortUpload(vaultName, uploadId);
+        } catch (AmazonServiceException e) {
+            log.error("Something went wrong at Amazon while aborting the multipart upload with id " + uploadId + ". " + e.getLocalizedMessage(), e);
+        } catch (AmazonClientException e) {
+            log.error("Something went wrong with the Amazon Client. " + e.getLocalizedMessage(), e);
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see de.kopis.glacier.commands.AbstractCommand#valid(joptsimple.OptionSet, de.kopis.glacier.parsers.GlacierUploaderOptionParser)
-	 */
-	@Override
-	public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-	    return options.has(optionParser.ABORT_UPLOAD) && options.hasArgument(optionParser.ABORT_UPLOAD);
-	}
-	
-	public void abortUpload(final String vaultName, final String uploadId) {
-      final AbortMultipartUploadRequest abortRequest = new AbortMultipartUploadRequest().withUploadId(uploadId).withVaultName(vaultName);
-	  log.info("Aborting upload to vault " + vaultName + " with upload id " + uploadId + ".");
-      client.abortMultipartUpload(abortRequest);
-      log.info("Assumed success!");
+    /* (non-Javadoc)
+     * @see de.kopis.glacier.commands.AbstractCommand#valid(joptsimple.OptionSet, de.kopis.glacier.parsers.GlacierUploaderOptionParser)
+     */
+    @Override
+    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
+        return options.has(optionParser.ABORT_UPLOAD) && options.hasArgument(optionParser.ABORT_UPLOAD);
+    }
+
+    public void abortUpload(final String vaultName, final String uploadId) {
+        final AbortMultipartUploadRequest abortRequest = new AbortMultipartUploadRequest().withUploadId(uploadId).withVaultName(vaultName);
+        log.info("Aborting upload to vault " + vaultName + " with upload id " + uploadId + ".");
+        client.abortMultipartUpload(abortRequest);
+        log.info("Assumed success!");
     }
 
 }

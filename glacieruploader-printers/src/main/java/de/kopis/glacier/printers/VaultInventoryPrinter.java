@@ -59,7 +59,7 @@ public class VaultInventoryPrinter {
     }
 
     o.flush();
-  }
+    }
 
   private void printArchive(final PrintWriter o, final JSONObject archive) throws JSONException {
     o.println("------------------------------------------------------------------------------");

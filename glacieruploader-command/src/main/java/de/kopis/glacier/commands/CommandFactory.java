@@ -34,7 +34,7 @@ public final class CommandFactory {
 
   /**
    * Adds a command to the list of commands
-   * 
+   *
    * @param command
    */
   public static void add(AbstractCommand command) {
@@ -43,7 +43,7 @@ public final class CommandFactory {
 
   /**
    * Removes a command from the list of commands
-   * 
+   *
    * @param command
    */
   public static void remove(AbstractCommand command) {
@@ -52,7 +52,7 @@ public final class CommandFactory {
 
   /**
    * Get the currently setted default command
-   * 
+   *
    * @return AbstractCommand
    */
   public static AbstractCommand getDefaultCommand() {
@@ -61,7 +61,7 @@ public final class CommandFactory {
 
   /**
    * Sets the default command. This is used when no other command is valid.
-   * 
+   *
    * @param command
    */
   public static void setDefaultCommand(AbstractCommand command) {
@@ -70,7 +70,7 @@ public final class CommandFactory {
 
   /**
    * Gets the first valid command, based on the options specified
-   * 
+   *
    * @param options
    * @param optionParser
    */
@@ -81,6 +81,6 @@ public final class CommandFactory {
       }
     }
     return defaultCommand;
-  }
+    }
 
 }

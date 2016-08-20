@@ -62,12 +62,12 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
     log.info(String.format("Multipart uploading %s (%s) to vault %s with part size %s (%s).", uploadFile.getName(),
-        hTotalSize, vaultName, partSize, hPartSize));
+            hTotalSize, vaultName, partSize, hPartSize));
     try {
       final String uploadId = this.initiateMultipartUpload(vaultName, partSize, uploadFile.getName());
       final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
       final CompleteMultipartUploadResult result = this.completeMultiPartUpload(uploadId, uploadFile, vaultName,
-          checksum);
+              checksum);
 
       log.info("Uploaded Archive ID: " + result.getArchiveId());
       log.info("Local Checksum: " + checksum);
@@ -87,12 +87,12 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     } catch (AmazonClientException e) {
       log.error("Something went wrong with the Amazon Client." + e.getLocalizedMessage(), e);
     }
-  }
+    }
 
   private String initiateMultipartUpload(final String vaultName, final Long partSize, final String fileName) {
     // Initiate
     InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest().withVaultName(vaultName)
-        .withArchiveDescription(fileName).withPartSize(partSize.toString());
+            .withArchiveDescription(fileName).withPartSize(partSize.toString());
 
     InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
 
@@ -102,11 +102,11 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
   }
 
   /* This method contains a derivative of work from the following source:
-   * 
+   *
    * https://github.com/aws/aws-sdk-java/blob/master/src/main/java/com/amazonaws/services/glacier/transfer/ArchiveTransferManager.java?source=c
-   * 
+   *
    * from the 1.8.5 tag in the source tree.
-   * 
+   *
    * Copyright 2012-2014 Amazon Technologies, Inc.
    *
    * Licensed under the Apache License, Version 2.0 (the "License");
@@ -144,7 +144,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
           inputSubStream.reset();
           String range = "bytes " + currentPosition + "-" + (currentPosition + length - 1) + "/*";
           UploadMultipartPartRequest req = new UploadMultipartPartRequest().withChecksum(checksum)
-              .withBody(inputSubStream).withRange(range).withUploadId(uploadId).withVaultName(vaultName);
+                  .withBody(inputSubStream).withRange(range).withUploadId(uploadId).withVaultName(vaultName);
           try {
             UploadMultipartPartResult partResult = client.uploadMultipartPart(req);
             log.info(String.format("Part %d/%d (%s) uploaded, checksum: %s", counter, total, range, partResult.getChecksum()));
@@ -166,17 +166,17 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
           throw new AmazonClientException("Failed operation", failedException);
         currentPosition += partSize;
         ++counter;
-      }
+            }
 
       checksum = TreeHashGenerator.calculateTreeHash(binaryChecksums);
     } finally {
       if (fileToUpload != null) {
         fileToUpload.close();
       }
-    }
+        }
 
     return checksum;
-  }
+    }
 
   private InputSubstream newInputSubstream(File file, long startingPosition, long length) {
     try {
@@ -184,12 +184,12 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     } catch (FileNotFoundException e) {
       throw new AmazonClientException("Unable to find file '" + file.getAbsolutePath() + "'", e);
     }
-  }
+    }
 
   private CompleteMultipartUploadResult completeMultiPartUpload(String uploadId, File file, final String vaultName,
-      String checksum) throws NoSuchAlgorithmException, IOException {
+                                                                String checksum) throws NoSuchAlgorithmException, IOException {
     CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest().withVaultName(vaultName)
-        .withUploadId(uploadId).withChecksum(checksum).withArchiveSize(String.valueOf(file.length()));
+            .withUploadId(uploadId).withChecksum(checksum).withArchiveSize(String.valueOf(file.length()));
 
     CompleteMultipartUploadResult compResult = client.completeMultipartUpload(compRequest);
 
@@ -207,7 +207,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     for (File uploadFile : files) {
       this.upload(vaultName, uploadFile, partSize);
     }
-  }
+    }
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {

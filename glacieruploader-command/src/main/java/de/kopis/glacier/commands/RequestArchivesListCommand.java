@@ -44,7 +44,7 @@ public class RequestArchivesListCommand extends AbstractCommand {
 
     try {
       final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
-          new JobParameters().withType("inventory-retrieval"));
+              new JobParameters().withType("inventory-retrieval"));
 
       final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
       final String jobId = initJobResult.getJobId();
@@ -54,7 +54,7 @@ public class RequestArchivesListCommand extends AbstractCommand {
     }
 
     // TODO wait for job, but it could take about 4 hours says the SDK...
-  }
+    }
 
   @Override
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {

@@ -47,7 +47,7 @@ public class UploadArchiveCommand extends AbstractCommand {
     } catch (final IOException e) {
       log.error("Something went wrong while uploading " + uploadFile + vaultName + "to vault " + ".", e);
     }
-  }
+    }
 
   @Override
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
@@ -55,11 +55,11 @@ public class UploadArchiveCommand extends AbstractCommand {
     final List<File> optionsFiles = options.valuesOf(optionParser.UPLOAD);
     final List<String> nonOptions = options.nonOptionArguments();
     final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
-    
+
     for (File uploadFile : files) {
-    	this.upload(vaultName, uploadFile);
+      this.upload(vaultName, uploadFile);
     }
-  }
+    }
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {

@@ -43,14 +43,14 @@ public class HelpCommand extends AbstractCommand {
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
     if (!options.has(optionParser.HELP)) {
       log.info("Ooops, can't determine what you want to do. Check your options. " + System.getProperty("line.separator") +
-      		"Do not forget that --vault and --endpoint are mandatory for all commands." + System.getProperty("line.separator") );
+              "Do not forget that --vault and --endpoint are mandatory for all commands." + System.getProperty("line.separator"));
     }
     try {
       optionParser.printHelpOn(System.out);
     } catch (final IOException e) {
       log.error("Can not print help", e);
     }
-  }
+    }
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {

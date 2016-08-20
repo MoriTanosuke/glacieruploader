@@ -56,7 +56,7 @@ public class CreateVaultCommand extends AbstractCommand {
     } catch (final AmazonClientException e) {
       log.error("Couldn't create vault.");
     }
-  }
+    }
 
   @Override
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {

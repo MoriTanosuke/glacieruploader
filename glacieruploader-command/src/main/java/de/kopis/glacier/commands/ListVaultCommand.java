@@ -52,9 +52,9 @@ public class ListVaultCommand extends AbstractCommand {
             for (DescribeVaultOutput vault : vaults) {
                 new VaultPrinter().printVault(vault, System.out);
             }
-        } catch(AmazonServiceException e) {
+        } catch (AmazonServiceException e) {
             log.error("Can't list vaults.", e);
-        } catch(AmazonClientException e) {
+        } catch (AmazonClientException e) {
             log.error("Can't list vaults.", e);
         }
     }

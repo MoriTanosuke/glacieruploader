@@ -56,14 +56,14 @@ public abstract class AbstractCommand {
     if (endpoint != null) {
       this.setEndpoint(endpoint);
     }
-  }
+    }
 
   protected void setEndpoint(final URL endpoint) {
     client.setEndpoint(endpoint.toExternalForm());
     // TODO check if this really fixes #13
     sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
     sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
-  }
+    }
 
   public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);
 

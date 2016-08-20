@@ -68,7 +68,7 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
     } catch (final IOException e) {
       log.error(e.getLocalizedMessage(), e);
     }
-  }
+    }
 
   @Override
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {

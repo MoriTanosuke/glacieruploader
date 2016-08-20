@@ -42,7 +42,7 @@ public class HumanReadableSize {
 
   public static String parse(final Integer size) throws IllegalArgumentException {
     return parse(size.toString());
-  }
+    }
 
   public static String parse(final String size) throws IllegalArgumentException {
     LOG.debug("Parsing '" + size + "'");
@@ -66,7 +66,7 @@ public class HumanReadableSize {
     }
     LOG.debug("Parsed: " + humanReadableSize);
     return humanReadableSize;
-  }
+    }
 
   private static String getLargerSizeClass(final String oldSizeClass) {
     String newSizeClass = "B";
@@ -83,17 +83,17 @@ public class HumanReadableSize {
     }
     LOG.debug("previous sizeClass: " + oldSizeClass + " new sizeClass: " + newSizeClass);
     return newSizeClass;
-  }
+    }
 
   public static String[] sanitize(final String size) {
     LOG.debug("Sanitizing '" + size + "'");
     final Pattern patternClass = Pattern.compile("([0-9.]+)\\s*?([kMGTP]?B)");
     final Matcher m = patternClass.matcher(size);
-    String[] s = new String[] { size, "B" };
+    String[] s = new String[]{size, "B"};
     if (m.find()) {
       final String pureSize = m.group(1);
       final String sizeClass = m.group(2);
-      s = new String[] { pureSize, sizeClass };
+      s = new String[]{pureSize, sizeClass};
     }
 
     LOG.debug("Sanitized: " + Arrays.deepToString(s));
