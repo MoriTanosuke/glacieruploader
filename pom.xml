@@ -120,16 +120,20 @@
                 <version>1.3</version>
                 <configuration>
                     <verbose>false</verbose>
-                    <addSvnKeyWords>true</addSvnKeyWords>
+                    <addSvnKeyWords>false</addSvnKeyWords>
                     <licenseName>gpl_v3</licenseName>
                 </configuration>
                 <executions>
                     <execution>
                         <id>first</id>
                         <goals>
-                            <goal>update-file-header</goal>
+                            <goal>check-file-header</goal>
                         </goals>
                         <phase>process-sources</phase>
+                        <configuration>
+                            <failOnMissingHeader>true</failOnMissingHeader>
+                            <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
