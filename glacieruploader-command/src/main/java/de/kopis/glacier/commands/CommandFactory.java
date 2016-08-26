@@ -22,10 +22,10 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.util.ArrayList;
-
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
+
+import java.util.ArrayList;
 
 public final class CommandFactory {
 
@@ -73,6 +73,7 @@ public final class CommandFactory {
      *
      * @param options      a complete {@link OptionSet}
      * @param optionParser a {@link GlacierUploaderOptionParser} to use on the given options
+     * @return a valid {@link AbstractCommand}
      */
     public static AbstractCommand get(OptionSet options, GlacierUploaderOptionParser optionParser) {
         for (AbstractCommand command : commands) {

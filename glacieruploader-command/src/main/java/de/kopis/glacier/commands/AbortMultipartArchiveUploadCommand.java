@@ -22,20 +22,20 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.model.AbortMultipartUploadRequest;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * Abort Multipart Archive Upload Command.
  *
- * @author Kendal Montgomery <theWizK@yahoo.com>
+ * @author Kendal Montgomery theWizK@yahoo.com
  * @version 1.0
  */
 public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
