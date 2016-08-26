@@ -36,8 +36,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:${git.origin}</connection>
-        <developerConnection>scm:git:${git.origin}</developerConnection>
+        <connection>scm:git:git://github.com/MoriTanosuke/glacieruploader.git</connection>
+        <developerConnection>scm:git:ssh://github.com:MoriTanosuke/glacieruploader.git</developerConnection>
         <url>https://github.com/MoriTanosuke/glacieruploader</url>
     </scm>
 
@@ -52,7 +52,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <git.origin>git@github.com:MoriTanosuke/glacieruploader.git</git.origin>
     </properties>
 
     <modules>
