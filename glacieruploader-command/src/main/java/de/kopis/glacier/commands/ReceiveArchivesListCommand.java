@@ -31,7 +31,6 @@ import java.net.URL;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
-import com.amazonaws.util.json.JSONException;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultInventoryPrinter;
 import joptsimple.OptionSet;
@@ -62,8 +61,6 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
             printer.setInventory(content);
             printer.printInventory(System.out);
         } catch (final AmazonClientException e) {
-            log.error(e.getLocalizedMessage(), e);
-        } catch (final JSONException e) {
             log.error(e.getLocalizedMessage(), e);
         } catch (final IOException e) {
             log.error(e.getLocalizedMessage(), e);

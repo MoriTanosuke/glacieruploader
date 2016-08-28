@@ -35,6 +35,7 @@ import org.apache.commons.configuration.Configuration;
 public class GlacierUploaderOptionParser extends OptionParser {
 
     public final OptionSpec<Void> LIST_VAULT;
+    public final OptionSpec<String> LIST_JOBS;
     public final OptionSpec<File> TARGET_FILE;
     public final OptionSpec<String> ENDPOINT;
     public final OptionSpec<String> VAULT;
@@ -61,6 +62,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
         this.CREDENTIALS = this.parseCredentials(config);
         this.CREATE_VAULT = this.parseCreateVault(config);
         this.LIST_VAULT = this.parseListVault(config);
+        this.LIST_JOBS = this.parseListJobs(config);
         this.DELETE_VAULT = this.parseDeleteVault(config);
         this.TARGET_FILE = this.parseTargetFile(config);
         this.CALCULATE_HASH = this.parseHashFile(config);
@@ -183,6 +185,15 @@ public class GlacierUploaderOptionParser extends OptionParser {
                 add("s");
             }
         }, "lists all available vaults");
+    }
+
+    private ArgumentAcceptingOptionSpec<String> parseListJobs(final Configuration config) {
+        return acceptsAll(new ArrayList<String>() {
+            {
+                add("list-jobs");
+                add("j");
+            }
+        }, "lists recent jobs").withRequiredArg().ofType(String.class);
     }
 
     private OptionSpecBuilder parseDeleteVault(final Configuration config) {

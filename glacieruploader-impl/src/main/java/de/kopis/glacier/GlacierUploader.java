@@ -34,6 +34,7 @@ import de.kopis.glacier.commands.DeleteArchiveCommand;
 import de.kopis.glacier.commands.DeleteVaultCommand;
 import de.kopis.glacier.commands.DownloadArchiveCommand;
 import de.kopis.glacier.commands.HelpCommand;
+import de.kopis.glacier.commands.ListJobsCommand;
 import de.kopis.glacier.commands.ListVaultCommand;
 import de.kopis.glacier.commands.ReceiveArchivesListCommand;
 import de.kopis.glacier.commands.RequestArchivesListCommand;
@@ -103,6 +104,7 @@ public final class GlacierUploader {
                 // Add all commands to the factory
                 CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
                 CommandFactory.add(new ListVaultCommand(endpoint, credentials));
+                CommandFactory.add(new ListJobsCommand(endpoint, credentials));
                 CommandFactory.add(new DeleteArchiveCommand(endpoint, credentials));
                 CommandFactory.add(new DeleteVaultCommand(endpoint, credentials));
                 CommandFactory.add(new DownloadArchiveCommand(endpoint, credentials));

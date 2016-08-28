@@ -31,14 +31,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
-import com.amazonaws.util.json.JSONException;
-import com.amazonaws.util.json.JSONObject;
 import org.junit.Test;
 
 public class VaultInventoryPrinterTest {
 
     @Test
-    public void testPrintInventoryListing() throws JSONException, IOException {
+    public void testPrintInventoryListing() throws IOException {
         final String line = System.getProperty("line.separator");
         final String inventory = readFile("target/test-classes/inventorylisting.txt");
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -49,12 +47,6 @@ public class VaultInventoryPrinterTest {
                 + "Archive ID:\t\t\tthisisaverylongrandomstringthatworksasthearchiveid" + line
                 + "CreationDate:\t\t\t2012-08-23T04:14:56Z" + line + "Size:\t\t\t\t123456789 (117.74MB)" + line
                 + "SHA:\t\t\t\t123456789123456789123456789" + line, out.toString());
-    }
-
-    @Test
-    public void printArchiveSize() throws JSONException {
-        assertEquals("123456789 (117.74MB)",
-                new VaultInventoryPrinter().printArchiveSize(new JSONObject("{Size:123456789}")));
     }
 
     private String readFile(final String filename) throws IOException {

@@ -25,9 +25,9 @@ package de.kopis.glacier.printers;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import com.amazonaws.util.json.JSONArray;
-import com.amazonaws.util.json.JSONException;
-import com.amazonaws.util.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class VaultInventoryPrinter {
     private String inventory;
@@ -71,9 +71,8 @@ public class VaultInventoryPrinter {
     }
 
     public String printArchiveSize(final JSONObject archive) throws JSONException {
-        final String size = archive.getString("Size");
+        final int size = archive.getInt("Size");
         final String humanReadableSize = HumanReadableSize.parse(size);
         return size + " (" + humanReadableSize + ")";
     }
-
 }

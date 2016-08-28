@@ -167,6 +167,20 @@ Available since 0.0.3.
     Retrieving inventory for job id 8yM9rC4RvSKW5QlXdsglkjJHDFGPMSQyZA2CjhpIWgw2AE4lyyIU87uZz2d-b8eoKrCbGehR4vj5dfHiKPA9Zj5...
     Using endpoint https://glacier.eu-west-1.amazonaws.com
 
+Retrieve recent jobs
+--------------------
+
+Available since 0.1.1.
+
+    java -jar glacieruploader.jar --endpoint https://glacier.eu-west-1.amazonaws.com --vault myvaultname --list-jobs
+    Job ID: gtf3gLYYO4Hh7p_lImBT6VcHwUPp1cMpwWcbIa31rl9c82t6xKuUXiZa8tubAwbE0_gRBiKvlrx7S3MmjWrTv1234567
+    Creation date: 2016-01-01T12:34:56.789Z
+    Status: InProgress
+    
+    Job ID: 4TVy1rijcW4ezU5o2zJv8RzLrUkh8l8mffSJK4KB--fwyMPxhu0e3u8D5Ucw9Y2c0nyYbnTOlVKBXGiIz9wMp1234567
+    Creation date: 2016-01-01T12:34:56.789Z
+    Status: InProgress
+
 List all vaults
 -----------------
 
