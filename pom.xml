@@ -81,7 +81,7 @@
             <dependency>
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk</artifactId>
-                <version>1.9.6</version>
+                <version>1.11.29</version>
             </dependency>
 
             <dependency>
@@ -140,6 +140,9 @@
                         <configuration>
                             <failOnMissingHeader>true</failOnMissingHeader>
                             <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
+                            <excludes>
+                                <exclude>**/log4j.properties</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
