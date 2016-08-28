@@ -7,7 +7,7 @@
     <parent>
         <groupId>de.kopis.glacier</groupId>
         <artifactId>glacieruploader-parent</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>glacieruploader-parsers</artifactId>
