@@ -25,7 +25,6 @@ package de.kopis.glacier.commands;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
@@ -54,7 +53,7 @@ public class UploadArchiveCommand extends AbstractCommand {
         final String vaultName = options.valueOf(optionParser.VAULT);
         final List<File> optionsFiles = options.valuesOf(optionParser.UPLOAD);
         final List<String> nonOptions = options.nonOptionArguments();
-        final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
+        final List<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
 
         for (File uploadFile : files) {
             this.upload(vaultName, uploadFile);

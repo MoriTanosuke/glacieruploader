@@ -28,13 +28,12 @@ import static junit.framework.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import joptsimple.OptionSet;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.junit.Test;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import joptsimple.OptionSet;
 
 public class UploadMultipartArchiveCommandTest {
     @Test
@@ -53,7 +52,7 @@ public class UploadMultipartArchiveCommandTest {
         assertEquals(1, optionsFiles.size());
         assertEquals(0, nonOptions.size());
 
-        final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
+        final List<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
         assertEquals(tempFile.getName(), files.get(0).getName());
     }
 }

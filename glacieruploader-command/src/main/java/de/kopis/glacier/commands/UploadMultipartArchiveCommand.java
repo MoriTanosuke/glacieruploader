@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -203,7 +202,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         final List<File> optionsFiles = options.valuesOf(optionParser.MULTIPARTUPLOAD);
         final Long partSize = options.valueOf(optionParser.PARTSIZE);
         final List<String> nonOptions = options.nonOptionArguments();
-        final ArrayList<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
+        final List<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
 
         for (File uploadFile : files) {
             this.upload(vaultName, uploadFile, partSize);

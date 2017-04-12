@@ -24,13 +24,14 @@ package de.kopis.glacier.parsers;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.configuration.Configuration;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
-import org.apache.commons.configuration.Configuration;
 
 public class GlacierUploaderOptionParser extends OptionParser {
 
@@ -83,8 +84,8 @@ public class GlacierUploaderOptionParser extends OptionParser {
         return String.format("https://glacier.%s.amazonaws.com", endpoint);
     }
 
-    public ArrayList<File> mergeNonOptionsFiles(List<File> optionsFiles, List<String> nonOptions) {
-        final ArrayList<File> files = new ArrayList<File>(optionsFiles);
+    public List<File> mergeNonOptionsFiles(List<File> optionsFiles, List<String> nonOptions) {
+        final List<File> files = new ArrayList<>(optionsFiles);
 
         if (nonOptions.size() > 0) {
             // Adds non options to the list in order
@@ -100,12 +101,10 @@ public class GlacierUploaderOptionParser extends OptionParser {
     }
 
     private ArgumentAcceptingOptionSpec<String> parseVault(final Configuration config) {
-        ArgumentAcceptingOptionSpec<String> vaultBuilder = acceptsAll(new ArrayList<String>() {
-            {
-                add("vault");
-                add("v");
-            }
-        }, "name of your vault").withRequiredArg().ofType(String.class);
+        ArgumentAcceptingOptionSpec<String> vaultBuilder = acceptsAll(Arrays.asList("vault", "v"),
+                "name of your vault")
+                .withRequiredArg()
+                .ofType(String.class);
 
         if (config.containsKey("vault")) {
             vaultBuilder.defaultsTo(config.getString("vault"));
@@ -114,12 +113,10 @@ public class GlacierUploaderOptionParser extends OptionParser {
     }
 
     private ArgumentAcceptingOptionSpec<String> parseEndpoint(final Configuration config) {
-        ArgumentAcceptingOptionSpec<String> endpointBuilder = acceptsAll(new ArrayList<String>() {
-            {
-                add("endpoint");
-                add("e");
-            }
-        }, "URL or Region handle of the amazon AWS endpoint where your vault is").withRequiredArg().ofType(String.class);
+        ArgumentAcceptingOptionSpec<String> endpointBuilder = acceptsAll(Arrays.asList("endpoint", "e"),
+                "URL or Region handle of the amazon AWS endpoint where your vault is")
+                .withRequiredArg()
+                .ofType(String.class);
 
         if (config.containsKey("endpoint")) {
             endpointBuilder.defaultsTo(formatEndpointUrl(config.getString("endpoint")));
@@ -128,38 +125,29 @@ public class GlacierUploaderOptionParser extends OptionParser {
     }
 
     private ArgumentAcceptingOptionSpec<File> parseUploadFile(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("upload");
-                add("u");
-            }
-        }, "start uploading a new archive").withRequiredArg().ofType(File.class);
+        return acceptsAll(Arrays.asList("upload", "u"),
+                "start uploading a new archive")
+                .withRequiredArg()
+                .ofType(File.class);
     }
 
     private ArgumentAcceptingOptionSpec<String> parseInventory(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("list-inventory");
-                add("l");
-            }
-        }, "retrieve the inventory listing of a vault or request a listing if no job id is set").withOptionalArg().ofType(String.class);
+        return acceptsAll(Arrays.asList("list-inventory", "l"),
+                "retrieve the inventory listing of a vault or request a listing if no job id is set")
+                .withOptionalArg()
+                .ofType(String.class);
     }
 
     private ArgumentAcceptingOptionSpec<String> parseDownload(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("download");
-                add("o");
-            }
-        }, "download an existing archive").withRequiredArg().ofType(String.class);
+        return acceptsAll(Arrays.asList("download", "o"),
+                "download an existing archive")
+                .withRequiredArg()
+                .ofType(String.class);
     }
 
     private ArgumentAcceptingOptionSpec<File> parseCredentials(final Configuration config) {
-        ArgumentAcceptingOptionSpec<File> credentialsBuilder = acceptsAll(new ArrayList<String>() {
-            {
-                add("credentials");
-            }
-        }, "path to your aws credentials file").withRequiredArg().ofType(File.class);
+        ArgumentAcceptingOptionSpec<File> credentialsBuilder = acceptsAll(Arrays.asList("credentials"),
+                "path to your aws credentials file").withRequiredArg().ofType(File.class);
 
         if (config.containsKey("credentials")) {
             credentialsBuilder.defaultsTo(new File(config.getString("credentials")));
@@ -170,103 +158,73 @@ public class GlacierUploaderOptionParser extends OptionParser {
     }
 
     private OptionSpecBuilder parseCreateVault(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("create");
-                add("c");
-            }
-        }, "creates a new vault");
+        return acceptsAll(Arrays.asList("create", "c"),
+                "creates a new vault");
     }
 
     private OptionSpecBuilder parseListVault(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("list-vaults");
-                add("s");
-            }
-        }, "lists all available vaults");
+        return acceptsAll(Arrays.asList("list-vaults", "s"),
+                "lists all available vaults");
     }
 
     private ArgumentAcceptingOptionSpec<String> parseListJobs(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("list-jobs");
-                add("j");
-            }
-        }, "lists recent jobs").withRequiredArg().ofType(String.class);
+        return acceptsAll(Arrays.asList("list-jobs", "j"),
+                "lists recent jobs")
+                .withRequiredArg()
+                .ofType(String.class);
     }
 
     private OptionSpecBuilder parseDeleteVault(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("delete-vault");
-                add("r");
-            }
-        }, "deletes an existing vault");
+        return acceptsAll(Arrays.asList("delete-vault", "r"),
+                "deletes an existing vault");
     }
 
     private ArgumentAcceptingOptionSpec<File> parseTargetFile(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("target");
-                add("t");
-            }
-        }, "filename to store downloaded archive").withRequiredArg().ofType(File.class);
+        return acceptsAll(Arrays.asList("target", "t"),
+                "filename to store downloaded archive")
+                .withRequiredArg()
+                .ofType(File.class);
     }
 
     private ArgumentAcceptingOptionSpec<File> parseHashFile(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("calculate");
-                add("a");
-            }
-        }, "calculate hashsum for a file").withRequiredArg().ofType(File.class);
+        return acceptsAll(Arrays.asList("calculate", "a"),
+                "calculate hashsum for a file")
+                .withRequiredArg()
+                .ofType(File.class);
     }
 
     private ArgumentAcceptingOptionSpec<String> parseDeleteArchive(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("delete");
-                add("d");
-            }
-        }, "deletes an existing archive").withRequiredArg().ofType(String.class);
+        return acceptsAll(Arrays.asList("delete", "d"),
+                "deletes an existing archive")
+                .withRequiredArg()
+                .ofType(String.class);
     }
 
     private ArgumentAcceptingOptionSpec<File> parseMultipartUploadFile(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("multipartupload");
-                add("m");
-            }
-        }, "start uploading a new archive in chuncks").withRequiredArg().ofType(File.class);
+        return acceptsAll(Arrays.asList("multipartupload", "m"),
+                "start uploading a new archive in chuncks")
+                .withRequiredArg()
+                .ofType(File.class);
     }
 
     private ArgumentAcceptingOptionSpec<Long> parsePartSize(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("partsize");
-                add("p");
-            }
-        }, "sets the size of each part for multipart uploads (must be a power of 2)").withRequiredArg().ofType(Long.class).defaultsTo((long) Math.pow(4096, 2));
+        return acceptsAll(Arrays.asList("partsize", "p"),
+                "sets the size of each part for multipart uploads (must be a power of 2)")
+                .withRequiredArg()
+                .ofType(Long.class)
+                .defaultsTo((long) Math.pow(4096, 2));
         // 16 MB.
     }
 
     private OptionSpecBuilder parseHelp(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("help");
-                add("h");
-                add("?");
-            }
-        }, "display the help menu");
+        return acceptsAll(Arrays.asList("help", "h", "?"),
+                "display the help menu");
     }
 
     private ArgumentAcceptingOptionSpec<String> parseAbortUpload(final Configuration config) {
-        return acceptsAll(new ArrayList<String>() {
-            {
-                add("abort-upload");
-                add("x");
-            }
-        }, "aborts an existing upload request - requires upload id").withRequiredArg().ofType(String.class);
+        return acceptsAll(Arrays.asList("abort-upload", "x"),
+                "aborts an existing upload request - requires upload id")
+                .withRequiredArg()
+                .ofType(String.class);
     }
 }
