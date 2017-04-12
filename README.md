@@ -9,6 +9,8 @@ How to get it
 Either [download a binary][0] or [build the software yourself from sourcecode][5].
 
 [![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.svg?branch=split-into-modules)](https://travis-ci.org/MoriTanosuke/glacieruploader)
+[![Quality Gate](https://sonarqube.com/api/badges/gate?key=de.kopis.glacier%3Aglacieruploader-parent)](https://sonarqube.com/dashboard?id=de.kopis.glacier%3Aglacieruploader-parent)
+[![Technical debt ratio](https://sonarqube.com/api/badges/measure?key=de.kopis.glacier%3Aglacieruploader-parent&metric=sqale_debt_ratio)](https://sonarqube.com/dashboard/index/de.kopis.glacier%3Aglacieruploader-parent)
 
 How to run
 ==========
