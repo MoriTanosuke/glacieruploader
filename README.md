@@ -208,7 +208,7 @@ License
 This project is distributed under [GNU GPL v3][3].
 
 
-[0]: http://download.kopis.de.s3-website-eu-west-1.amazonaws.com/glacieruploader/index.html
+[0]: https://github.com/MoriTanosuke/glacieruploader/releases
 [1]: https://github.com/MoriTanosuke/glacieruploader/issues
 [2]: https://github.com/MoriTanosuke/glacieruploader/fork
 [3]: http://www.gnu.org/licenses/gpl-3.0.html
