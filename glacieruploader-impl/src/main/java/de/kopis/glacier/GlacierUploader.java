@@ -26,6 +26,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import de.kopis.glacier.commands.AbortMultipartArchiveUploadCommand;
 import de.kopis.glacier.commands.AbstractCommand;
 import de.kopis.glacier.commands.CommandFactory;
@@ -43,11 +48,6 @@ import de.kopis.glacier.commands.UploadArchiveCommand;
 import de.kopis.glacier.commands.UploadMultipartArchiveCommand;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.SystemConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public final class GlacierUploader {
 
@@ -62,7 +62,7 @@ public final class GlacierUploader {
         try {
             options = optionParser.parse(args);
         } catch (Exception e) {
-            System.err.println("Something went wrong parsing the arguments");
+            System.err.println("Something went wrong parsing the arguments: " + e.getMessage());
             return;
         }
 

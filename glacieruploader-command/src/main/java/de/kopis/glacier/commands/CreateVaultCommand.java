@@ -52,9 +52,9 @@ public class CreateVaultCommand extends AbstractCommand {
             final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
             new VaultPrinter().printVault(describeVaultResult, System.out);
         } catch (final AmazonServiceException e) {
-            log.error("Couldn't create vault.");
+            log.error("Couldn't create vault.", e);
         } catch (final AmazonClientException e) {
-            log.error("Couldn't create vault.");
+            log.error("Couldn't create vault.", e);
         }
     }
 
