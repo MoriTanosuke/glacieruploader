@@ -212,6 +212,5 @@ This project is distributed under [GNU GPL v3][3].
 [1]: https://github.com/MoriTanosuke/glacieruploader/issues
 [2]: https://github.com/MoriTanosuke/glacieruploader/fork
 [3]: http://www.gnu.org/licenses/gpl-3.0.html
-[4]: https://cringe.ci.cloudbees.com/job/glacieruploader/
-[5]: https://github.com/MoriTanosuke/glacieruploader/wiki/How-to-build
+[5]: http://blog.kopis.de/glacieruploader/howtobuild
 [6]: https://github.com/MoriTanosuke/glacieruploader/
