@@ -1,3 +1,16 @@
 language: java
 jdk:
   - oraclejdk7
+sudo: false
+install: true
+addons:
+  sonarqube:
+    organization: "moritanosuke-github"
+    token:
+      secure: "CfSC8TjejCCxFYiTnDdN1DENT1NN2mdqoOjUIuKHSOdU0LroTzbm8RHKALbwLNdPiqb92Htssqd8xg7AWX4uvhfHBg3s4d51T2trLzqy9KAzt4q3PUuZVN4311s2iDBL76DOAbT5thWTPWi5PYqQFw4lMdPKCAE77GBh6mMAFoU="
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
