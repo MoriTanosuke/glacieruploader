@@ -22,36 +22,26 @@ package de.kopis.glacier;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
+import de.kopis.glacier.commands.*;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import joptsimple.OptionSet;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import de.kopis.glacier.commands.AbortMultipartArchiveUploadCommand;
-import de.kopis.glacier.commands.AbstractCommand;
-import de.kopis.glacier.commands.CommandFactory;
-import de.kopis.glacier.commands.CreateVaultCommand;
-import de.kopis.glacier.commands.DeleteArchiveCommand;
-import de.kopis.glacier.commands.DeleteVaultCommand;
-import de.kopis.glacier.commands.DownloadArchiveCommand;
-import de.kopis.glacier.commands.HelpCommand;
-import de.kopis.glacier.commands.ListJobsCommand;
-import de.kopis.glacier.commands.ListVaultCommand;
-import de.kopis.glacier.commands.ReceiveArchivesListCommand;
-import de.kopis.glacier.commands.RequestArchivesListCommand;
-import de.kopis.glacier.commands.TreeHashArchiveCommand;
-import de.kopis.glacier.commands.UploadArchiveCommand;
-import de.kopis.glacier.commands.UploadMultipartArchiveCommand;
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import joptsimple.OptionSet;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public final class GlacierUploader {
 
     private static final Log log = LogFactory.getLog(GlacierUploader.class);
+
+    private GlacierUploader() {
+        // do not instantiate
+    }
 
     public static void main(String[] args) {
         // Get our options
@@ -93,13 +83,13 @@ public final class GlacierUploader {
             CommandFactory.add(CommandFactory.getDefaultCommand());
 
             final File credentials = options.valueOf(optionParser.CREDENTIALS);
-            final String string_endpoint = options.valueOf(optionParser.ENDPOINT);
+            final String endpointArg = options.valueOf(optionParser.ENDPOINT);
 
-            if (credentials != null && string_endpoint != null) {
+            if (credentials != null && endpointArg != null) {
 
-                final URL endpoint = new URL(optionParser.formatEndpointUrl(string_endpoint));
+                final URL endpoint = new URL(optionParser.formatEndpointUrl(endpointArg));
 
-                log.info("Using end point: " + string_endpoint);
+                log.info("Using end point: " + endpointArg);
 
                 // Add all commands to the factory
                 CommandFactory.add(new CreateVaultCommand(endpoint, credentials));

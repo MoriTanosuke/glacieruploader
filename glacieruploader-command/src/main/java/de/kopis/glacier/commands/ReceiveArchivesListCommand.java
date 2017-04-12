@@ -22,18 +22,18 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultInventoryPrinter;
 import joptsimple.OptionSet;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 public class ReceiveArchivesListCommand extends AbstractCommand {
 
@@ -51,18 +51,16 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
             final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
             final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
             final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
-            String content = "";
+            StringBuilder content = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
-                content += line;
+                content.append(line);
             }
             reader.close();
             // TODO use dependency injection here
-            printer.setInventory(content);
+            printer.setInventory(content.toString());
             printer.printInventory(System.out);
-        } catch (final AmazonClientException e) {
-            log.error(e.getLocalizedMessage(), e);
-        } catch (final IOException e) {
+        } catch (final AmazonClientException | IOException e) {
             log.error(e.getLocalizedMessage(), e);
         }
     }

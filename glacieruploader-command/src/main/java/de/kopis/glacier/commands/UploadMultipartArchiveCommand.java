@@ -22,31 +22,22 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.TreeHashGenerator;
-import com.amazonaws.services.glacier.model.CompleteMultipartUploadRequest;
-import com.amazonaws.services.glacier.model.CompleteMultipartUploadResult;
-import com.amazonaws.services.glacier.model.InitiateMultipartUploadRequest;
-import com.amazonaws.services.glacier.model.InitiateMultipartUploadResult;
-import com.amazonaws.services.glacier.model.UploadMultipartPartRequest;
-import com.amazonaws.services.glacier.model.UploadMultipartPartResult;
+import com.amazonaws.services.glacier.model.*;
 import com.amazonaws.services.s3.internal.InputSubstream;
 import com.amazonaws.services.s3.internal.RepeatableFileInputStream;
 import com.amazonaws.util.BinaryUtils;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.HumanReadableSize;
 import joptsimple.OptionSet;
+
+import java.io.*;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class UploadMultipartArchiveCommand extends AbstractCommand {
 
@@ -191,9 +182,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest().withVaultName(vaultName)
                 .withUploadId(uploadId).withChecksum(checksum).withArchiveSize(String.valueOf(file.length()));
 
-        CompleteMultipartUploadResult compResult = client.completeMultipartUpload(compRequest);
-
-        return compResult;
+        return client.completeMultipartUpload(compRequest);
     }
 
     @Override

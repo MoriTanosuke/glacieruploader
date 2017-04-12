@@ -22,12 +22,7 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.model.CreateVaultRequest;
 import com.amazonaws.services.glacier.model.CreateVaultResult;
 import com.amazonaws.services.glacier.model.DescribeVaultRequest;
@@ -35,6 +30,10 @@ import com.amazonaws.services.glacier.model.DescribeVaultResult;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class CreateVaultCommand extends AbstractCommand {
     public CreateVaultCommand(final URL endpoint, final File credentials) throws IOException {
@@ -51,8 +50,6 @@ public class CreateVaultCommand extends AbstractCommand {
             final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
             final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
             new VaultPrinter().printVault(describeVaultResult, System.out);
-        } catch (final AmazonServiceException e) {
-            log.error("Couldn't create vault.", e);
         } catch (final AmazonClientException e) {
             log.error("Couldn't create vault.", e);
         }

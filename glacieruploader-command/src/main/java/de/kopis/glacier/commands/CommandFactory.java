@@ -26,11 +26,16 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class CommandFactory {
 
-    private static ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>(9);
+    private static List<AbstractCommand> commands = new ArrayList<>(9);
     private static AbstractCommand defaultCommand = null;
+
+    private CommandFactory() {
+        // do not instantiate
+    }
 
     /**
      * Adds a command to the list of commands

@@ -22,16 +22,16 @@ package de.kopis.glacier.parsers;
  * #L%
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.configuration.Configuration;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
+import org.apache.commons.configuration.Configuration;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GlacierUploaderOptionParser extends OptionParser {
 
@@ -87,7 +87,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
     public List<File> mergeNonOptionsFiles(List<File> optionsFiles, List<String> nonOptions) {
         final List<File> files = new ArrayList<>(optionsFiles);
 
-        if (nonOptions.size() > 0) {
+        if (!nonOptions.isEmpty()) {
             // Adds non options to the list in order
             // to be able to use * in filenames
             for (String nonOption : nonOptions) {

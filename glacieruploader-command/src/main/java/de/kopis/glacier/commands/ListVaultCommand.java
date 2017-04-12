@@ -22,19 +22,18 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.model.DescribeVaultOutput;
 import com.amazonaws.services.glacier.model.ListVaultsRequest;
 import com.amazonaws.services.glacier.model.ListVaultsResult;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 
 public class ListVaultCommand extends AbstractCommand {
     private final VaultPrinter vaultPrinter;
@@ -54,9 +53,7 @@ public class ListVaultCommand extends AbstractCommand {
             for (DescribeVaultOutput vault : vaults) {
                 vaultPrinter.printVault(vault, System.out);
             }
-        } catch (AmazonServiceException e) {
-            log.error("Can't list vaults.", e);
-        } catch (AmazonClientException e) {
+        } catch (final AmazonClientException e) {
             log.error("Can't list vaults.", e);
         }
     }
