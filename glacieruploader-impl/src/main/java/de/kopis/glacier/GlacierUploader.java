@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,9 +84,8 @@ public final class GlacierUploader {
 
         String region = options.valueOf(optionParser.REGION);
         // check deprecated, but supported config parameters
-        if(options.has(optionParser.ENDPOINT)) {
+        if(StringUtils.isBlank(region) && options.has(optionParser.ENDPOINT)) {
             log.warn("Option {} is deprecated, please switch to {}", optionParser.ENDPOINT, optionParser.REGION);
-            log.debug("Option {} not found, trying to parse from {}", optionParser.REGION, optionParser.ENDPOINT);
             String endpointUrl = options.valueOf(optionParser.ENDPOINT);
             region = optionParser.parseEndpointToRegion(endpointUrl);
             log.debug("Parsed {} from configured endpoint", region , endpointUrl);
