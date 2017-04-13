@@ -162,14 +162,18 @@
                         <goals>
                             <goal>check-file-header</goal>
                         </goals>
-                        <phase>process-sources</phase>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <failOnMissingHeader>true</failOnMissingHeader>
                             <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
-                            <excludes>
-                                <exclude>**/log4j.properties</exclude>
-                            </excludes>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-missing-headers</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <phase>process-sources</phase>
                     </execution>
                 </executions>
             </plugin>
