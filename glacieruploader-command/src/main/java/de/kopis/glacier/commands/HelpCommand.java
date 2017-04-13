@@ -46,7 +46,7 @@ public class HelpCommand extends AbstractCommand {
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        if (!options.has(optionParser.HELP)) {
+        if (!options.has(optionParser.help)) {
             log.info("Ooops, can't determine what you want to do. Check your options. " + System.getProperty("line.separator") +
                     "Do not forget that --vault and --region are mandatory for all commands." + System.getProperty("line.separator"));
         }
@@ -59,7 +59,7 @@ public class HelpCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.HELP);
+        return options.has(optionParser.help);
     }
 
 }

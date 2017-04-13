@@ -25,6 +25,7 @@ package de.kopis.glacier.commands;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.AmazonGlacier;
@@ -39,18 +40,20 @@ import joptsimple.OptionSet;
 public class ReceiveArchivesListCommand extends AbstractCommand {
 
     private final VaultInventoryPrinter printer;
+    private final OutputStream out;
 
     public ReceiveArchivesListCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns) {
-        this(client, sqs, sns, new VaultInventoryPrinter());
+        this(client, sqs, sns, new VaultInventoryPrinter(), System.out);
     }
 
-    public ReceiveArchivesListCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final VaultInventoryPrinter vaultInventoryPrinter) {
+    public ReceiveArchivesListCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final VaultInventoryPrinter vaultInventoryPrinter, final OutputStream out) {
         super(client, sqs, sns);
         this.printer = vaultInventoryPrinter;
+        this.out = out;
     }
 
     private void retrieveInventoryListing(final String vaultName, final String jobId) {
-        log.info("Retrieving inventory for job id " + jobId + "...");
+        log.info("Retrieving inventory for job id {}...", jobId);
 
         try {
             final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
@@ -64,7 +67,7 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
             reader.close();
 
             printer.setInventory(content.toString());
-            printer.printInventory(System.out);
+            printer.printInventory(out);
         } catch (final AmazonClientException | IOException e) {
             log.error(e.getLocalizedMessage(), e);
         }
@@ -72,13 +75,13 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final String vaultName = options.valueOf(optionParser.VAULT);
-        final String jobId = options.valueOf(optionParser.INVENTORY_LISTING);
+        final String vaultName = options.valueOf(optionParser.vault);
+        final String jobId = options.valueOf(optionParser.inventoryListing);
         this.retrieveInventoryListing(vaultName, jobId);
     }
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.INVENTORY_LISTING) && options.hasArgument(optionParser.INVENTORY_LISTING);
+        return options.has(optionParser.inventoryListing) && options.hasArgument(optionParser.inventoryListing);
     }
 }

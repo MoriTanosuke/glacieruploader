@@ -47,12 +47,12 @@ public class DeleteVaultCommand extends AbstractCommand {
 
   @Override
   public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    String vaultName = options.valueOf(optionParser.VAULT);
+    String vaultName = options.valueOf(optionParser.vault);
     this.deleteVault(vaultName);
   }
 
   @Override
   public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-    return options.has(optionParser.DELETE_VAULT);
+    return options.has(optionParser.deleteVault);
   }
 }

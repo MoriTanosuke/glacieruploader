@@ -31,6 +31,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.AmazonGlacier;
@@ -59,6 +60,9 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     // from:
     // http://docs.amazonwebservices.com/amazonglacier/latest/dev/uploading-an-archive-mpu-using-java.html
     private void upload(final String vaultName, final File uploadFile, final Long partSize) {
+        Validate.notBlank(vaultName, "vaultName can not be blank");
+        Validate.notNull(uploadFile, "uploadFile can not be null");
+        Validate.notNull(partSize, "partSize can not be null");
         final String hPartSize = HumanReadableSize.parse(partSize);
         final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
@@ -197,9 +201,9 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final String vaultName = options.valueOf(optionParser.VAULT);
-        final List<File> optionsFiles = options.valuesOf(optionParser.MULTIPARTUPLOAD);
-        final Long partSize = options.valueOf(optionParser.PARTSIZE);
+        final String vaultName = options.valueOf(optionParser.vault);
+        final List<File> optionsFiles = options.valuesOf(optionParser.multipartUpload);
+        final Long partSize = options.valueOf(optionParser.partSize);
         final List<String> nonOptions = options.nonOptionArguments();
         final List<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
 
@@ -210,6 +214,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.MULTIPARTUPLOAD) && options.hasArgument(optionParser.MULTIPARTUPLOAD);
+        return options.has(optionParser.multipartUpload) && options.hasArgument(optionParser.multipartUpload)
+                && options.has(optionParser.partSize) && options.hasArgument(optionParser.partSize);
     }
 }

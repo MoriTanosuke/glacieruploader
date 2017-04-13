@@ -41,47 +41,47 @@ public class GlacierUploaderOptionParser extends OptionParser {
     private static final Logger log = LoggerFactory.getLogger(GlacierUploaderOptionParser.class);
     private static final Pattern REGION_REGEX_PATTERN = Pattern.compile(".*\\.?(?<region>([a-z]{2,}-){2,}\\d+)\\.?.*");
 
-    public final OptionSpec<Void> LIST_VAULT;
-    public final OptionSpec<String> LIST_JOBS;
-    public final OptionSpec<File> TARGET_FILE;
+    public final OptionSpec<Void> listVaults;
+    public final OptionSpec<String> listJobs;
+    public final OptionSpec<File> targetFile;
     @Deprecated
-    public final OptionSpec<String> ENDPOINT;
-    public final OptionSpec<String> REGION;
-    public final OptionSpec<String> VAULT;
-    public final OptionSpec<File> UPLOAD;
-    public final OptionSpec<String> DOWNLOAD;
-    public final OptionSpec<String> INVENTORY_LISTING;
-    public final OptionSpec<Void> CREATE_VAULT;
+    public final OptionSpec<String> endpoint;
+    public final OptionSpec<String> region;
+    public final OptionSpec<String> vault;
+    public final OptionSpec<File> upload;
+    public final OptionSpec<String> download;
+    public final OptionSpec<String> inventoryListing;
+    public final OptionSpec<Void> createVault;
     @Deprecated
-    public final OptionSpec<File> CREDENTIALS;
-    public final OptionSpec<String> DELETE_ARCHIVE;
-    public final OptionSpec<Void> DELETE_VAULT;
-    public final OptionSpec<File> CALCULATE_HASH;
-    public final OptionSpec<File> MULTIPARTUPLOAD;
-    public final OptionSpec<Long> PARTSIZE;
-    public final OptionSpec<Void> HELP;
-    public final OptionSpec<String> ABORT_UPLOAD;
+    public final OptionSpec<File> credentials;
+    public final OptionSpec<String> deleteArchive;
+    public final OptionSpec<Void> deleteVault;
+    public final OptionSpec<File> calculateHash;
+    public final OptionSpec<File> multipartUpload;
+    public final OptionSpec<Long> partSize;
+    public final OptionSpec<Void> help;
+    public final OptionSpec<String> abortUpload;
 
     public GlacierUploaderOptionParser(final Configuration config) {
         super();
-        this.VAULT = this.parseVault(config);
-        this.ENDPOINT = this.parseEndpoint(config);
-        this.REGION = this.parseRegion(config);
-        this.UPLOAD = this.parseUploadFile(config);
-        this.INVENTORY_LISTING = this.parseInventory(config);
-        this.DOWNLOAD = this.parseDownload(config);
-        this.CREDENTIALS = this.parseCredentials(config);
-        this.CREATE_VAULT = this.parseCreateVault(config);
-        this.LIST_VAULT = this.parseListVault(config);
-        this.LIST_JOBS = this.parseListJobs(config);
-        this.DELETE_VAULT = this.parseDeleteVault(config);
-        this.TARGET_FILE = this.parseTargetFile(config);
-        this.CALCULATE_HASH = this.parseHashFile(config);
-        this.DELETE_ARCHIVE = this.parseDeleteArchive(config);
-        this.MULTIPARTUPLOAD = this.parseMultipartUploadFile(config);
-        this.PARTSIZE = this.parsePartSize(config);
-        this.HELP = this.parseHelp(config);
-        this.ABORT_UPLOAD = this.parseAbortUpload(config);
+        this.vault = this.parseVault(config);
+        this.endpoint = this.parseEndpoint(config);
+        this.region = this.parseRegion(config);
+        this.upload = this.parseUploadFile(config);
+        this.inventoryListing = this.parseInventory(config);
+        this.download = this.parseDownload(config);
+        this.credentials = this.parseCredentials(config);
+        this.createVault = this.parseCreateVault(config);
+        this.listVaults = this.parseListVault(config);
+        this.listJobs = this.parseListJobs(config);
+        this.deleteVault = this.parseDeleteVault(config);
+        this.targetFile = this.parseTargetFile(config);
+        this.calculateHash = this.parseHashFile(config);
+        this.deleteArchive = this.parseDeleteArchive(config);
+        this.multipartUpload = this.parseMultipartUploadFile(config);
+        this.partSize = this.parsePartSize(config);
+        this.help = this.parseHelp(config);
+        this.abortUpload = this.parseAbortUpload(config);
     }
 
     public String parseEndpointToRegion(String endpointOptionValue) {
@@ -90,7 +90,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
         final Matcher matcher = REGION_REGEX_PATTERN.matcher(endpointOptionValue);
         if(matcher.matches()) {
             region = matcher.group("region");
-            log.debug("Endpoint parsed: " + region);
+            log.debug("Endpoint parsed: {}", region);
         }
 
         return region;

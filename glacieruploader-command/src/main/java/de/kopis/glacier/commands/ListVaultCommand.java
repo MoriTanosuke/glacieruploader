@@ -72,6 +72,6 @@ public class ListVaultCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.LIST_VAULT);
+        return options.has(optionParser.listVaults);
     }
 }

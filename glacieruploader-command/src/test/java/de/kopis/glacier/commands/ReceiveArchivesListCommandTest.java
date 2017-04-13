@@ -55,7 +55,7 @@ public class ReceiveArchivesListCommandTest extends AbstractCommandTest {
             public void printInventory(final OutputStream out) throws JSONException {
                 assertEquals(content, getInventory());
             }
-        });
+        }, System.out);
 
         assertTrue(command.valid(options, optionParser));
         command.exec(options, optionParser);

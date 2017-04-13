@@ -52,7 +52,7 @@ public class ListJobsCommand extends AbstractCommand {
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
         log.info("Listing jobs...");
 
-        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String vaultName = options.valueOf(optionParser.vault);
         final ListJobsRequest req = new ListJobsRequest(vaultName);
         final ListJobsResult jobOutputResult = client.listJobs(req);
         for (GlacierJobDescription job : jobOutputResult.getJobList()) {
@@ -64,7 +64,7 @@ public class ListJobsCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.VAULT)
-                && options.has(optionParser.LIST_JOBS) && options.hasArgument(optionParser.LIST_JOBS);
+        return options.has(optionParser.vault)
+                && options.has(optionParser.listJobs) && options.hasArgument(optionParser.listJobs);
     }
 }

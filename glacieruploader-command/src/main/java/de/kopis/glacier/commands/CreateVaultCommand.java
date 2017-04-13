@@ -65,12 +65,12 @@ public class CreateVaultCommand extends AbstractCommand {
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String vaultName = options.valueOf(optionParser.vault);
         this.createVault(vaultName);
     }
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.CREATE_VAULT);
+        return options.has(optionParser.createVault);
     }
 }

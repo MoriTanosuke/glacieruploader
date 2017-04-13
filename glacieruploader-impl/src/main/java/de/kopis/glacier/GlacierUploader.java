@@ -82,17 +82,17 @@ public final class GlacierUploader {
             return;
         }
 
-        String region = options.valueOf(optionParser.REGION);
+        String region = options.valueOf(optionParser.region);
         // check deprecated, but supported config parameters
-        if(StringUtils.isBlank(region) && options.has(optionParser.ENDPOINT)) {
-            log.warn("Option {} is deprecated, please switch to {}", optionParser.ENDPOINT, optionParser.REGION);
-            String endpointUrl = options.valueOf(optionParser.ENDPOINT);
+        if(StringUtils.isBlank(region) && options.has(optionParser.endpoint)) {
+            log.warn("Option {} is deprecated, please switch to {}", optionParser.endpoint, optionParser.region);
+            String endpointUrl = options.valueOf(optionParser.endpoint);
             region = optionParser.parseEndpointToRegion(endpointUrl);
             log.debug("Parsed {} from configured endpoint", region , endpointUrl);
         }
 
         // check deprecated config parameters
-        final List<? extends OptionSpec<? extends Serializable>> specs = Arrays.asList(optionParser.CREDENTIALS);
+        final List<? extends OptionSpec<? extends Serializable>> specs = Arrays.asList(optionParser.credentials);
         for(OptionSpec spec : specs) {
             if (options.has(spec)) {
                 log.info("Option {} is deprecated, will be ignored", specs);

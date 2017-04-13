@@ -48,8 +48,8 @@ public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
      */
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final String vaultName = options.valueOf(optionParser.VAULT);
-        final String uploadId = options.valueOf(optionParser.ABORT_UPLOAD);
+        final String vaultName = options.valueOf(optionParser.vault);
+        final String uploadId = options.valueOf(optionParser.abortUpload);
         try {
             abortUpload(vaultName, uploadId);
         } catch (AmazonServiceException e) {
@@ -64,7 +64,7 @@ public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
      */
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.ABORT_UPLOAD) && options.hasArgument(optionParser.ABORT_UPLOAD);
+        return options.has(optionParser.abortUpload) && options.hasArgument(optionParser.abortUpload);
     }
 
     private void abortUpload(final String vaultName, final String uploadId) {

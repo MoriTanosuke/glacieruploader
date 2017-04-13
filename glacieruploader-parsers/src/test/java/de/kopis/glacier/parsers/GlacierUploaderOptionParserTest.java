@@ -132,7 +132,7 @@ public class GlacierUploaderOptionParserTest {
         final OptionSet optionSet = optionsParser.parse(newArgs);
         assertTrue("Option 'list-inventory' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
                 optionSet.has("list-inventory"));
-        if (optionSet.hasArgument(optionsParser.INVENTORY_LISTING)) {
+        if (optionSet.hasArgument(optionsParser.inventoryListing)) {
             assertEquals("Value of option 'list-inventory' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
                     "inventory-job-id", optionSet.valueOf("list-inventory"));
         }
@@ -204,7 +204,7 @@ public class GlacierUploaderOptionParserTest {
         // use a dummy configuration
         final CompositeConfiguration dummyConfig = new CompositeConfiguration();
         final OptionSet options = optionsParser.parse("-m", tempFile.getAbsolutePath());
-        final List<File> optionsFiles = options.valuesOf(optionsParser.MULTIPARTUPLOAD);
+        final List<File> optionsFiles = options.valuesOf(optionsParser.multipartUpload);
         final List<String> nonOptions = options.nonOptionArguments();
 
         Assert.assertEquals(1, optionsFiles.size());

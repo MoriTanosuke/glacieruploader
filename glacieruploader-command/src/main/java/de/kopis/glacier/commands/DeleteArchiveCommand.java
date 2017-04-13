@@ -49,14 +49,14 @@ public class DeleteArchiveCommand extends AbstractCommand {
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final String vaultName = options.valueOf(optionParser.VAULT);
-        final String archiveId = options.valueOf(optionParser.DELETE_ARCHIVE);
+        final String vaultName = options.valueOf(optionParser.vault);
+        final String archiveId = options.valueOf(optionParser.deleteArchive);
         this.delete(vaultName, archiveId);
     }
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.DELETE_ARCHIVE) && options.hasArgument(optionParser.DELETE_ARCHIVE);
+        return options.has(optionParser.deleteArchive) && options.hasArgument(optionParser.deleteArchive);
     }
 
 }

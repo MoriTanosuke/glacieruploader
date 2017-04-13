@@ -50,21 +50,21 @@ public class DownloadArchiveCommand extends AbstractCommand {
         Validate.notNull(vaultName, "vaultName can not be null");
         Validate.notNull(archiveId, "archiveId can not be null");
         Validate.notNull(targetFile, "targetFile can not be null");
-        log.info("Downloading archive " + archiveId + " from vault " + vaultName + "...");
+        log.info("Downloading archive {} from vault {}...", archiveId, vaultName);
         atm.download(vaultName, archiveId, targetFile);
-        log.info("Archive downloaded to " + targetFile);
+        log.info("Archive downloaded to {}", targetFile);
     }
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final String vaultName = options.valueOf(optionParser.VAULT);
-        final String archiveId = options.valueOf(optionParser.DOWNLOAD);
-        final File targetFile = options.valueOf(optionParser.TARGET_FILE);
+        final String vaultName = options.valueOf(optionParser.vault);
+        final String archiveId = options.valueOf(optionParser.download);
+        final File targetFile = options.valueOf(optionParser.targetFile);
         this.download(vaultName, archiveId, targetFile);
     }
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.DOWNLOAD) && options.has(optionParser.TARGET_FILE);
+        return options.has(optionParser.download) && options.has(optionParser.targetFile);
     }
 }

@@ -48,13 +48,13 @@ public class TreeHashArchiveCommand extends AbstractCommand {
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final File file = options.valueOf(optionParser.CALCULATE_HASH);
+        final File file = options.valueOf(optionParser.calculateHash);
         this.calculateTreeHash(file);
     }
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.CALCULATE_HASH) && options.hasArgument(optionParser.CALCULATE_HASH);
+        return options.has(optionParser.calculateHash) && options.hasArgument(optionParser.calculateHash);
     }
 
 }

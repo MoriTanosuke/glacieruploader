@@ -60,13 +60,13 @@ public class RequestArchivesListCommand extends AbstractCommand {
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final String vaultName = options.valueOf(optionParser.VAULT);
+        final String vaultName = options.valueOf(optionParser.vault);
         this.startInventoryListing(vaultName);
     }
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.VAULT) &&
-                options.has(optionParser.INVENTORY_LISTING) && !options.hasArgument(optionParser.INVENTORY_LISTING);
+        return options.has(optionParser.vault) &&
+                options.has(optionParser.inventoryListing) && !options.hasArgument(optionParser.inventoryListing);
     }
 }

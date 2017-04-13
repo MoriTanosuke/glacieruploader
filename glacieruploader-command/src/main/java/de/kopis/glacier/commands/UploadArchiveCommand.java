@@ -63,8 +63,8 @@ public class UploadArchiveCommand extends AbstractCommand {
 
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        final String vaultName = options.valueOf(optionParser.VAULT);
-        final List<File> optionsFiles = options.valuesOf(optionParser.UPLOAD);
+        final String vaultName = options.valueOf(optionParser.vault);
+        final List<File> optionsFiles = options.valuesOf(optionParser.upload);
         final List<String> nonOptions = options.nonOptionArguments();
         final List<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
 
@@ -75,6 +75,6 @@ public class UploadArchiveCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.UPLOAD);
+        return options.has(optionParser.upload);
     }
 }
