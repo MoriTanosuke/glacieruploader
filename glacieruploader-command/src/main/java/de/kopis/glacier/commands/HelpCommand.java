@@ -23,6 +23,7 @@ package de.kopis.glacier.commands;
  */
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.sns.AmazonSNS;
@@ -32,8 +33,15 @@ import joptsimple.OptionSet;
 
 public class HelpCommand extends AbstractCommand {
 
+    private final OutputStream out;
+
     public HelpCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
+        this(client, sqs, sns, System.out);
+    }
+
+    public HelpCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final OutputStream out) {
         super(client, sqs, sns);
+        this.out = out;
     }
 
     @Override
@@ -43,7 +51,7 @@ public class HelpCommand extends AbstractCommand {
                     "Do not forget that --vault and --region are mandatory for all commands." + System.getProperty("line.separator"));
         }
         try {
-            optionParser.printHelpOn(System.out);
+            optionParser.printHelpOn(out);
         } catch (final IOException e) {
             log.error("Can not print help", e);
         }
