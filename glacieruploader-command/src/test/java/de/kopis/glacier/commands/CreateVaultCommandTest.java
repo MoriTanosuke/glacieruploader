@@ -56,7 +56,7 @@ public class CreateVaultCommandTest extends AbstractCommandTest {
             public void printVault(final DescribeVaultOutput output, final OutputStream o) {
                 assertEquals(vaultName, output.getVaultName());
             }
-        });
+        }, System.out);
 
         assertTrue(command.valid(options, optionParser));
         command.exec(options, optionParser);
