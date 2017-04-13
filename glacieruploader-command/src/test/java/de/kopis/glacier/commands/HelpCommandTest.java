@@ -22,9 +22,17 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import static org.easymock.EasyMock.anyInt;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.junit.Test;
 import joptsimple.OptionSet;
@@ -34,13 +42,35 @@ public class HelpCommandTest extends AbstractCommandTest {
     public void exec() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         // no need to specify options
-        final OptionSet options = optionParser.parse();
-        new HelpCommand(client, sqs, sns, out).exec(options, optionParser);
+        final OptionSet options = optionParser.parse("--help");
+        final HelpCommand command = new HelpCommand(client, sqs, sns, out);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         ByteArrayOutputStream another = new ByteArrayOutputStream();
         optionParser.printHelpOn(another);
 
         assertEquals(another.toString(), out.toString());
+    }
+
+    @Test
+    public void execWithoutOption() {
+        final OptionSet options = optionParser.parse();
+        final HelpCommand command = new HelpCommand(client, sqs, sns, System.out);
+        command.exec(options, optionParser);
+    }
+
+    @Test
+    public void execWithBrokenOutput() throws IOException {
+        final OptionSet options = optionParser.parse("--help");
+        final OutputStream out = createMock(OutputStream.class);
+        out.write((byte[]) anyObject(), anyInt(), anyInt());
+        expectLastCall().andThrow(new IOException("dummy exception from junit test"));
+        replay(out);
+
+        final HelpCommand command = new HelpCommand(client, sqs, sns, out);
+        command.exec(options, optionParser);
     }
 
 }

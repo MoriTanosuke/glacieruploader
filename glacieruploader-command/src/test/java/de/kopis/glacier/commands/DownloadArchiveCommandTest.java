@@ -26,6 +26,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.UUID;
@@ -48,7 +49,10 @@ public class DownloadArchiveCommandTest extends AbstractCommandTest {
         final OptionSet options = optionParser.parse("--vault", vaultName,
                 "--download", archiveId,
                 "--target", targetName);
-        new DownloadArchiveCommand(client, sqs, sns, atm).exec(options, optionParser);
+        final DownloadArchiveCommand command = new DownloadArchiveCommand(client, sqs, sns, atm);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(atm);
     }

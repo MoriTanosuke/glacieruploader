@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.OutputStream;
 import java.util.UUID;
@@ -48,13 +49,16 @@ public class ReceiveArchivesListCommandTest extends AbstractCommandTest {
         expect(client.getJobOutput(isA(GetJobOutputRequest.class))).andReturn(jobResult).times(1);
         replay(client);
 
-        final OptionSet options = optionParser.parse("--vault", "vaultName");
-        new ReceiveArchivesListCommand(client, sqs, sns, new VaultInventoryPrinter() {
+        final OptionSet options = optionParser.parse("--vault", "vaultName", "--list-inventory", UUID.randomUUID().toString());
+        final ReceiveArchivesListCommand command = new ReceiveArchivesListCommand(client, sqs, sns, new VaultInventoryPrinter() {
             @Override
             public void printInventory(final OutputStream out) throws JSONException {
                 assertEquals(content, getInventory());
             }
-        }).exec(options, optionParser);
+        });
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(client);
     }

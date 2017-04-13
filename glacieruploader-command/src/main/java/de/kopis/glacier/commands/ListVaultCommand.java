@@ -22,6 +22,7 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import java.io.OutputStream;
 import java.util.List;
 
 import com.amazonaws.AmazonClientException;
@@ -37,14 +38,16 @@ import joptsimple.OptionSet;
 
 public class ListVaultCommand extends AbstractCommand {
     private final VaultPrinter vaultPrinter;
+    private final OutputStream outputStream;
 
     public ListVaultCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
-        this(client, sqs, sns, new VaultPrinter());
+        this(client, sqs, sns, new VaultPrinter(), System.out);
     }
 
-    public ListVaultCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final VaultPrinter vaultPrinter) {
+    public ListVaultCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final VaultPrinter vaultPrinter, final OutputStream out) {
         super(client, sqs, sns);
         this.vaultPrinter = vaultPrinter;
+        this.outputStream = out;
     }
 
     private void listVaults() {
@@ -55,7 +58,7 @@ public class ListVaultCommand extends AbstractCommand {
             final ListVaultsResult listVaultsResult = client.listVaults(listVaultsRequest);
             final List<DescribeVaultOutput> vaults = listVaultsResult.getVaultList();
             for (DescribeVaultOutput vault : vaults) {
-                vaultPrinter.printVault(vault, System.out);
+                vaultPrinter.printVault(vault, outputStream);
             }
         } catch (final AmazonClientException e) {
             log.error("Can't list vaults.", e);

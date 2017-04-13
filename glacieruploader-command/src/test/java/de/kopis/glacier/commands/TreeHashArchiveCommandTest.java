@@ -22,6 +22,8 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.UUID;
 
@@ -33,6 +35,17 @@ public class TreeHashArchiveCommandTest extends AbstractCommandTest {
     public void canCalculateTreeHashForFile() throws Exception {
         final String content = UUID.randomUUID().toString();
         final File file = writeTemporaryFile(content);
+
+        final OptionSet options = optionParser.parse("--calculate", file.getAbsolutePath());
+        // TODO how to verify this call? output is only into log
+        final TreeHashArchiveCommand command = new TreeHashArchiveCommand(client, sqs, sns);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
+    }
+    @Test
+    public void canNotCalculateTreeHashForMissingFile() throws Exception {
+        final File file = new File("notexisting.txt");
 
         final OptionSet options = optionParser.parse("--calculate", file.getAbsolutePath());
         // TODO how to verify this call? output is only into log

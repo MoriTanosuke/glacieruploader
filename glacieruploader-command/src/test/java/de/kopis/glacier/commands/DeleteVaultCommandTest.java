@@ -28,6 +28,7 @@ import static org.easymock.EasyMock.newCapture;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
@@ -47,8 +48,11 @@ public class DeleteVaultCommandTest extends AbstractCommandTest {
         expect(client.deleteVault(capture(capturedRequest))).andReturn(new DeleteVaultResult()).times(1);
         replay(client);
 
-        final OptionSet options = optionParser.parse("--vault", vaultName);
-        new DeleteVaultCommand(client, sqs, sns).exec(options, optionParser);
+        final OptionSet options = optionParser.parse("--vault", vaultName, "--delete-vault");
+        final DeleteVaultCommand command = new DeleteVaultCommand(client, sqs, sns);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(client);
         assertEquals(vaultName, capturedRequest.getValue().getVaultName());

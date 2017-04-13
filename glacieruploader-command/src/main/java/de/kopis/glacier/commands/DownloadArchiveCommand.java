@@ -46,11 +46,6 @@ public class DownloadArchiveCommand extends AbstractCommand {
         this.atm = atm;
     }
 
-    private void download(final String vaultName, final String archiveId, final String targetFile) {
-        final File downloadFile = new File(targetFile);
-        download(vaultName, archiveId, downloadFile);
-    }
-
     private void download(final String vaultName, final String archiveId, final File targetFile) {
         Validate.notNull(vaultName, "vaultName can not be null");
         Validate.notNull(archiveId, "archiveId can not be null");

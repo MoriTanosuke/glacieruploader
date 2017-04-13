@@ -28,6 +28,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -61,7 +62,10 @@ public class UploadMultipartArchiveCommandTest extends AbstractCommandTest {
         expect(client.completeMultipartUpload(isA(CompleteMultipartUploadRequest.class))).andReturn(new CompleteMultipartUploadResult()).times(1);
         replay(client, sqs, sns);
 
-        new UploadMultipartArchiveCommand(client, sqs, sns).exec(options, optionParser);
+        final UploadMultipartArchiveCommand command = new UploadMultipartArchiveCommand(client, sqs, sns);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(client, sqs, sns);
     }

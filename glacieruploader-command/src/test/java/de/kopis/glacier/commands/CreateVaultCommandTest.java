@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.OutputStream;
 
@@ -45,17 +46,20 @@ public class CreateVaultCommandTest extends AbstractCommandTest {
         final CreateVaultResult createVaultResult = new CreateVaultResult();
         createVaultResult.setLocation("dummyLocation");
         expect(client.createVault(isA(CreateVaultRequest.class))).andReturn(createVaultResult).times(1);
-        //TODO check against provided createVaultResult
         expect(client.describeVault(isA(DescribeVaultRequest.class))).andReturn(new DescribeVaultResult()).times(1);
         replay(client);
 
         final String vaultName = "dummyVaultName";
-        final OptionSet options = optionParser.parse("--vault", vaultName);
-        new CreateVaultCommand(client, sqs, sns, new VaultPrinter() {
+        final OptionSet options = optionParser.parse("--vault", vaultName, "--create");
+        final CreateVaultCommand command = new CreateVaultCommand(client, sqs, sns, new VaultPrinter() {
             @Override
             public void printVault(final DescribeVaultOutput output, final OutputStream o) {
                 assertEquals(vaultName, output.getVaultName());
-            }}).exec(options, optionParser);
+            }
+        });
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(client);
     }

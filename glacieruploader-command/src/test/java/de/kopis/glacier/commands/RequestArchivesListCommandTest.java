@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
@@ -45,7 +46,10 @@ public class RequestArchivesListCommandTest extends AbstractCommandTest {
         replay(client);
 
         final OptionSet options = optionParser.parse("--vault", "vaultName", "--list-inventory");
-        new RequestArchivesListCommand(client, sqs, sns).exec(options, optionParser);
+        final RequestArchivesListCommand command = new RequestArchivesListCommand(client, sqs, sns);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(client);
     }

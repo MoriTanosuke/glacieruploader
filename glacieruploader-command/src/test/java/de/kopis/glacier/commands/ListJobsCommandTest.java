@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -52,13 +53,15 @@ public class ListJobsCommandTest extends AbstractCommandTest {
         expect(client.listJobs(isA(ListJobsRequest.class))).andReturn(jobResult).times(1);
         replay(client);
 
-        final OptionSet options = optionParser.parse();
-        new ListJobsCommand(client, sqs, sns, new JobPrinter() {
+        final OptionSet options = optionParser.parse("--vault", "vaultName", "--list-jobs", UUID.randomUUID().toString());
+        final ListJobsCommand command = new ListJobsCommand(client, sqs, sns, new JobPrinter() {
             @Override
             public void printJob(final GlacierJobDescription job, final OutputStream o) {
                 assertEquals(jobId, job.getJobId());
             }
-        }).exec(options, optionParser);
+        });
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(client);
     }

@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -50,15 +51,16 @@ public class ListVaultCommandTest extends AbstractCommandTest {
         expect(client.listVaults(isA(ListVaultsRequest.class))).andReturn(vaultList).times(1);
         replay(client);
 
-        // there is no need to supply the LIST_VAULT option, because we're calling the command directly and it
-        // does not take arguments anyway
-        final OptionSet options = optionParser.parse();
-        new ListVaultCommand(client, sqs, sns, new VaultPrinter() {
+        final OptionSet options = optionParser.parse("--list-vaults");
+        final ListVaultCommand command = new ListVaultCommand(client, sqs, sns, new VaultPrinter() {
             @Override
             public void printVault(final DescribeVaultOutput output, final OutputStream o) {
                 assertEquals(vaultName, output.getVaultName());
             }
-        }).exec(options, optionParser);
+        }, System.out);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(client);
     }

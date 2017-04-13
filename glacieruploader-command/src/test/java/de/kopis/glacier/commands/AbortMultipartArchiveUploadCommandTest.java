@@ -26,6 +26,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertTrue;
+
+import java.util.UUID;
 
 import org.junit.Test;
 import com.amazonaws.services.glacier.model.AbortMultipartUploadRequest;
@@ -38,8 +41,11 @@ public class AbortMultipartArchiveUploadCommandTest extends AbstractCommandTest 
         expect(client.abortMultipartUpload(isA(AbortMultipartUploadRequest.class))).andReturn(new AbortMultipartUploadResult()).times(1);
         replay(client);
 
-        final OptionSet options = optionParser.parse();
-        new AbortMultipartArchiveUploadCommand(client, sqs, sns).exec(options, optionParser);
+        final OptionSet options = optionParser.parse("--abort-upload", UUID.randomUUID().toString());
+        final AbortMultipartArchiveUploadCommand command = new AbortMultipartArchiveUploadCommand(client, sqs, sns);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
 
         verify(client);
     }
