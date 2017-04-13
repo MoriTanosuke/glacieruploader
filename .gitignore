@@ -6,3 +6,4 @@ aws.properties
 bin
 .idea
 *.iml
+*.log
