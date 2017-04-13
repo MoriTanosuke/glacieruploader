@@ -84,18 +84,18 @@ public final class GlacierUploader {
         String region = options.valueOf(optionParser.REGION);
         // check deprecated, but supported config parameters
         if(options.has(optionParser.ENDPOINT)) {
-            log.warn("Option " + optionParser.ENDPOINT + " is deprecated, please switch to " + optionParser.REGION);
-            log.debug("Option " + optionParser.REGION + " not found, trying to parse from " + optionParser.ENDPOINT);
+            log.warn("Option {} is deprecated, please switch to {}", optionParser.ENDPOINT, optionParser.REGION);
+            log.debug("Option {} not found, trying to parse from {}", optionParser.REGION, optionParser.ENDPOINT);
             String endpointUrl = options.valueOf(optionParser.ENDPOINT);
             region = optionParser.parseEndpointToRegion(endpointUrl);
-            log.debug("Parsed " + region + " from configured endpoint " + endpointUrl);
+            log.debug("Parsed {} from configured endpoint", region , endpointUrl);
         }
 
         // check deprecated config parameters
         final List<? extends OptionSpec<? extends Serializable>> specs = Arrays.asList(optionParser.CREDENTIALS);
         for(OptionSpec spec : specs) {
             if (options.has(spec)) {
-                log.info("Option " + specs + " is deprecated, will be ignored");
+                log.info("Option {} is deprecated, will be ignored", specs);
             }
         }
 
@@ -116,7 +116,7 @@ public final class GlacierUploader {
             if (configFile.exists() && configFile.canRead()) {
                 config.addConfiguration(new PropertiesConfiguration(configFile));
             } else {
-                log.warn(String.format("Config file '%s' not found", configFile.getCanonicalPath()));
+                log.warn("Config file '{}' not found", configFile.getCanonicalPath());
             }
         } catch (Exception e) {
             log.warn("Can not read configuration", e);
@@ -126,7 +126,7 @@ public final class GlacierUploader {
 
     private static void findAndExecCommand(final String region, OptionSet options, GlacierUploaderOptionParser optionParser) {
         Validate.notNull(region, "region can not be NULL");
-        log.info("Using region: " + region);
+        log.info("Using region: {}", region);
 
         final DefaultAWSCredentialsProviderChain credentialsProvider = new DefaultAWSCredentialsProviderChain();
         final AmazonGlacier client = AmazonGlacierClientBuilder.standard()
