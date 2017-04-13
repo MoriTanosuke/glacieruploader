@@ -61,14 +61,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <fileSets>
-                        <fileSet>
-                            <directory>${project.build.resources[0].directory}</directory>
-                            <excludes>
-                                <exclude>src/main/resources/aws.properties</exclude>
-                            </excludes>
-                        </fileSet>
-                    </fileSets>
                     <archive>
                         <manifest>
                             <mainClass>de.kopis.glacier.GlacierUploader</mainClass>
