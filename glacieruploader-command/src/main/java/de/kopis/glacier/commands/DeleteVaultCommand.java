@@ -37,12 +37,12 @@ public class DeleteVaultCommand extends AbstractCommand {
 
   private void deleteVault(final String vaultName) {
     Validate.notNull(vaultName, "vaultName can not be null");
-    log.info("Deleting vault " + vaultName + "...");
+    log.info("Deleting vault {}...", vaultName);
 
     final DeleteVaultRequest deleteVaultRequest = new DeleteVaultRequest(vaultName);
     // TODO check for notifications first?
     client.deleteVault(deleteVaultRequest);
-    log.info("Vault " + vaultName + " deleted.");
+    log.info("Vault {} deleted.", vaultName);
   }
 
   @Override

@@ -39,12 +39,12 @@ public class DeleteArchiveCommand extends AbstractCommand {
     private void delete(final String vaultName, final String archiveId) {
         Validate.notNull(vaultName, "vaultName can not be null");
         Validate.notNull(archiveId, "archiveId can not be null");
-        log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
+        log.info("Deleting archive {} from vault {}...", archiveId, vaultName);
 
         final DeleteArchiveRequest deleteRequest = new DeleteArchiveRequest(vaultName, archiveId);
         client.deleteArchive(deleteRequest);
 
-        log.info("Archive " + archiveId + " deletion started from vault " + vaultName + ".");
+        log.info("Archive {} deletion started from vault {}.", archiveId, vaultName);
     }
 
     @Override

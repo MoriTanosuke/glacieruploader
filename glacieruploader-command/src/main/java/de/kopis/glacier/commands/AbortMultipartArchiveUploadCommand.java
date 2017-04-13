@@ -55,7 +55,7 @@ public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
         } catch (AmazonServiceException e) {
             log.error("Something went wrong at Amazon while aborting the multipart upload with id " + uploadId + ". " + e.getLocalizedMessage(), e);
         } catch (AmazonClientException e) {
-            log.error("Something went wrong with the Amazon Client. " + e.getLocalizedMessage(), e);
+            log.error("Something went wrong with the Amazon Client.", e);
         }
     }
 
@@ -69,7 +69,7 @@ public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
 
     private void abortUpload(final String vaultName, final String uploadId) {
         final AbortMultipartUploadRequest abortRequest = new AbortMultipartUploadRequest().withUploadId(uploadId).withVaultName(vaultName);
-        log.info("Aborting upload to vault " + vaultName + " with upload id " + uploadId + ".");
+        log.info("Aborting upload to vault {} with upload id {}.", vaultName, uploadId);
         client.abortMultipartUpload(abortRequest);
         log.info("Upload aborted successfully.");
     }

@@ -41,7 +41,7 @@ public class RequestArchivesListCommand extends AbstractCommand {
 
     private void startInventoryListing(final String vaultName) {
         Validate.notNull(vaultName, "vaultName can not be null");
-        log.info("Starting inventory listing for vault " + vaultName + "...");
+        log.info("Starting inventory listing for vault {}...", vaultName);
 
         try {
             final InitiateJobRequest initJobRequest = new InitiateJobRequest()
@@ -50,7 +50,7 @@ public class RequestArchivesListCommand extends AbstractCommand {
 
             final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
             final String jobId = initJobResult.getJobId();
-            log.info("Inventory Job created with ID" + System.getProperty("line.separator") + jobId);
+            log.info("Inventory Job created with ID {}", jobId);
         } catch (final AmazonClientException e) {
             log.error(e.getLocalizedMessage(), e);
         }

@@ -39,9 +39,10 @@ public class TreeHashArchiveCommand extends AbstractCommand {
 
     private void calculateTreeHash(File file) {
         if (file.exists()) {
-            log.info(TreeHashGenerator.calculateTreeHash(file));
+            final String treeHash = TreeHashGenerator.calculateTreeHash(file);
+            log.info(treeHash);
         } else {
-            log.error(String.format("File '%s' not found", file.getAbsolutePath()));
+            log.error("File '{}' not found", file.getAbsolutePath());
         }
     }
 

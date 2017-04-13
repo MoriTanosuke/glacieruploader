@@ -52,12 +52,12 @@ public class UploadArchiveCommand extends AbstractCommand {
     }
 
     public void upload(final String vaultName, final File uploadFile) {
-        log.info("Starting to upload " + uploadFile + " to vault " + vaultName + "...");
+        log.info("Starting to upload {} to vault {}...", uploadFile, vaultName);
         try {
             final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
-            log.info("Uploaded archive " + archiveId);
+            log.info("Uploaded archive {}", archiveId);
         } catch (final IOException e) {
-            log.error("Something went wrong while uploading " + uploadFile + vaultName + "to vault " + ".", e);
+            log.error("Something went wrong while uploading " + uploadFile + " to vault " + vaultName + ".", e);
         }
     }
 

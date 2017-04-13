@@ -50,7 +50,7 @@ public class HumanReadableSize {
     }
 
     public static String parse(final String size) throws IllegalArgumentException {
-        LOG.debug("Parsing '" + size + "'");
+        LOG.debug("Parsing '{}'", size);
         final String[] sanitizedSize = sanitize(size);
         BigDecimal sizeAsNumber = null;
         try {
@@ -60,7 +60,7 @@ public class HumanReadableSize {
         } catch (final ParseException e) {
             throw new IllegalArgumentException("Can not parse Number", e);
         }
-        LOG.debug("Parsed as number: " + sizeAsNumber);
+        LOG.debug("Parsed as number: {}", sizeAsNumber);
         String humanReadableSize = "";
         String sizeClass = sanitizedSize[1];
         if (sizeAsNumber.longValue() >= 1024L) {
@@ -69,7 +69,7 @@ public class HumanReadableSize {
         } else {
             humanReadableSize = round(new BigDecimal(sizeAsNumber.toString()), 2, BigDecimal.ROUND_UP) + sizeClass;
         }
-        LOG.debug("Parsed: " + humanReadableSize);
+        LOG.debug("Parsed: {}", humanReadableSize);
         return humanReadableSize;
     }
 
@@ -91,7 +91,7 @@ public class HumanReadableSize {
     }
 
     public static String[] sanitize(final String size) {
-        LOG.debug("Sanitizing '" + size + "'");
+        LOG.debug("Sanitizing '{}'", size);
         final Pattern patternClass = Pattern.compile("([0-9.]+)\\s*?([kMGTP]?B)");
         final Matcher m = patternClass.matcher(size);
         String[] s = new String[]{size, "B"};
@@ -101,14 +101,14 @@ public class HumanReadableSize {
             s = new String[]{pureSize, sizeClass};
         }
 
-        LOG.debug("Sanitized: " + Arrays.deepToString(s));
+        LOG.debug("Sanitized: {}", Arrays.deepToString(s));
         return s;
     }
 
     private static String round(final BigDecimal unrounded, final int precision, final int roundingMode) {
-        LOG.debug("Rounding '" + unrounded + "' to " + precision + " precision");
+        LOG.debug("Rounding '{}' to {} precision", unrounded, precision);
         final BigDecimal rounded = unrounded.setScale(precision, roundingMode);
-        LOG.debug("Rounded: " + rounded);
+        LOG.debug("Rounded: {}", rounded);
         return rounded.toString();
     }
 }

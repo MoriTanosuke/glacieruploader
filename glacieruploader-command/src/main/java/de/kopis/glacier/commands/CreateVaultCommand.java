@@ -49,12 +49,12 @@ public class CreateVaultCommand extends AbstractCommand {
 
     private void createVault(final String vaultName) {
         Validate.notNull(vaultName, "vaultName can not be null");
-        log.info("Creating vault " + vaultName + "...");
+        log.info("Creating vault {}...", vaultName);
 
         try {
             final CreateVaultRequest createVaultRequest = new CreateVaultRequest(vaultName);
             final CreateVaultResult createVaultResult = client.createVault(createVaultRequest);
-            log.info("Vault " + vaultName + " created. " + createVaultResult);
+            log.info("Vault {} created.", vaultName);
             final DescribeVaultRequest describeVaultRequest = new DescribeVaultRequest().withVaultName(vaultName);
             final DescribeVaultResult describeVaultResult = client.describeVault(describeVaultRequest);
             printer.printVault(describeVaultResult, System.out);

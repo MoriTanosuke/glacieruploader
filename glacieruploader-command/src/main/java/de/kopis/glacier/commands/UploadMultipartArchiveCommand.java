@@ -62,17 +62,17 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         final String hPartSize = HumanReadableSize.parse(partSize);
         final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
-        log.info(String.format("Multipart uploading %s (%s) to vault %s with part size %s (%s).", uploadFile.getName(),
-                hTotalSize, vaultName, partSize, hPartSize));
+        log.info("Multipart uploading {} ({}) to vault {} with part size {} ({}).",
+                uploadFile.getName(), hTotalSize, vaultName, partSize, hPartSize);
         try {
             final String uploadId = this.initiateMultipartUpload(vaultName, partSize, uploadFile.getName());
             final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
             final CompleteMultipartUploadResult result = this.completeMultiPartUpload(uploadId, uploadFile, vaultName,
                     checksum);
 
-            log.info("Uploaded Archive ID: " + result.getArchiveId());
-            log.info("Local Checksum: " + checksum);
-            log.info("Remote Checksum: " + result.getChecksum());
+            log.info("Uploaded Archive ID: {}", result.getArchiveId());
+            log.info("Local Checksum: {}", checksum);
+            log.info("Remote Checksum: {}", result.getChecksum());
             if (checksum.equals(result.getChecksum())) {
                 log.info("Checksums are identical, upload succeeded.");
             } else {
@@ -97,7 +97,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
         InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
 
-        log.info("Upload ID (token): " + result.getUploadId());
+        log.info("Upload ID (token): {}", result.getUploadId());
 
         return result.getUploadId();
     }
@@ -152,7 +152,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
                                 .withVaultName(vaultName);
                         try {
                             UploadMultipartPartResult partResult = client.uploadMultipartPart(req);
-                            log.info(String.format("Part %d/%d (%s) uploaded, checksum: %s", counter, total, range, partResult.getChecksum()));
+                            log.info("Part {}/{} ({}) uploaded, checksum: {}", counter, total, range, partResult.getChecksum());
                             completed = true;
                             binaryChecksums.add(binaryChecksum);
                         } catch (Exception e) {
