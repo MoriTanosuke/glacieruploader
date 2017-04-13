@@ -31,12 +31,12 @@ public class JobPrinter {
 
     public void printJob(GlacierJobDescription job, OutputStream o) {
         final PrintWriter out = new PrintWriter(o);
-        out.println("Job ID:\t" + job.getJobId());
-        out.println("Creation date:\t" + job.getCreationDate());
+        out.println("Job ID:\t\t\t\t" + job.getJobId());
+        out.println("Creation date:\t\t" + job.getCreationDate());
         if (job.getCompleted()) {
             out.println("Completion date:\t" + job.getCompletionDate());
         }
-        out.println("Status:\t" + job.getStatusCode() + (job.getStatusMessage() != null ? " (" + job.getStatusMessage() + ")" : ""));
+        out.println("Status:\t\t\t\t" + job.getStatusCode() + (job.getStatusMessage() != null ? " (" + job.getStatusMessage() + ")" : ""));
         out.println();
         out.flush();
     }
