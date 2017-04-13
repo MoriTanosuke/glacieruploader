@@ -22,25 +22,29 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import java.util.List;
+
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.model.DescribeVaultOutput;
 import com.amazonaws.services.glacier.model.ListVaultsRequest;
 import com.amazonaws.services.glacier.model.ListVaultsResult;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-
 public class ListVaultCommand extends AbstractCommand {
     private final VaultPrinter vaultPrinter;
 
-    public ListVaultCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
-        vaultPrinter = new VaultPrinter();
+    public ListVaultCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
+        this(client, sqs, sns, new VaultPrinter());
+    }
+
+    public ListVaultCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final VaultPrinter vaultPrinter) {
+        super(client, sqs, sns);
+        this.vaultPrinter = vaultPrinter;
     }
 
     private void listVaults() {

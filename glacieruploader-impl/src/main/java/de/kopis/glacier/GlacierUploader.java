@@ -22,22 +22,47 @@ package de.kopis.glacier;
  * #L%
  */
 
-import de.kopis.glacier.commands.*;
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
-import joptsimple.OptionSet;
+import java.io.File;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.glacier.AmazonGlacier;
+import com.amazonaws.services.glacier.AmazonGlacierClientBuilder;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import de.kopis.glacier.commands.AbortMultipartArchiveUploadCommand;
+import de.kopis.glacier.commands.AbstractCommand;
+import de.kopis.glacier.commands.CommandFactory;
+import de.kopis.glacier.commands.CreateVaultCommand;
+import de.kopis.glacier.commands.DeleteArchiveCommand;
+import de.kopis.glacier.commands.DeleteVaultCommand;
+import de.kopis.glacier.commands.DownloadArchiveCommand;
+import de.kopis.glacier.commands.HelpCommand;
+import de.kopis.glacier.commands.ListJobsCommand;
+import de.kopis.glacier.commands.ListVaultCommand;
+import de.kopis.glacier.commands.ReceiveArchivesListCommand;
+import de.kopis.glacier.commands.RequestArchivesListCommand;
+import de.kopis.glacier.commands.TreeHashArchiveCommand;
+import de.kopis.glacier.commands.UploadArchiveCommand;
+import de.kopis.glacier.commands.UploadMultipartArchiveCommand;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 public final class GlacierUploader {
 
-    private static final Log log = LogFactory.getLog(GlacierUploader.class);
+    private static final Logger log = LoggerFactory.getLogger(GlacierUploader.class);
 
     private GlacierUploader() {
         // do not instantiate
@@ -52,12 +77,35 @@ public final class GlacierUploader {
         try {
             options = optionParser.parse(args);
         } catch (Exception e) {
-            System.err.println("Something went wrong parsing the arguments: " + e.getMessage());
+            log.error("Something went wrong parsing the arguments", e);
             return;
         }
 
+        String region = options.valueOf(optionParser.REGION);
+        // check deprecated, but supported config parameters
+        if(options.has(optionParser.ENDPOINT)) {
+            log.warn("Option " + optionParser.ENDPOINT + " is deprecated, please switch to " + optionParser.REGION);
+            log.debug("Option " + optionParser.REGION + " not found, trying to parse from " + optionParser.ENDPOINT);
+            String endpointUrl = options.valueOf(optionParser.ENDPOINT);
+            region = optionParser.parseEndpointToRegion(endpointUrl);
+            log.debug("Parsed " + region + " from configured endpoint " + endpointUrl);
+        }
+
+        // check deprecated config parameters
+        final List<? extends OptionSpec<? extends Serializable>> specs = Arrays.asList(optionParser.CREDENTIALS);
+        for(OptionSpec spec : specs) {
+            if (options.has(spec)) {
+                log.info("Option " + specs + " is deprecated, will be ignored");
+            }
+        }
+
+        // last sanity check
+        if(region == null) {
+            log.error("Region is not configured.");
+        }
+
         // Launch
-        findAndExecCommand(options, optionParser);
+        findAndExecCommand(region, options, optionParser);
     }
 
     public static CompositeConfiguration setupConfig() {
@@ -76,44 +124,46 @@ public final class GlacierUploader {
         return config;
     }
 
-    private static void findAndExecCommand(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        try {
-            // Set default
-            CommandFactory.setDefaultCommand(new HelpCommand());
-            CommandFactory.add(CommandFactory.getDefaultCommand());
+    private static void findAndExecCommand(final String region, OptionSet options, GlacierUploaderOptionParser optionParser) {
+        Validate.notNull(region, "region can not be NULL");
+        log.info("Using region: " + region);
 
-            final File credentials = options.valueOf(optionParser.CREDENTIALS);
-            final String endpointArg = options.valueOf(optionParser.ENDPOINT);
+        final DefaultAWSCredentialsProviderChain credentialsProvider = new DefaultAWSCredentialsProviderChain();
+        final AmazonGlacier client = AmazonGlacierClientBuilder.standard()
+                .withCredentials(credentialsProvider)
+                .withRegion(Regions.fromName(region))
+                .build();
+        final AmazonSQS sqs = AmazonSQSClientBuilder.standard()
+                .withCredentials(credentialsProvider)
+                .withRegion(Regions.fromName(region))
+                .build();
+        final AmazonSNS sns = AmazonSNSClientBuilder.standard()
+                .withCredentials(credentialsProvider)
+                .withRegion(Regions.fromName(region))
+                .build();
 
-            if (credentials != null && endpointArg != null) {
+        // Set default command
+        CommandFactory.setDefaultCommand(new HelpCommand(client, sqs, sns));
+        CommandFactory.add(CommandFactory.getDefaultCommand());
 
-                final URL endpoint = new URL(optionParser.formatEndpointUrl(endpointArg));
+        // Add all commands to the factory
+        CommandFactory.add(new CreateVaultCommand(client, sqs, sns));
+        CommandFactory.add(new ListVaultCommand(client, sqs, sns));
+        CommandFactory.add(new ListJobsCommand(client, sqs, sns));
+        CommandFactory.add(new DeleteArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new DeleteVaultCommand(client, sqs, sns));
+        CommandFactory.add(new DownloadArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new ReceiveArchivesListCommand(client, sqs, sns));
+        CommandFactory.add(new RequestArchivesListCommand(client, sqs, sns));
+        CommandFactory.add(new TreeHashArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new UploadArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new UploadMultipartArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new AbortMultipartArchiveUploadCommand(client, sqs, sns));
 
-                log.info("Using end point: " + endpointArg);
+        // Find a valid one
+        AbstractCommand command = CommandFactory.get(options, optionParser);
 
-                // Add all commands to the factory
-                CommandFactory.add(new CreateVaultCommand(endpoint, credentials));
-                CommandFactory.add(new ListVaultCommand(endpoint, credentials));
-                CommandFactory.add(new ListJobsCommand(endpoint, credentials));
-                CommandFactory.add(new DeleteArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new DeleteVaultCommand(endpoint, credentials));
-                CommandFactory.add(new DownloadArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new ReceiveArchivesListCommand(endpoint, credentials));
-                CommandFactory.add(new RequestArchivesListCommand(endpoint, credentials));
-                CommandFactory.add(new TreeHashArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new UploadArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new UploadMultipartArchiveCommand(endpoint, credentials));
-                CommandFactory.add(new AbortMultipartArchiveUploadCommand(endpoint, credentials));
-            }
-
-            // Find a valid one
-            AbstractCommand command = CommandFactory.get(options, optionParser);
-
-            // Execute it
-            command.exec(options, optionParser);
-
-        } catch (final IOException e) {
-            log.error("Ooops, something is wrong with the system configuration", e);
-        }
+        // Execute it
+        command.exec(options, optionParser);
     }
 }

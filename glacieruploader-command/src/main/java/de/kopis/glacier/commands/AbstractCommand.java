@@ -22,47 +22,34 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.glacier.AmazonGlacierClient;
-import com.amazonaws.services.sns.AmazonSNSClient;
-import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.glacier.AmazonGlacier;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
-import org.apache.log4j.Logger;
 
 public abstract class AbstractCommand {
     protected final Logger log;
 
     protected AWSCredentials credentials = null;
-    protected AmazonGlacierClient client = null;
-    protected AmazonSQSClient sqs = null;
-    protected AmazonSNSClient sns = null;
+    protected AmazonGlacier client = null;
+    protected AmazonSQS sqs = null;
+    protected AmazonSNS sns = null;
 
-    public AbstractCommand(final URL endpoint, final File credentials) throws IOException {
-        this.log = Logger.getLogger(this.getClass());
+    public AbstractCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
+        Validate.notNull(client);
+        Validate.notNull(sqs);
+        Validate.notNull(sns);
 
-        if (credentials != null) {
-            this.credentials = new PropertiesCredentials(credentials);
-            this.client = new AmazonGlacierClient(this.credentials);
-            this.sqs = new AmazonSQSClient(this.credentials);
-            this.sns = new AmazonSNSClient(this.credentials);
-        }
+        this.client = client;
+        this.sqs = sqs;
+        this.sns = sns;
 
-        if (endpoint != null) {
-            this.setEndpoint(endpoint);
-        }
-    }
-
-    protected void setEndpoint(final URL endpoint) {
-        client.setEndpoint(endpoint.toExternalForm());
-        // TODO check if this really fixes #13
-        sqs.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sqs"));
-        sns.setEndpoint(endpoint.toExternalForm().replaceAll("glacier", "sns"));
+        this.log = LoggerFactory.getLogger(this.getClass());
     }
 
     public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);

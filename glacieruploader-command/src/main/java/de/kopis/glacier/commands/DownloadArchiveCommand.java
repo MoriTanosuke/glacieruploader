@@ -23,27 +23,39 @@ package de.kopis.glacier.commands;
  */
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
+import org.apache.commons.lang3.Validate;
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
+import com.amazonaws.services.glacier.transfer.ArchiveTransferManagerBuilder;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
 public class DownloadArchiveCommand extends AbstractCommand {
 
-    public DownloadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
+    private ArchiveTransferManager atm;
+
+    public DownloadArchiveCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
+        this(client, sqs, sns, new ArchiveTransferManagerBuilder().withGlacierClient(client).withSqsClient(sqs).withSnsClient(sns).build());
     }
 
-    public void download(final String vaultName, final String archiveId, final String targetFile) {
+    public DownloadArchiveCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final ArchiveTransferManager atm) {
+        super(client, sqs, sns);
+        this.atm = atm;
+    }
+
+    private void download(final String vaultName, final String archiveId, final String targetFile) {
         final File downloadFile = new File(targetFile);
         download(vaultName, archiveId, downloadFile);
     }
 
-    public void download(final String vaultName, final String archiveId, final File targetFile) {
+    private void download(final String vaultName, final String archiveId, final File targetFile) {
+        Validate.notNull(vaultName, "vaultName can not be null");
+        Validate.notNull(archiveId, "archiveId can not be null");
+        Validate.notNull(targetFile, "targetFile can not be null");
         log.info("Downloading archive " + archiveId + " from vault " + vaultName + "...");
-        final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
         atm.download(vaultName, archiveId, targetFile);
         log.info("Archive downloaded to " + targetFile);
     }

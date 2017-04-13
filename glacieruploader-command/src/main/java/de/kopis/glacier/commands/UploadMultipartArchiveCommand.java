@@ -22,32 +22,43 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.TreeHashGenerator;
-import com.amazonaws.services.glacier.model.*;
+import com.amazonaws.services.glacier.model.CompleteMultipartUploadRequest;
+import com.amazonaws.services.glacier.model.CompleteMultipartUploadResult;
+import com.amazonaws.services.glacier.model.InitiateMultipartUploadRequest;
+import com.amazonaws.services.glacier.model.InitiateMultipartUploadResult;
+import com.amazonaws.services.glacier.model.UploadMultipartPartRequest;
+import com.amazonaws.services.glacier.model.UploadMultipartPartResult;
 import com.amazonaws.services.s3.internal.InputSubstream;
 import com.amazonaws.services.s3.internal.RepeatableFileInputStream;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.util.BinaryUtils;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.HumanReadableSize;
 import joptsimple.OptionSet;
 
-import java.io.*;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.List;
-
 public class UploadMultipartArchiveCommand extends AbstractCommand {
 
-    public UploadMultipartArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
+    public UploadMultipartArchiveCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
+        super(client, sqs, sns);
     }
 
     // from:
     // http://docs.amazonwebservices.com/amazonglacier/latest/dev/uploading-an-archive-mpu-using-java.html
-    public void upload(final String vaultName, final File uploadFile, final Long partSize) {
+    private void upload(final String vaultName, final File uploadFile, final Long partSize) {
         final String hPartSize = HumanReadableSize.parse(partSize);
         final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
@@ -127,28 +138,25 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
                 while (!completed && tries < 5) {
                     tries++;
-                    InputStream inputSubStream = newInputSubstream(file, currentPosition, length);
-                    inputSubStream.mark(-1);
-                    checksum = TreeHashGenerator.calculateTreeHash(inputSubStream);
-                    byte[] binaryChecksum = BinaryUtils.fromHex(checksum);
-                    inputSubStream.reset();
-                    String range = "bytes " + currentPosition + "-" + (currentPosition + length - 1) + "/*";
-                    UploadMultipartPartRequest req = new UploadMultipartPartRequest().withChecksum(checksum)
-                            .withBody(inputSubStream).withRange(range).withUploadId(uploadId).withVaultName(vaultName);
-                    try {
-                        UploadMultipartPartResult partResult = client.uploadMultipartPart(req);
-                        log.info(String.format("Part %d/%d (%s) uploaded, checksum: %s", counter, total, range, partResult.getChecksum()));
-                        completed = true;
-                        binaryChecksums.add(binaryChecksum);
-                    } catch (Exception e) {
-                        failedException = e;
-                    } finally {
-                        if (inputSubStream != null) {
-                            try {
-                                inputSubStream.close();
-                            } catch (IOException ex) {
-                                log.debug("Ignore failure in closing the Closeable", ex);
-                            }
+                    try (InputStream inputSubStream = newInputSubstream(file, currentPosition, length)) {
+                        inputSubStream.mark(-1);
+                        checksum = TreeHashGenerator.calculateTreeHash(inputSubStream);
+                        byte[] binaryChecksum = BinaryUtils.fromHex(checksum);
+                        inputSubStream.reset();
+                        String range = "bytes " + currentPosition + "-" + (currentPosition + length - 1) + "/*";
+                        UploadMultipartPartRequest req = new UploadMultipartPartRequest()
+                                .withChecksum(checksum)
+                                .withBody(inputSubStream)
+                                .withRange(range)
+                                .withUploadId(uploadId)
+                                .withVaultName(vaultName);
+                        try {
+                            UploadMultipartPartResult partResult = client.uploadMultipartPart(req);
+                            log.info(String.format("Part %d/%d (%s) uploaded, checksum: %s", counter, total, range, partResult.getChecksum()));
+                            completed = true;
+                            binaryChecksums.add(binaryChecksum);
+                        } catch (Exception e) {
+                            failedException = e;
                         }
                     }
                 }
@@ -170,11 +178,13 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     }
 
     private InputSubstream newInputSubstream(File file, long startingPosition, long length) {
+        InputSubstream in = null;
         try {
-            return new InputSubstream(new RepeatableFileInputStream(file), startingPosition, length, true);
+            in = new InputSubstream(new RepeatableFileInputStream(file), startingPosition, length, true);
         } catch (FileNotFoundException e) {
             throw new AmazonClientException("Unable to find file '" + file.getAbsolutePath() + "'", e);
         }
+        return in;
     }
 
     private CompleteMultipartUploadResult completeMultiPartUpload(String uploadId, File file, final String vaultName,

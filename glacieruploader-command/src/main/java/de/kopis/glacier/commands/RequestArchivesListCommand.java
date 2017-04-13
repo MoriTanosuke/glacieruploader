@@ -22,29 +22,31 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
+import org.apache.commons.lang3.Validate;
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.model.InitiateJobRequest;
 import com.amazonaws.services.glacier.model.InitiateJobResult;
 import com.amazonaws.services.glacier.model.JobParameters;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
 public class RequestArchivesListCommand extends AbstractCommand {
 
-    public RequestArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
+    public RequestArchivesListCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns) {
+        super(client, sqs, sns);
     }
 
-    public void startInventoryListing(final String vaultName) {
+    private void startInventoryListing(final String vaultName) {
+        Validate.notNull(vaultName, "vaultName can not be null");
         log.info("Starting inventory listing for vault " + vaultName + "...");
 
         try {
-            final InitiateJobRequest initJobRequest = new InitiateJobRequest().withVaultName(vaultName).withJobParameters(
-                    new JobParameters().withType("inventory-retrieval"));
+            final InitiateJobRequest initJobRequest = new InitiateJobRequest()
+                    .withVaultName(vaultName)
+                    .withJobParameters(new JobParameters().withType("inventory-retrieval"));
 
             final InitiateJobResult initJobResult = client.initiateJob(initJobRequest);
             final String jobId = initJobResult.getJobId();
@@ -64,6 +66,7 @@ public class RequestArchivesListCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.INVENTORY_LISTING) && !options.hasArgument(optionParser.INVENTORY_LISTING);
+        return options.has(optionParser.VAULT) &&
+                options.has(optionParser.INVENTORY_LISTING) && !options.hasArgument(optionParser.INVENTORY_LISTING);
     }
 }

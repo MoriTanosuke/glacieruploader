@@ -22,21 +22,23 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
+import org.apache.commons.lang3.Validate;
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
 public class DeleteArchiveCommand extends AbstractCommand {
 
-    public DeleteArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
+    public DeleteArchiveCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
+        super(client, sqs, sns);
     }
 
-    public void delete(final String vaultName, final String archiveId) {
+    private void delete(final String vaultName, final String archiveId) {
+        Validate.notNull(vaultName, "vaultName can not be null");
+        Validate.notNull(archiveId, "archiveId can not be null");
         log.info("Deleting archive " + archiveId + " from vault " + vaultName + "...");
 
         final DeleteArchiveRequest deleteRequest = new DeleteArchiveRequest(vaultName, archiveId);

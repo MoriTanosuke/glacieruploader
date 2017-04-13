@@ -22,8 +22,6 @@ package de.kopis.glacier.printers;
  * #L%
  */
 
-import org.apache.log4j.Logger;
-
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -32,9 +30,12 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class HumanReadableSize {
-    private static final Logger LOG = Logger.getLogger(HumanReadableSize.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HumanReadableSize.class);
 
     private HumanReadableSize() {
         // do not instantiate

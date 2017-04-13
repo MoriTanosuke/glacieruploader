@@ -23,20 +23,21 @@ package de.kopis.glacier.commands;
  */
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.TreeHashGenerator;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
 public class TreeHashArchiveCommand extends AbstractCommand {
 
-    public TreeHashArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
+    public TreeHashArchiveCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns) {
+        super(client, sqs, sns);
     }
 
-    public void calculateTreeHash(File file) {
+    private void calculateTreeHash(File file) {
         if (file.exists()) {
             log.info(TreeHashGenerator.calculateTreeHash(file));
         } else {
@@ -52,7 +53,7 @@ public class TreeHashArchiveCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.CALCULATE_HASH);
+        return options.has(optionParser.CALCULATE_HASH) && options.hasArgument(optionParser.CALCULATE_HASH);
     }
 
 }

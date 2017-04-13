@@ -15,41 +15,64 @@ Either [download a binary][0] or [build the software yourself from sourcecode][5
 How to run
 ==========
 
-You need a file named `aws.properties` with 2 lines:
+To run the application, use the following command:
 
-    accessKey=your_aws_access_key
-    secretKey=your_secret_key
+````bash
+java -jar glacieruploader.jar --option1 value1 --option2 value2 ...
+````
 
-When running the uploader, specify the path to this file with `--credentials /path/to/aws.properties`
-or set the default in your configuration file. If you don't specify this option, the default is to
-search for the file in javas `user.home` directory.
+Since 0.1.1 the default amazon credentials lookup is used:
+
+  * Environment Variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (RECOMMENDED since they are recognized by all the AWS SDKs and CLI except for .NET), or AWS_ACCESS_KEY and AWS_SECRET_KEY (only recognized by Java SDK)
+  * Java System Properties - `aws.accessKeyId` and `aws.secretKey`
+  * Credential profiles file at the default location (*~/.aws/credentials*) shared by all AWS SDKs and the AWS CLI
+  * Credentials delivered through the Amazon EC2 container service if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` environment variable is set and security manager has permission to access the variable
+  * Instance profile credentials delivered through the Amazon EC2 metadata service
+
+See [official javadocs for DefaultAWSCredentialsProviderChain][7] for more information.
 
 Command-line options
 ====================
 
-    Option                                  Description                            
-    ------                                  -----------                            
-    -?, -h, --help                          display the help menu                  
-    -a, --calculate <File>                  calculate hashsum for a file           
-    -c, --create                            creates a new vault                    
-    --credentials <File>                    path to your aws credentials file      
-                                              (default: /home/carsten/aws.      
-                                              properties)                          
-    -d, --delete                            deletes an existing archive            
-    -e, --endpoint                          URL of the amazon AWS endpoint where   
-                                              your vault is                        
-    -l, --list-inventory                    retrieve the inventory listing of a    
-                                              vault                                
-    -m, --multipartupload <File>            start uploading a new archive in       
-                                              chuncks                              
-    -o, --download                          download an existing archive           
-    -p, --partsize [Integer]                sets the size of each part for         
-                                              multipart uploads (default: 10485760)
+    Option                                  Description
+    ------                                  -----------
+    -?, -h, --help                          display the help menu
+    -a, --calculate <File>                  calculate hashsum for a file
+    -c, --create                            creates a new vault
+    -d, --delete                            deletes an existing archive
+    -g, --region                            name of the region to use, one of
+                                                us-gov-west-1
+                                                us-east-1
+                                                us-east-2, 
+                                                us-west-1
+                                                us-west-2
+                                                eu-west-1,
+                                                eu-west-2
+                                                eu-central-1
+                                                ap-south-1,
+                                                ap-southeast-1
+                                                ap-southeast-2
+                                                ap-northeast-1
+                                                ap-northeast-2
+                                                sa-east-1
+                                                cn-north-1
+                                                ca-central-1
+                                            NOTE: use --region instead of --endpoint
+    -l, --list-inventory                    retrieve the inventory listing of a vault
+    -m, --multipartupload <File>            start uploading a new archive in chunks
+    -o, --download                          download an existing archive
+    -p, --partsize [Integer]                sets the size of each part for multipart uploads (default: 10485760)
     -r, --delete-vault                      deletes an existing vault
-    -s, --list-vaults                       lists all available vaults 
-    -t, --target <File>                     filename to store downloaded archive   
-    -u, --upload <File>                     start uploading a new archive          
-    -v, --vault                             name of your vault   
+    -s, --list-vaults                       lists all available vaults
+    -t, --target <File>                     filename to store downloaded archive
+    -u, --upload <File>                     start uploading a new archive
+    -v, --vault                             name of your vault
+
+Deprecated command-line options
+-------------------------------
+
+    -e, --endpoint                          URL of the amazon AWS endpoint where your vault is
+
 
 If you have issues with command line parameters containing an `-`, put the parameter in quotes (`"`).
 
@@ -216,3 +239,4 @@ This project is distributed under [GNU GPL v3][3].
 [3]: http://www.gnu.org/licenses/gpl-3.0.html
 [5]: http://blog.kopis.de/glacieruploader/howtobuild
 [6]: https://github.com/MoriTanosuke/glacieruploader/
+[7]: https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html

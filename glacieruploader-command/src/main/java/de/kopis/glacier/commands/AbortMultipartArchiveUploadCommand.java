@@ -24,13 +24,12 @@ package de.kopis.glacier.commands;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.model.AbortMultipartUploadRequest;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * Abort Multipart Archive Upload Command.
@@ -40,8 +39,8 @@ import java.net.URL;
  */
 public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
 
-    public AbortMultipartArchiveUploadCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
+    public AbortMultipartArchiveUploadCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
+        super(client, sqs, sns);
     }
 
     /* (non-Javadoc)
@@ -68,11 +67,11 @@ public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
         return options.has(optionParser.ABORT_UPLOAD) && options.hasArgument(optionParser.ABORT_UPLOAD);
     }
 
-    public void abortUpload(final String vaultName, final String uploadId) {
+    private void abortUpload(final String vaultName, final String uploadId) {
         final AbortMultipartUploadRequest abortRequest = new AbortMultipartUploadRequest().withUploadId(uploadId).withVaultName(vaultName);
         log.info("Aborting upload to vault " + vaultName + " with upload id " + uploadId + ".");
         client.abortMultipartUpload(abortRequest);
-        log.info("Assumed success!");
+        log.info("Upload aborted successfully.");
     }
 
 }

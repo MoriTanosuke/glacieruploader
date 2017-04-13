@@ -24,23 +24,36 @@ package de.kopis.glacier.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
+import com.amazonaws.services.glacier.transfer.ArchiveTransferManagerBuilder;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
 public class UploadArchiveCommand extends AbstractCommand {
 
-    public UploadArchiveCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
+    private final ArchiveTransferManager atm;
+
+    public UploadArchiveCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns) {
+        this(client, sqs, sns, new ArchiveTransferManagerBuilder()
+                .withGlacierClient(client)
+                .withSqsClient(sqs)
+                .withSnsClient(sns)
+                .build());
+    }
+
+    public UploadArchiveCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final ArchiveTransferManager atm) {
+        super(client, sqs, sns);
+        this.atm = atm;
     }
 
     public void upload(final String vaultName, final File uploadFile) {
         log.info("Starting to upload " + uploadFile + " to vault " + vaultName + "...");
         try {
-            final ArchiveTransferManager atm = new ArchiveTransferManager(client, sqs, sns);
             final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
             log.info("Uploaded archive " + archiveId);
         } catch (final IOException e) {

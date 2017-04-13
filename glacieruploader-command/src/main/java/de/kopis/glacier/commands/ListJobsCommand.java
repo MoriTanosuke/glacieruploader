@@ -22,14 +22,14 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.model.GlacierJobDescription;
 import com.amazonaws.services.glacier.model.ListJobsRequest;
 import com.amazonaws.services.glacier.model.ListJobsResult;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import de.kopis.glacier.printers.JobPrinter;
 import joptsimple.OptionSet;
 
 /**
@@ -37,8 +37,15 @@ import joptsimple.OptionSet;
  */
 public class ListJobsCommand extends AbstractCommand {
 
-    public ListJobsCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
+    private JobPrinter printer;
+
+    public ListJobsCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
+        this(client, sqs, sns, new JobPrinter());
+    }
+
+    public ListJobsCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final JobPrinter printer) {
+        super(client, sqs, sns);
+        this.printer = printer;
     }
 
     @Override
@@ -49,13 +56,7 @@ public class ListJobsCommand extends AbstractCommand {
         final ListJobsRequest req = new ListJobsRequest(vaultName);
         final ListJobsResult jobOutputResult = client.listJobs(req);
         for (GlacierJobDescription job : jobOutputResult.getJobList()) {
-            System.out.println("Job ID: " + job.getJobId());
-            System.out.println("Creation date: " + job.getCreationDate());
-            if (job.getCompleted()) {
-                System.out.println("Completion date: " + job.getCompletionDate());
-            }
-            System.out.println("Status: " + job.getStatusCode() + (job.getStatusMessage() != null ? " (" + job.getStatusMessage() + ")" : ""));
-            System.out.println();
+            printer.printJob(job, System.out);
         }
 
         log.info("Done.");
@@ -63,6 +64,7 @@ public class ListJobsCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.LIST_JOBS) && options.hasArgument(optionParser.LIST_JOBS);
+        return options.has(optionParser.VAULT)
+                && options.has(optionParser.LIST_JOBS) && options.hasArgument(optionParser.LIST_JOBS);
     }
 }

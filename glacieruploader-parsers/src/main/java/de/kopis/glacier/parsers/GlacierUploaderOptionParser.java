@@ -22,28 +22,37 @@ package de.kopis.glacier.parsers;
  * #L%
  */
 
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.OptionParser;
-import joptsimple.OptionSpec;
-import joptsimple.OptionSpecBuilder;
-import org.apache.commons.configuration.Configuration;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.configuration.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionParser;
+import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
 
 public class GlacierUploaderOptionParser extends OptionParser {
+    private static final Logger log = LoggerFactory.getLogger(GlacierUploaderOptionParser.class);
+    private static final Pattern REGION_REGEX_PATTERN = Pattern.compile(".*\\.?(?<region>([a-z]{2,}-){2,}\\d+)\\.?.*");
 
     public final OptionSpec<Void> LIST_VAULT;
     public final OptionSpec<String> LIST_JOBS;
     public final OptionSpec<File> TARGET_FILE;
+    @Deprecated
     public final OptionSpec<String> ENDPOINT;
+    public final OptionSpec<String> REGION;
     public final OptionSpec<String> VAULT;
     public final OptionSpec<File> UPLOAD;
     public final OptionSpec<String> DOWNLOAD;
     public final OptionSpec<String> INVENTORY_LISTING;
     public final OptionSpec<Void> CREATE_VAULT;
+    @Deprecated
     public final OptionSpec<File> CREDENTIALS;
     public final OptionSpec<String> DELETE_ARCHIVE;
     public final OptionSpec<Void> DELETE_VAULT;
@@ -57,6 +66,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
         super();
         this.VAULT = this.parseVault(config);
         this.ENDPOINT = this.parseEndpoint(config);
+        this.REGION = this.parseRegion(config);
         this.UPLOAD = this.parseUploadFile(config);
         this.INVENTORY_LISTING = this.parseInventory(config);
         this.DOWNLOAD = this.parseDownload(config);
@@ -74,14 +84,16 @@ public class GlacierUploaderOptionParser extends OptionParser {
         this.ABORT_UPLOAD = this.parseAbortUpload(config);
     }
 
-    public String formatEndpointUrl(String endpoint) {
-        if (endpoint == null) {
-            return null;
+    public String parseEndpointToRegion(String endpointOptionValue) {
+        String region = endpointOptionValue;
+
+        final Matcher matcher = REGION_REGEX_PATTERN.matcher(endpointOptionValue);
+        if(matcher.matches()) {
+            region = matcher.group("region");
+            log.debug("Endpoint parsed: " + region);
         }
-        if (endpoint.startsWith("https://")) {
-            return endpoint;
-        }
-        return String.format("https://glacier.%s.amazonaws.com", endpoint);
+
+        return region;
     }
 
     public List<File> mergeNonOptionsFiles(List<File> optionsFiles, List<String> nonOptions) {
@@ -112,6 +124,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
         return vaultBuilder;
     }
 
+    @Deprecated
     private ArgumentAcceptingOptionSpec<String> parseEndpoint(final Configuration config) {
         ArgumentAcceptingOptionSpec<String> endpointBuilder = acceptsAll(Arrays.asList("endpoint", "e"),
                 "URL or Region handle of the amazon AWS endpoint where your vault is")
@@ -119,7 +132,19 @@ public class GlacierUploaderOptionParser extends OptionParser {
                 .ofType(String.class);
 
         if (config.containsKey("endpoint")) {
-            endpointBuilder.defaultsTo(formatEndpointUrl(config.getString("endpoint")));
+            endpointBuilder.defaultsTo(parseEndpointToRegion(config.getString("endpoint")));
+        }
+        return endpointBuilder;
+    }
+
+    private ArgumentAcceptingOptionSpec<String> parseRegion(final Configuration config) {
+        ArgumentAcceptingOptionSpec<String> endpointBuilder = acceptsAll(Arrays.asList("region", "g"),
+                "Region handle of the amazon AWS endpoint where your vault is")
+                .withRequiredArg()
+                .ofType(String.class);
+
+        if (config.containsKey("region")) {
+            endpointBuilder.defaultsTo(config.getString("region"));
         }
         return endpointBuilder;
     }
@@ -145,6 +170,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
                 .ofType(String.class);
     }
 
+    @Deprecated
     private ArgumentAcceptingOptionSpec<File> parseCredentials(final Configuration config) {
         ArgumentAcceptingOptionSpec<File> credentialsBuilder = acceptsAll(Arrays.asList("credentials"),
                 "path to your aws credentials file").withRequiredArg().ofType(File.class);

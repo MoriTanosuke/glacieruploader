@@ -28,16 +28,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.List;
 
-import joptsimple.OptionSet;
+import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.junit.Before;
 import org.junit.Test;
+import joptsimple.OptionSet;
+import junit.framework.Assert;
 
 public class GlacierUploaderOptionParserTest {
 
+    public static final String ENDPOINT_URL = "https://glacier.eu-west-1.amazonaws.com";
     private GlacierUploaderOptionParser optionsParser;
     private String[] args;
 
@@ -45,13 +50,13 @@ public class GlacierUploaderOptionParserTest {
     public void setUp() {
         optionsParser = new GlacierUploaderOptionParser(new SystemConfiguration());
 
-        args = new String[]{"--vault", "vaultname", "--endpoint", "file:///endpointurl"};
+        args = new String[]{"--vault", "vaultname", "--endpoint", ENDPOINT_URL};
     }
 
     @Test
     public void acceptsShortcutForVaultOption() {
         final OptionSet optionSet = optionsParser.parse("-v", "vaultname", "--endpoint",
-                "file:///endpointurl");
+                ENDPOINT_URL);
         assertTrue("Option 'vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
                 optionSet.has("vault"));
         assertEquals("Value of option 'vault' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
@@ -73,7 +78,13 @@ public class GlacierUploaderOptionParserTest {
         assertTrue("Option 'endpoint' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
                 optionSet.has("endpoint"));
         assertEquals("Value of option 'endpoint' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
-                "file:///endpointurl", optionSet.valueOf("endpoint"));
+                ENDPOINT_URL, optionSet.valueOf("endpoint"));
+    }
+
+    @Test
+    public void canParseEndpointUrlToRegion() {
+        assertEquals("eu-west-1", optionsParser.parseEndpointToRegion(ENDPOINT_URL));
+        assertEquals("eu-central-2", optionsParser.parseEndpointToRegion("eu-central-2"));
     }
 
     @Test
@@ -182,5 +193,24 @@ public class GlacierUploaderOptionParserTest {
         final OptionSet optionSet = optionsParser.parse(newArgs);
         assertTrue("Option 'calculate' not found in " + Arrays.deepToString(optionSet.specs().toArray()),
                 optionSet.has("calculate"));
+    }
+
+    @Test
+    public void parsesFilesWithWhitespaceSuccessfully() throws IOException {
+        File tempFile = File.createTempFile("this is a test with whitespaces", ".txt");
+        tempFile.deleteOnExit();
+        System.out.println("Using temp file: " + tempFile.getAbsolutePath());
+
+        // use a dummy configuration
+        final CompositeConfiguration dummyConfig = new CompositeConfiguration();
+        final OptionSet options = optionsParser.parse("-m", tempFile.getAbsolutePath());
+        final List<File> optionsFiles = options.valuesOf(optionsParser.MULTIPARTUPLOAD);
+        final List<String> nonOptions = options.nonOptionArguments();
+
+        Assert.assertEquals(1, optionsFiles.size());
+        Assert.assertEquals(0, nonOptions.size());
+
+        final List<File> files = optionsParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
+        Assert.assertEquals(tempFile.getName(), files.get(0).getName());
     }
 }

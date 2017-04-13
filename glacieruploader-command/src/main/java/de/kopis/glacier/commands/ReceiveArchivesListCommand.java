@@ -22,29 +22,34 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultInventoryPrinter;
 import joptsimple.OptionSet;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 
 public class ReceiveArchivesListCommand extends AbstractCommand {
 
     private final VaultInventoryPrinter printer;
 
-    public ReceiveArchivesListCommand(final URL endpoint, final File credentials) throws IOException {
-        super(endpoint, credentials);
-        printer = new VaultInventoryPrinter();
+    public ReceiveArchivesListCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns) {
+        this(client, sqs, sns, new VaultInventoryPrinter());
     }
 
-    public void retrieveInventoryListing(final String vaultName, final String jobId) {
+    public ReceiveArchivesListCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final VaultInventoryPrinter vaultInventoryPrinter) {
+        super(client, sqs, sns);
+        this.printer = vaultInventoryPrinter;
+    }
+
+    private void retrieveInventoryListing(final String vaultName, final String jobId) {
         log.info("Retrieving inventory for job id " + jobId + "...");
 
         try {
@@ -57,7 +62,7 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
                 content.append(line);
             }
             reader.close();
-            // TODO use dependency injection here
+
             printer.setInventory(content.toString());
             printer.printInventory(System.out);
         } catch (final AmazonClientException | IOException e) {

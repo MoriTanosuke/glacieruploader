@@ -24,35 +24,45 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import static junit.framework.Assert.assertEquals;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
+import java.util.UUID;
 
-import org.apache.commons.configuration.CompositeConfiguration;
 import org.junit.Test;
-import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
+import com.amazonaws.services.glacier.model.CompleteMultipartUploadRequest;
+import com.amazonaws.services.glacier.model.CompleteMultipartUploadResult;
+import com.amazonaws.services.glacier.model.InitiateMultipartUploadRequest;
+import com.amazonaws.services.glacier.model.InitiateMultipartUploadResult;
+import com.amazonaws.services.glacier.model.UploadMultipartPartRequest;
+import com.amazonaws.services.glacier.model.UploadMultipartPartResult;
 import joptsimple.OptionSet;
 
-public class UploadMultipartArchiveCommandTest {
+public class UploadMultipartArchiveCommandTest extends AbstractCommandTest {
     @Test
-    public void parsesFilesWithWhitespaceSuccessfully() throws IOException {
-        File tempFile = File.createTempFile("this is a test with whitespaces", ".txt");
+    public void testExec() throws IOException {
+        final File tempFile = File.createTempFile("this is a test with whitespaces", ".txt");
         tempFile.deleteOnExit();
-        System.out.println("Using temp file: " + tempFile.getAbsolutePath());
+        try(FileWriter fw = new FileWriter(tempFile)) {
+            fw.write(UUID.randomUUID().toString());
+        }
 
-        // use a dummy configuration
-        final CompositeConfiguration dummyConfig = new CompositeConfiguration();
-        final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(dummyConfig);
-        final OptionSet options = optionParser.parse("-m", tempFile.getAbsolutePath());
-        final List<File> optionsFiles = options.valuesOf(optionParser.MULTIPARTUPLOAD);
-        final List<String> nonOptions = options.nonOptionArguments();
+        final OptionSet options = optionParser.parse("--vault", "dummy", "-m", tempFile.getAbsolutePath());
 
-        assertEquals(1, optionsFiles.size());
-        assertEquals(0, nonOptions.size());
+        final InitiateMultipartUploadResult initiateResult = new InitiateMultipartUploadResult();
+        initiateResult.setUploadId(UUID.randomUUID().toString());
+        expect(client.initiateMultipartUpload(isA(InitiateMultipartUploadRequest.class))).andReturn(initiateResult).times(1);
+        expect(client.uploadMultipartPart(isA(UploadMultipartPartRequest.class))).andReturn(new UploadMultipartPartResult()).times(1);
+        expect(client.completeMultipartUpload(isA(CompleteMultipartUploadRequest.class))).andReturn(new CompleteMultipartUploadResult()).times(1);
+        replay(client, sqs, sns);
 
-        final List<File> files = optionParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
-        assertEquals(tempFile.getName(), files.get(0).getName());
+        new UploadMultipartArchiveCommand(client, sqs, sns).exec(options, optionParser);
+
+        verify(client, sqs, sns);
     }
 }
