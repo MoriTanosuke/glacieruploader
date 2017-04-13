@@ -26,7 +26,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -44,7 +46,7 @@ public class JobPrinterTest {
         final GlacierJobDescription job = new GlacierJobDescription();
         job.setJobId(jobId);
         job.setCompleted(true);
-        final DateFormat dateFormat = DateFormat.getDateTimeInstance();
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         job.setCompletionDate(dateFormat.format(new Date(0)));
         job.setStatusCode(StatusCode.Succeeded);
@@ -52,7 +54,7 @@ public class JobPrinterTest {
         new JobPrinter().printJob(job, out);
         assertEquals("Job ID:\t\t\t\t" + jobId + "\n" +
                 "Creation date:\t\tnull\n" +
-                "Completion date:\t01.01.1970 00:00:00\n" +
+                "Completion date:\t1970-01-01 00:00:00\n" +
                 "Status:\t\t\t\tSucceeded (" + statusMessage + ")\n" +
                 "\n", out.toString());
     }
