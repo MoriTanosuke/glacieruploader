@@ -28,8 +28,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 
-import com.amazonaws.services.glacier.model.DescribeVaultResult;
 import org.junit.Test;
+import com.amazonaws.services.glacier.model.DescribeVaultOutput;
+import com.amazonaws.services.glacier.model.DescribeVaultResult;
 
 public class VaultPrinterTest {
 
@@ -41,7 +42,23 @@ public class VaultPrinterTest {
     private static final String CREATION_DATE = INVENTORY_DATE;
 
     @Test
-    public void testPrintVault() {
+    public void testPrintVaultOutput() {
+        final String linebreak = System.getProperty("line.separator");
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final DescribeVaultOutput describeVaultResult = new DescribeVaultOutput();
+        describeVaultResult.setCreationDate(CREATION_DATE);
+        describeVaultResult.setLastInventoryDate(INVENTORY_DATE);
+        describeVaultResult.setNumberOfArchives(NUMBER_OF_ARCHIVES);
+        describeVaultResult.setSizeInBytes(SIZE_IN_BYTES);
+        describeVaultResult.setVaultARN(ARN);
+        describeVaultResult.setVaultName(VAULT_NAME);
+        new VaultPrinter().printVault(describeVaultResult, out);
+        assertEquals("CreationDate:\t" + CREATION_DATE + linebreak + "LastInventoryDate:\t" + INVENTORY_DATE + linebreak
+                + "NumberOfArchives:\t" + NUMBER_OF_ARCHIVES + linebreak + "SizeInBytes:\t\t" + SIZE_IN_BYTES + linebreak
+                + "VaultARN:\t\t" + ARN + linebreak + "VaultName:\t\t" + VAULT_NAME + linebreak, out.toString());
+    }
+    @Test
+    public void testPrintVaultResult() {
         final String linebreak = System.getProperty("line.separator");
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final DescribeVaultResult describeVaultResult = new DescribeVaultResult();

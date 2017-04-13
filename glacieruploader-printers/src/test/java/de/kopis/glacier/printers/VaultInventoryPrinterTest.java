@@ -40,7 +40,9 @@ public class VaultInventoryPrinterTest {
         final String line = System.getProperty("line.separator");
         final String inventory = readFile("target/test-classes/inventorylisting.txt");
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        new VaultInventoryPrinter(inventory).printInventory(out);
+        final VaultInventoryPrinter printer = new VaultInventoryPrinter();
+        printer.setInventory(inventory);
+        printer.printInventory(out);
         assertEquals("ARN:\t\t\t\tarn:aws:glacier:eu-west-1:968744042024:vaults/mytestbackup" + line
                 + "------------------------------------------------------------------------------" + line
                 + "Description:\t\t\ta custom description for your archive" + line
@@ -50,14 +52,14 @@ public class VaultInventoryPrinterTest {
     }
 
     private String readFile(final String filename) throws IOException {
-        String contents = "";
+        StringBuilder contents = new StringBuilder();
         final BufferedReader in = new BufferedReader(new FileReader(filename));
         String line = null;
         while ((line = in.readLine()) != null) {
-            contents += line;
+            contents.append(line);
         }
         in.close();
-        return contents;
+        return contents.toString();
     }
 
 }

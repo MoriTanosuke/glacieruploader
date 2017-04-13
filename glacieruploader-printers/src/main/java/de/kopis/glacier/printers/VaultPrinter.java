@@ -32,23 +32,27 @@ public class VaultPrinter {
 
     public void printVault(final DescribeVaultOutput output, OutputStream o) {
         final PrintWriter out = new PrintWriter(o);
-        out.println("CreationDate:\t" + output.getCreationDate());
-        out.println("LastInventoryDate:\t" + output.getLastInventoryDate());
-        out.println("NumberOfArchives:\t" + output.getNumberOfArchives());
-        out.println("SizeInBytes:\t\t" + output.getSizeInBytes());
-        out.println("VaultARN:\t\t" + output.getVaultARN());
-        out.println();
-        out.flush();
+        final String creationDate = output.getCreationDate();
+        final String lastInventoryDate = output.getLastInventoryDate();
+        final Long numberOfArchives = output.getNumberOfArchives();
+        final Long sizeInBytes = output.getSizeInBytes();
+        final String vaultARN = output.getVaultARN();
+        final String vaultName = output.getVaultName();
+        printVault(out, creationDate, lastInventoryDate, numberOfArchives, sizeInBytes, vaultARN, vaultName);
     }
 
-    public void printVault(final DescribeVaultResult describeVaultResult, final OutputStream o) {
+    public void printVault(final DescribeVaultResult output, final OutputStream o) {
         final PrintWriter out = new PrintWriter(o);
-        out.println("CreationDate:\t" + describeVaultResult.getCreationDate());
-        out.println("LastInventoryDate:\t" + describeVaultResult.getLastInventoryDate());
-        out.println("NumberOfArchives:\t" + describeVaultResult.getNumberOfArchives());
-        out.println("SizeInBytes:\t\t" + describeVaultResult.getSizeInBytes());
-        out.println("VaultARN:\t\t" + describeVaultResult.getVaultARN());
-        out.println("VaultName:\t\t" + describeVaultResult.getVaultName());
+        printVault(out, output.getCreationDate(), output.getLastInventoryDate(), output.getNumberOfArchives(), output.getSizeInBytes(), output.getVaultARN(), output.getVaultName());
+    }
+
+    private void printVault(final PrintWriter out, final String creationDate, final String lastInventoryDate, final Long numberOfArchives, final Long sizeInBytes, final String vaultARN, final String vaultName) {
+        out.println("CreationDate:\t" + creationDate);
+        out.println("LastInventoryDate:\t" + lastInventoryDate);
+        out.println("NumberOfArchives:\t" + numberOfArchives);
+        out.println("SizeInBytes:\t\t" + sizeInBytes);
+        out.println("VaultARN:\t\t" + vaultARN);
+        out.println("VaultName:\t\t" + vaultName);
         out.flush();
     }
 }
