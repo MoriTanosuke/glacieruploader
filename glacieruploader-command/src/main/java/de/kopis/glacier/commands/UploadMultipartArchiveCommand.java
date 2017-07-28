@@ -156,7 +156,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
                                 .withVaultName(vaultName);
                         try {
                             UploadMultipartPartResult partResult = client.uploadMultipartPart(req);
-                            log.info("Part {}/{} ({}) uploaded, checksum: {}", counter, total, range, partResult.getChecksum());
+                            log.info("Part {}/{} ({}) uploaded, checksum: {}, retries: {}", counter, total, range, partResult.getChecksum(), tries);
                             completed = true;
                             binaryChecksums.add(binaryChecksum);
                         } catch (Exception e) {
