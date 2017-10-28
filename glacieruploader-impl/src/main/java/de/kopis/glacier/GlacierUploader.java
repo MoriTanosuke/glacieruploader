@@ -116,7 +116,7 @@ public final class GlacierUploader {
             if (configFile.exists() && configFile.canRead()) {
                 config.addConfiguration(new PropertiesConfiguration(configFile));
             } else {
-                log.warn("Config file '{}' not found", configFile.getCanonicalPath());
+                log.debug("Config file '{}' not found", configFile.getCanonicalPath());
             }
         } catch (Exception e) {
             log.warn("Can not read configuration", e);
