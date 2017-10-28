@@ -32,7 +32,7 @@ public class JobPrinter {
     public void printJob(GlacierJobDescription job, OutputStream o) {
         final PrintWriter out = new PrintWriter(o);
         out.println("Job ID:\t\t\t\t" + job.getJobId());
-        out.println("Creation date:\t\t" + job.getCreationDate());
+        out.println("Creation date:\t\t\t" + job.getCreationDate());
         if (job.getCompleted()) {
             out.println("Completion date:\t" + job.getCompletionDate());
         }

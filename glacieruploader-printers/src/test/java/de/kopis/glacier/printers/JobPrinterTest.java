@@ -55,7 +55,7 @@ public class JobPrinterTest {
         job.setStatusMessage(statusMessage);
         new JobPrinter().printJob(job, out);
         assertEquals("Job ID:\t\t\t\t" + jobId + LINE_SEPARATOR +
-                "Creation date:\t\tnull" + LINE_SEPARATOR +
+                "Creation date:\t\t\tnull" + LINE_SEPARATOR +
                 "Completion date:\t1970-01-01 00:00:00" + LINE_SEPARATOR +
                 "Status:\t\t\t\tSucceeded (" + statusMessage + ")" + LINE_SEPARATOR +
                 LINE_SEPARATOR, out.toString());
