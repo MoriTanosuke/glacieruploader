@@ -22,10 +22,7 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
+import com.amazonaws.event.ProgressTracker;
 import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManagerBuilder;
@@ -34,8 +31,16 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 public class UploadArchiveCommand extends AbstractCommand {
 
+    public static final int PROGRESS_PRINT_PERIOD = 5;
     private final ArchiveTransferManager atm;
 
     public UploadArchiveCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns) {
@@ -53,12 +58,32 @@ public class UploadArchiveCommand extends AbstractCommand {
 
     public void upload(final String vaultName, final File uploadFile) {
         log.info("Starting to upload {} to vault {}...", uploadFile, vaultName);
-        try {
-            final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
-            log.info("Uploaded archive {}", archiveId);
-        } catch (final IOException e) {
-            log.error("Something went wrong while uploading " + uploadFile + " to vault " + vaultName + ".", e);
+        upload(vaultName, uploadFile, "-", true);
+    }
+
+    private void upload(String vaultName, File uploadFile, String sameAccountId, boolean printProgress) {
+        final ProgressTracker progressTracker = new ProgressTracker();
+        // check if we chould enable the progress printer
+        if (printProgress) {
+            final Runnable progressPrinter = new Runnable() {
+                @Override
+                public void run() {
+                    BigDecimal percentage = calcPercentage(progressTracker.getProgress().getRequestBytesTransferred(),
+                            progressTracker.getProgress().getRequestContentLength());
+                    log.info(String.format("%.0f%%", percentage.doubleValue()));
+                }
+
+                private BigDecimal calcPercentage(double x1, double y1) {
+                    BigDecimal x = BigDecimal.valueOf(x1);
+                    BigDecimal y = BigDecimal.valueOf(y1);
+                    return x.divide(y, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100));
+                }
+            };
+            Executors.newScheduledThreadPool(1).scheduleAtFixedRate(progressPrinter, 3, PROGRESS_PRINT_PERIOD, TimeUnit.SECONDS);
         }
+        final String archiveId = atm.upload(sameAccountId, vaultName, uploadFile.getName(), uploadFile,
+                progressTracker).getArchiveId();
+        log.info("Uploaded archive {}", archiveId);
     }
 
     @Override
