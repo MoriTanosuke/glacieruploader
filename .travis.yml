@@ -14,3 +14,13 @@ cache:
   directories:
     - '$HOME/.m2/repository'
     - '$HOME/.sonar/cache'
+deploy:
+  provider: releases
+  api_key:
+    secure: "$TOKEN"
+  file_glob: true
+  file: glacieruplodaer-impl/target/glacieruploader-impl-*-jar-with-dependencies.jar
+  skip_cleanup: true
+  draft: true
+  on:
+    tags: true
