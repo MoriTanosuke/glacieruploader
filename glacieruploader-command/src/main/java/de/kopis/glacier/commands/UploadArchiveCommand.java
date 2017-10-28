@@ -22,10 +22,7 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
+import com.amazonaws.event.ProgressTracker;
 import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManagerBuilder;
@@ -33,6 +30,11 @@ import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
+
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class UploadArchiveCommand extends AbstractCommand {
 
@@ -53,12 +55,20 @@ public class UploadArchiveCommand extends AbstractCommand {
 
     public void upload(final String vaultName, final File uploadFile) {
         log.info("Starting to upload {} to vault {}...", uploadFile, vaultName);
-        try {
-            final String archiveId = atm.upload(vaultName, uploadFile.getName(), uploadFile).getArchiveId();
-            log.info("Uploaded archive {}", archiveId);
-        } catch (final IOException e) {
-            log.error("Something went wrong while uploading " + uploadFile + " to vault " + vaultName + ".", e);
-        }
+        final String sameAccountId = "-";
+        final ProgressTracker progressTracker = new ProgressTracker();
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                log.info("{}/{}) transferred",
+                        progressTracker.getProgress().getRequestBytesTransferred(),
+                        progressTracker.getProgress().getRequestContentLength()
+                );
+            }
+        },1000, 1000, TimeUnit.MILLISECONDS);
+        final String archiveId = atm.upload(sameAccountId, vaultName, uploadFile.getName(), uploadFile,
+                progressTracker).getArchiveId();
+        log.info("Uploaded archive {}", archiveId);
     }
 
     @Override

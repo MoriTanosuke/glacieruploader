@@ -22,22 +22,19 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.amazonaws.event.ProgressListener;
+import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
+import com.amazonaws.services.glacier.transfer.UploadResult;
+import joptsimple.OptionSet;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.junit.Test;
-import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
-import com.amazonaws.services.glacier.transfer.UploadResult;
-import joptsimple.OptionSet;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UploadArchiveCommandTest extends AbstractCommandTest {
     @Test
@@ -46,7 +43,10 @@ public class UploadArchiveCommandTest extends AbstractCommandTest {
         final File file = writeTemporaryFile(content);
 
         final ArchiveTransferManager atm = createMock(ArchiveTransferManager.class);
-        expect(atm.upload(eq("vaultName"), eq(file.getName()), eq(file))).andReturn(new UploadResult(UUID.randomUUID().toString())).times(1);
+        expect(atm.upload(eq("-"), eq("vaultName"),
+                eq(file.getName()), eq(file),
+                isA(ProgressListener.class)
+        )).andReturn(new UploadResult(UUID.randomUUID().toString())).times(1);
         replay(atm);
 
         final OptionSet options = optionParser.parse("--vault", "vaultName", "--upload", file.getAbsolutePath());
