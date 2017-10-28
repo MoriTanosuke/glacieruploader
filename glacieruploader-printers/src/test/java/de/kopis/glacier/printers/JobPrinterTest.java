@@ -37,6 +37,8 @@ import com.amazonaws.services.glacier.model.GlacierJobDescription;
 import com.amazonaws.services.glacier.model.StatusCode;
 
 public class JobPrinterTest {
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     @Test
     public void printJob() throws Exception {
         final String jobId = UUID.randomUUID().toString();
@@ -52,11 +54,11 @@ public class JobPrinterTest {
         job.setStatusCode(StatusCode.Succeeded);
         job.setStatusMessage(statusMessage);
         new JobPrinter().printJob(job, out);
-        assertEquals("Job ID:\t\t\t\t" + jobId + "\n" +
-                "Creation date:\t\tnull\n" +
-                "Completion date:\t1970-01-01 00:00:00\n" +
-                "Status:\t\t\t\tSucceeded (" + statusMessage + ")\n" +
-                "\n", out.toString());
+        assertEquals("Job ID:\t\t\t\t" + jobId + LINE_SEPARATOR +
+                "Creation date:\t\tnull" + LINE_SEPARATOR +
+                "Completion date:\t1970-01-01 00:00:00" + LINE_SEPARATOR +
+                "Status:\t\t\t\tSucceeded (" + statusMessage + ")" + LINE_SEPARATOR +
+                LINE_SEPARATOR, out.toString());
     }
 
 }
