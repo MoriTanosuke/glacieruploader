@@ -22,20 +22,20 @@ package de.kopis.glacier.parsers;
  * #L%
  */
 
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionParser;
+import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
+import org.apache.commons.configuration.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.configuration.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.OptionParser;
-import joptsimple.OptionSpec;
-import joptsimple.OptionSpecBuilder;
 
 public class GlacierUploaderOptionParser extends OptionParser {
     private static final Logger log = LoggerFactory.getLogger(GlacierUploaderOptionParser.class);
@@ -121,6 +121,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
         if (config.containsKey("vault")) {
             vaultBuilder.defaultsTo(config.getString("vault"));
         }
+        log.debug("vault option: {} default values: {}", vaultBuilder, vaultBuilder.defaultValues());
         return vaultBuilder;
     }
 

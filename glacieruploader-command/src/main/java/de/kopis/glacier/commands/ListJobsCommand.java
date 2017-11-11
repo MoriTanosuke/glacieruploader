@@ -31,6 +31,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.JobPrinter;
 import joptsimple.OptionSet;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Lists recents jobs for the current vault.
@@ -64,7 +65,7 @@ public class ListJobsCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.vault)
-                && options.has(optionParser.listJobs) && options.hasArgument(optionParser.listJobs);
+        return !StringUtils.isBlank(options.valueOf(optionParser.vault)) &&
+                options.has(optionParser.listJobs) && options.hasArgument(optionParser.listJobs);
     }
 }

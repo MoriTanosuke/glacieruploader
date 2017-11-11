@@ -22,18 +22,6 @@ package de.kopis.glacier;
  * #L%
  */
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.SystemConfiguration;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.glacier.AmazonGlacier;
@@ -42,24 +30,22 @@ import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import de.kopis.glacier.commands.AbortMultipartArchiveUploadCommand;
-import de.kopis.glacier.commands.AbstractCommand;
-import de.kopis.glacier.commands.CommandFactory;
-import de.kopis.glacier.commands.CreateVaultCommand;
-import de.kopis.glacier.commands.DeleteArchiveCommand;
-import de.kopis.glacier.commands.DeleteVaultCommand;
-import de.kopis.glacier.commands.DownloadArchiveCommand;
-import de.kopis.glacier.commands.HelpCommand;
-import de.kopis.glacier.commands.ListJobsCommand;
-import de.kopis.glacier.commands.ListVaultCommand;
-import de.kopis.glacier.commands.ReceiveArchivesListCommand;
-import de.kopis.glacier.commands.RequestArchivesListCommand;
-import de.kopis.glacier.commands.TreeHashArchiveCommand;
-import de.kopis.glacier.commands.UploadArchiveCommand;
-import de.kopis.glacier.commands.UploadMultipartArchiveCommand;
+import de.kopis.glacier.commands.*;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 public final class GlacierUploader {
 
@@ -109,10 +95,13 @@ public final class GlacierUploader {
     }
 
     public static CompositeConfiguration setupConfig() {
+        return setupConfig(new File(System.getProperty("user.home"), ".glacieruploaderrc"));
+    }
+
+    public static CompositeConfiguration setupConfig(File configFile) {
         final CompositeConfiguration config = new CompositeConfiguration();
         config.addConfiguration(new SystemConfiguration());
         try {
-            File configFile = new File(System.getProperty("user.home"), ".glacieruploaderrc");
             if (configFile.exists() && configFile.canRead()) {
                 config.addConfiguration(new PropertiesConfiguration(configFile));
             } else {

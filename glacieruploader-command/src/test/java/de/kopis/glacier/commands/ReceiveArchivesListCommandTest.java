@@ -22,23 +22,20 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.OutputStream;
-import java.util.UUID;
-
-import org.json.JSONException;
-import org.junit.Test;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
 import com.amazonaws.services.glacier.model.GetJobOutputResult;
 import com.amazonaws.util.StringInputStream;
 import de.kopis.glacier.printers.VaultInventoryPrinter;
 import joptsimple.OptionSet;
+import org.json.JSONException;
+import org.junit.Test;
+
+import java.io.OutputStream;
+import java.util.UUID;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ReceiveArchivesListCommandTest extends AbstractCommandTest {
     @Test
@@ -62,5 +59,4 @@ public class ReceiveArchivesListCommandTest extends AbstractCommandTest {
 
         verify(client);
     }
-
 }

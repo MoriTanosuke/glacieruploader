@@ -22,7 +22,6 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import org.apache.commons.lang3.Validate;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.model.InitiateJobRequest;
@@ -32,6 +31,8 @@ import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 
 public class RequestArchivesListCommand extends AbstractCommand {
 
@@ -55,7 +56,7 @@ public class RequestArchivesListCommand extends AbstractCommand {
             log.error(e.getLocalizedMessage(), e);
         }
 
-        // TODO wait for job, but it could take about 4 hours says the SDK...
+        // TODO wait for job? but it could take about 4 hours says the SDK...
     }
 
     @Override
@@ -66,7 +67,8 @@ public class RequestArchivesListCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.vault) &&
+        log.debug("Checking options for {}: {},", getClass(), options.specs());
+        return !StringUtils.isBlank(options.valueOf(optionParser.vault)) &&
                 options.has(optionParser.inventoryListing) && !options.hasArgument(optionParser.inventoryListing);
     }
 }

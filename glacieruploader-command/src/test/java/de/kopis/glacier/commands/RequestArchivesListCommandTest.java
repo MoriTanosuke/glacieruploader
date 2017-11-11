@@ -22,19 +22,21 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertTrue;
-
-import java.util.UUID;
-
-import org.junit.Test;
 import com.amazonaws.services.glacier.model.InitiateJobRequest;
 import com.amazonaws.services.glacier.model.InitiateJobResult;
+import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
+import org.apache.commons.configuration.MapConfiguration;
+import org.easymock.Capture;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class RequestArchivesListCommandTest extends AbstractCommandTest {
     @Test
@@ -54,4 +56,28 @@ public class RequestArchivesListCommandTest extends AbstractCommandTest {
         verify(client);
     }
 
+    @Test
+    public void testVaultOverrideBySystemEnvironment() {
+        final String vaultName = UUID.randomUUID().toString();
+
+        final Map<String, String> props = new HashMap<>();
+        props.put("vault", vaultName);
+
+        // override option parser and check if it's taking the default values from provided configuration
+        final GlacierUploaderOptionParser optionParser = new GlacierUploaderOptionParser(new MapConfiguration(props));
+        final OptionSet options = optionParser.parse("--list-inventory");
+
+        Capture<? extends InitiateJobRequest> capturedJobRequest = newCapture();
+        expect(client.initiateJob(capture(capturedJobRequest)))
+                .andReturn(new InitiateJobResult())
+                .times(1);
+        replay(client);
+
+        final RequestArchivesListCommand command = new RequestArchivesListCommand(client, sqs, sns);
+        command.exec(options, optionParser);
+
+        verify(client);
+        // make sure the vault name from our config is used
+        assertEquals(capturedJobRequest.getValue().getVaultName(), vaultName);
+    }
 }

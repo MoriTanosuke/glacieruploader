@@ -22,14 +22,14 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class HelpCommand extends AbstractCommand {
 
@@ -47,8 +47,8 @@ public class HelpCommand extends AbstractCommand {
     @Override
     public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
         if (!options.has(optionParser.help)) {
-            log.info("Ooops, can't determine what you want to do. Check your options. " + System.getProperty("line.separator") +
-                    "Do not forget that --vault and --region are mandatory for all commands." + System.getProperty("line.separator"));
+            log.info("Ooops, can't determine what you want to do. Check your options." +
+                    System.getProperty("line.separator"));
         }
         try {
             optionParser.printHelpOn(out);

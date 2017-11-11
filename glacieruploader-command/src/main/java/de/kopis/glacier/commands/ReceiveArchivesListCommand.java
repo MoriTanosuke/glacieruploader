@@ -22,11 +22,6 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.model.GetJobOutputRequest;
@@ -36,6 +31,12 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultInventoryPrinter;
 import joptsimple.OptionSet;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 public class ReceiveArchivesListCommand extends AbstractCommand {
 
@@ -56,7 +57,9 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
         log.info("Retrieving inventory for job id {}...", jobId);
 
         try {
-            final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest().withVaultName(vaultName).withJobId(jobId);
+            final GetJobOutputRequest jobOutputRequest = new GetJobOutputRequest()
+                    .withVaultName(vaultName)
+                    .withJobId(jobId);
             final GetJobOutputResult jobOutputResult = client.getJobOutput(jobOutputRequest);
             final BufferedReader reader = new BufferedReader(new InputStreamReader(jobOutputResult.getBody()));
             StringBuilder content = new StringBuilder();
@@ -82,6 +85,8 @@ public class ReceiveArchivesListCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.inventoryListing) && options.hasArgument(optionParser.inventoryListing);
+        log.debug("Checking options for {}: {},", getClass(), options.specs());
+        return !StringUtils.isBlank(options.valueOf(optionParser.vault)) &&
+                options.has(optionParser.inventoryListing) && options.hasArgument(optionParser.inventoryListing);
     }
 }
