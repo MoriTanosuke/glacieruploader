@@ -22,23 +22,19 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.UUID;
-
-import org.junit.Test;
 import com.amazonaws.services.glacier.model.GlacierJobDescription;
 import com.amazonaws.services.glacier.model.ListJobsRequest;
 import com.amazonaws.services.glacier.model.ListJobsResult;
 import de.kopis.glacier.printers.JobPrinter;
 import joptsimple.OptionSet;
+import org.junit.Test;
+
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.UUID;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 public class ListJobsCommandTest extends AbstractCommandTest {
     @Test
@@ -64,5 +60,12 @@ public class ListJobsCommandTest extends AbstractCommandTest {
         command.exec(options, optionParser);
 
         verify(client);
+    }
+
+    @Test
+    public void execWithBlankVault() {
+        final OptionSet options = optionParser.parse("--list-jobs", UUID.randomUUID().toString());
+        final ListJobsCommand command = new ListJobsCommand(client, sqs, sns);
+        assertFalse(command.valid(options, optionParser));
     }
 }
