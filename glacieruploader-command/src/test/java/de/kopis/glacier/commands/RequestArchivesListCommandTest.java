@@ -35,8 +35,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class RequestArchivesListCommandTest extends AbstractCommandTest {
     @Test
@@ -79,5 +78,12 @@ public class RequestArchivesListCommandTest extends AbstractCommandTest {
         verify(client);
         // make sure the vault name from our config is used
         assertEquals(capturedJobRequest.getValue().getVaultName(), vaultName);
+    }
+
+    @Test
+    public void execWithBlankVault() {
+        final OptionSet options = optionParser.parse("--list-jobs", UUID.randomUUID().toString());
+        final RequestArchivesListCommand command = new RequestArchivesListCommand(client, sqs, sns);
+        assertFalse(command.valid(options, optionParser));
     }
 }

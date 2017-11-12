@@ -34,8 +34,7 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ReceiveArchivesListCommandTest extends AbstractCommandTest {
     @Test
@@ -58,5 +57,12 @@ public class ReceiveArchivesListCommandTest extends AbstractCommandTest {
         command.exec(options, optionParser);
 
         verify(client);
+    }
+
+    @Test
+    public void execWithBlankVault() {
+        final OptionSet options = optionParser.parse("--list-jobs", UUID.randomUUID().toString());
+        final ReceiveArchivesListCommand command = new ReceiveArchivesListCommand(client, sqs, sns);
+        assertFalse(command.valid(options, optionParser));
     }
 }
