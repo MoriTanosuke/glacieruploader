@@ -49,7 +49,7 @@ import java.util.List;
 
 public final class GlacierUploader {
 
-    private static final Logger log = LoggerFactory.getLogger(GlacierUploader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GlacierUploader.class);
 
     private GlacierUploader() {
         // do not instantiate
@@ -64,30 +64,30 @@ public final class GlacierUploader {
         try {
             options = optionParser.parse(args);
         } catch (Exception e) {
-            log.error("Something went wrong parsing the arguments", e);
+            LOG.error("Something went wrong parsing the arguments", e);
             return;
         }
 
         String region = options.valueOf(optionParser.region);
         // check deprecated, but supported config parameters
         if(StringUtils.isBlank(region) && options.has(optionParser.endpoint)) {
-            log.warn("Option {} is deprecated, please switch to {}", optionParser.endpoint, optionParser.region);
+            LOG.warn("Option {} is deprecated, please switch to {}", optionParser.endpoint, optionParser.region);
             String endpointUrl = options.valueOf(optionParser.endpoint);
             region = optionParser.parseEndpointToRegion(endpointUrl);
-            log.debug("Parsed {} from configured endpoint", region , endpointUrl);
+            LOG.debug("Parsed {} from configured endpoint", region , endpointUrl);
         }
 
         // check deprecated config parameters
         final List<? extends OptionSpec<? extends Serializable>> specs = Arrays.asList(optionParser.credentials);
         for(OptionSpec spec : specs) {
             if (options.has(spec)) {
-                log.info("Option {} is deprecated, will be ignored", specs);
+                LOG.info("Option {} is deprecated, will be ignored", specs);
             }
         }
 
         // last sanity check
         if(region == null) {
-            log.error("Region is not configured.");
+            LOG.error("Region is not configured.");
         }
 
         // Launch
@@ -105,17 +105,17 @@ public final class GlacierUploader {
             if (configFile.exists() && configFile.canRead()) {
                 config.addConfiguration(new PropertiesConfiguration(configFile));
             } else {
-                log.debug("Config file '{}' not found", configFile.getCanonicalPath());
+                LOG.debug("Config file '{}' not found", configFile.getCanonicalPath());
             }
         } catch (Exception e) {
-            log.warn("Can not read configuration", e);
+            LOG.warn("Can not read configuration", e);
         }
         return config;
     }
 
     private static void findAndExecCommand(final String region, OptionSet options, GlacierUploaderOptionParser optionParser) {
         Validate.notNull(region, "region can not be NULL");
-        log.info("Using region: {}", region);
+        LOG.info("Using region: {}", region);
 
         final DefaultAWSCredentialsProviderChain credentialsProvider = new DefaultAWSCredentialsProviderChain();
         final AmazonGlacier client = AmazonGlacierClientBuilder.standard()

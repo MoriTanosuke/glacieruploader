@@ -28,8 +28,12 @@ import java.io.PrintWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VaultInventoryPrinter {
+    private static final Logger LOG = LoggerFactory.getLogger(VaultInventoryPrinter.class);
+
     private String inventory;
 
     public VaultInventoryPrinter() {

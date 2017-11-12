@@ -38,7 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GlacierUploaderOptionParser extends OptionParser {
-    private static final Logger log = LoggerFactory.getLogger(GlacierUploaderOptionParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GlacierUploaderOptionParser.class);
     private static final Pattern REGION_REGEX_PATTERN = Pattern.compile(".*\\.?(?<region>([a-z]{2,}-){2,}\\d+)\\.?.*");
 
     public final OptionSpec<Void> listVaults;
@@ -90,7 +90,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
         final Matcher matcher = REGION_REGEX_PATTERN.matcher(endpointOptionValue);
         if(matcher.matches()) {
             region = matcher.group("region");
-            log.debug("Endpoint parsed: {}", region);
+            LOG.debug("Endpoint parsed: {}", region);
         }
 
         return region;
@@ -121,7 +121,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
         if (config.containsKey("vault")) {
             vaultBuilder.defaultsTo(config.getString("vault"));
         }
-        log.debug("vault option: {} default values: {}", vaultBuilder, vaultBuilder.defaultValues());
+        LOG.debug("vault option: {} default values: {}", vaultBuilder, vaultBuilder.defaultValues());
         return vaultBuilder;
     }
 
