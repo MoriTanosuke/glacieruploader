@@ -1,9 +1,11 @@
 package de.kopis.glacier.printers;
 
+import org.junit.Test;
+
+import java.math.BigDecimal;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
 
 /*
  * #%L
@@ -64,6 +66,11 @@ public class HumanReadableSizeTest {
     @Test
     public void terabyteLargeSizeFailed() {
         assertEquals("68.44TB", HumanReadableSize.parse("75240135239680"));
+    }
+
+    @Test
+    public void gigabyteLargeSizeAsBigDecimal() {
+        assertEquals("68.44GB", HumanReadableSize.parse(new BigDecimal("73476694570")));
     }
 
     @Test

@@ -24,14 +24,15 @@ package de.kopis.glacier.printers;
  * #L%
  */
 
-import static org.junit.Assert.assertEquals;
+import org.json.JSONObject;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class VaultInventoryPrinterTest {
 
@@ -49,6 +50,14 @@ public class VaultInventoryPrinterTest {
                 + "Archive ID:\t\t\tthisisaverylongrandomstringthatworksasthearchiveid" + line
                 + "CreationDate:\t\t\t2012-08-23T04:14:56Z" + line + "Size:\t\t\t\t123456789 (117.74MB)" + line
                 + "SHA:\t\t\t\t123456789123456789123456789" + line, out.toString());
+    }
+
+    @Test
+    public void test68GbLargeInventorySizeInteger() {
+        final JSONObject inventoryJson = new JSONObject("{\"Size\": 73476694570 }");
+        final VaultInventoryPrinter printer = new VaultInventoryPrinter();
+        final String readableSize = printer.printArchiveSize(inventoryJson);
+        assertEquals("73476694570 (68.44GB)", readableSize);
     }
 
     private String readFile(final String filename) throws IOException {

@@ -22,9 +22,6 @@ package de.kopis.glacier.printers;
  * #L%
  */
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
+
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 public class VaultInventoryPrinter {
     private static final Logger LOG = LoggerFactory.getLogger(VaultInventoryPrinter.class);
@@ -86,7 +87,7 @@ public class VaultInventoryPrinter {
     }
 
     public String printArchiveSize(final JSONObject archive) throws JSONException {
-        final int size = archive.getInt("Size");
+        final BigDecimal size = archive.getBigDecimal("Size");
         final String humanReadableSize = HumanReadableSize.parse(size);
         return size + " (" + humanReadableSize + ")";
     }
