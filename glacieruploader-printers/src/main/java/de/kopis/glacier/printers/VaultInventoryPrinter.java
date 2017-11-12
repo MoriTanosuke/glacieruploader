@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
+
 public class VaultInventoryPrinter {
     private static final Logger LOG = LoggerFactory.getLogger(VaultInventoryPrinter.class);
 
@@ -72,6 +74,15 @@ public class VaultInventoryPrinter {
         o.println("CreationDate:\t\t\t" + archive.get("CreationDate"));
         o.println("Size:\t\t\t\t" + printArchiveSize(archive));
         o.println("SHA:\t\t\t\t" + archive.get("SHA256TreeHash"));
+
+        // print ALL archive properties to debug log
+        if (LOG.isDebugEnabled()) {
+            final Iterator<String> keyIterator = archive.keys();
+            while (keyIterator.hasNext()) {
+                final String key = keyIterator.next();
+                LOG.debug("{}={}", key, archive.get(key));
+            }
+        }
     }
 
     public String printArchiveSize(final JSONObject archive) throws JSONException {
