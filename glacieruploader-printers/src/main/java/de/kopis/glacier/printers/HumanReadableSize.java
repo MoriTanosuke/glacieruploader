@@ -90,7 +90,7 @@ public class HumanReadableSize {
         } else if ("TB".equals(oldSizeClass)) {
             newSizeClass = "PT";
         }
-        LOG.debug("previous sizeClass: " + oldSizeClass + " new sizeClass: " + newSizeClass);
+        LOG.debug("previous sizeClass: {} new sizeClass: {}", oldSizeClass, newSizeClass);
         return newSizeClass;
     }
 
@@ -105,7 +105,9 @@ public class HumanReadableSize {
             s = new String[]{pureSize, sizeClass};
         }
 
-        LOG.debug("Sanitized: {}", Arrays.deepToString(s));
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("Sanitized: {}", Arrays.deepToString(s));
+        }
         return s;
     }
 

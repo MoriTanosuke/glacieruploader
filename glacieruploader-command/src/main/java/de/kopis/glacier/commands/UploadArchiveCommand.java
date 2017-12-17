@@ -70,9 +70,11 @@ public class UploadArchiveCommand extends AbstractCommand {
             final Runnable progressPrinter = new Runnable() {
                 @Override
                 public void run() {
-                    BigDecimal percentage = calcPercentage(progressTracker.getProgress().getRequestBytesTransferred(),
-                            progressTracker.getProgress().getRequestContentLength());
-                    log.info(String.format("%.0f%%", percentage.doubleValue()));
+                    if(log.isInfoEnabled()) {
+                        BigDecimal percentage = calcPercentage(progressTracker.getProgress().getRequestBytesTransferred(),
+                                progressTracker.getProgress().getRequestContentLength());
+                        log.info(String.format("%.0f%%", percentage.doubleValue()));
+                    }
                 }
 
                 private BigDecimal calcPercentage(double x1, double y1) {

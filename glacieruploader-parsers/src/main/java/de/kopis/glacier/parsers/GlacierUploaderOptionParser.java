@@ -44,6 +44,9 @@ public class GlacierUploaderOptionParser extends OptionParser {
     public final OptionSpec<Void> listVaults;
     public final OptionSpec<String> listJobs;
     public final OptionSpec<File> targetFile;
+    /**
+     * @deprecated use {@link #region} instead
+     */
     @Deprecated
     public final OptionSpec<String> endpoint;
     public final OptionSpec<String> region;
@@ -52,6 +55,9 @@ public class GlacierUploaderOptionParser extends OptionParser {
     public final OptionSpec<String> download;
     public final OptionSpec<String> inventoryListing;
     public final OptionSpec<Void> createVault;
+    /**
+     * @deprecated See <a href="https://github.com/MoriTanosuke/glacieruploader/#how-to-run">https://github.com/MoriTanosuke/glacieruploader/#how-to-run</a>
+     */
     @Deprecated
     public final OptionSpec<File> credentials;
     public final OptionSpec<String> deleteArchive;

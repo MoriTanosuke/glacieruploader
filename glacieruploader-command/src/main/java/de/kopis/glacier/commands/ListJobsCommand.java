@@ -33,20 +33,28 @@ import de.kopis.glacier.printers.JobPrinter;
 import joptsimple.OptionSet;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.OutputStream;
+
 /**
  * Lists recents jobs for the current vault.
  */
 public class ListJobsCommand extends AbstractCommand {
 
     private JobPrinter printer;
+    private OutputStream out;
 
     public ListJobsCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
-        this(client, sqs, sns, new JobPrinter());
+        this(client, sqs, sns, new JobPrinter(), System.out);
     }
 
     public ListJobsCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final JobPrinter printer) {
+        this(client, sqs, sns, printer, System.out);
+    }
+
+    public ListJobsCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns, final JobPrinter printer, final OutputStream out) {
         super(client, sqs, sns);
         this.printer = printer;
+        this.out = out;
     }
 
     @Override
@@ -57,7 +65,7 @@ public class ListJobsCommand extends AbstractCommand {
         final ListJobsRequest req = new ListJobsRequest(vaultName);
         final ListJobsResult jobOutputResult = client.listJobs(req);
         for (GlacierJobDescription job : jobOutputResult.getJobList()) {
-            printer.printJob(job, System.out);
+            printer.printJob(job, out);
         }
 
         log.info("Done.");
