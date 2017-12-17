@@ -22,26 +22,11 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang3.Validate;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.glacier.TreeHashGenerator;
-import com.amazonaws.services.glacier.model.CompleteMultipartUploadRequest;
-import com.amazonaws.services.glacier.model.CompleteMultipartUploadResult;
-import com.amazonaws.services.glacier.model.InitiateMultipartUploadRequest;
-import com.amazonaws.services.glacier.model.InitiateMultipartUploadResult;
-import com.amazonaws.services.glacier.model.UploadMultipartPartRequest;
-import com.amazonaws.services.glacier.model.UploadMultipartPartResult;
+import com.amazonaws.services.glacier.model.*;
 import com.amazonaws.services.s3.internal.InputSubstream;
 import com.amazonaws.services.s3.internal.RepeatableFileInputStream;
 import com.amazonaws.services.sns.AmazonSNS;
@@ -50,6 +35,12 @@ import com.amazonaws.util.BinaryUtils;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.HumanReadableSize;
 import joptsimple.OptionSet;
+import org.apache.commons.lang3.Validate;
+
+import java.io.*;
+import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class UploadMultipartArchiveCommand extends AbstractCommand {
 
@@ -126,7 +117,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         String checksum = "";
         try {
             long currentPosition = 0;
-            List<byte[]> binaryChecksums = new LinkedList<byte[]>();
+            List<byte[]> binaryChecksums = new LinkedList<>();
             fileToUpload = new FileInputStream(file);
             int counter = 1;
             int total = (int) Math.ceil(file.length() / (double) partSize);

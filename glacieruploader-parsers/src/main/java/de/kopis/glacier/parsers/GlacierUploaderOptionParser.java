@@ -119,13 +119,14 @@ public class GlacierUploaderOptionParser extends OptionParser {
     }
 
     private ArgumentAcceptingOptionSpec<String> parseVault(final Configuration config) {
-        ArgumentAcceptingOptionSpec<String> vaultBuilder = acceptsAll(Arrays.asList("vault", "v"),
+        final String vault = "vault";
+        ArgumentAcceptingOptionSpec<String> vaultBuilder = acceptsAll(Arrays.asList(vault, "v"),
                 "name of your vault")
                 .withRequiredArg()
                 .ofType(String.class);
 
-        if (config.containsKey("vault")) {
-            vaultBuilder.defaultsTo(config.getString("vault"));
+        if (config.containsKey(vault)) {
+            vaultBuilder.defaultsTo(config.getString(vault));
         }
         LOG.debug("vault option: {} default values: {}", vaultBuilder, vaultBuilder.defaultValues());
         return vaultBuilder;
@@ -133,13 +134,14 @@ public class GlacierUploaderOptionParser extends OptionParser {
 
     @Deprecated
     private ArgumentAcceptingOptionSpec<String> parseEndpoint(final Configuration config) {
-        ArgumentAcceptingOptionSpec<String> endpointBuilder = acceptsAll(Arrays.asList("endpoint", "e"),
+        final String endpoint = "endpoint";
+        ArgumentAcceptingOptionSpec<String> endpointBuilder = acceptsAll(Arrays.asList(endpoint, "e"),
                 "URL or Region handle of the amazon AWS endpoint where your vault is")
                 .withRequiredArg()
                 .ofType(String.class);
 
-        if (config.containsKey("endpoint")) {
-            endpointBuilder.defaultsTo(parseEndpointToRegion(config.getString("endpoint")));
+        if (config.containsKey(endpoint)) {
+            endpointBuilder.defaultsTo(parseEndpointToRegion(config.getString(endpoint)));
         }
         return endpointBuilder;
     }
@@ -179,11 +181,12 @@ public class GlacierUploaderOptionParser extends OptionParser {
 
     @Deprecated
     private ArgumentAcceptingOptionSpec<File> parseCredentials(final Configuration config) {
-        ArgumentAcceptingOptionSpec<File> credentialsBuilder = acceptsAll(Arrays.asList("credentials"),
+        final String credentials = "credentials";
+        ArgumentAcceptingOptionSpec<File> credentialsBuilder = acceptsAll(Arrays.asList(credentials),
                 "path to your aws credentials file").withRequiredArg().ofType(File.class);
 
-        if (config.containsKey("credentials")) {
-            credentialsBuilder.defaultsTo(new File(config.getString("credentials")));
+        if (config.containsKey(credentials)) {
+            credentialsBuilder.defaultsTo(new File(config.getString(credentials)));
         } else {
             credentialsBuilder.defaultsTo(new File(System.getProperty("user.home") + "/aws.properties"));
         }
