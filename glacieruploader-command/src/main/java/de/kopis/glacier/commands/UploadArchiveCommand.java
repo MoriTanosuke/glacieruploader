@@ -36,10 +36,12 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class UploadArchiveCommand extends AbstractCommand {
 
+    public static final ScheduledExecutorService SCHEDULED_POOL = Executors.newScheduledThreadPool(1);
     public static final int PROGRESS_PRINT_PERIOD = 5;
     private final ArchiveTransferManager atm;
 
@@ -79,7 +81,7 @@ public class UploadArchiveCommand extends AbstractCommand {
                     return x.divide(y, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100));
                 }
             };
-            Executors.newScheduledThreadPool(1).scheduleAtFixedRate(progressPrinter, 3, PROGRESS_PRINT_PERIOD, TimeUnit.SECONDS);
+            SCHEDULED_POOL.scheduleAtFixedRate(progressPrinter, 3, PROGRESS_PRINT_PERIOD, TimeUnit.SECONDS);
         }
         final String archiveId = atm.upload(sameAccountId, vaultName, uploadFile.getName(), uploadFile,
                 progressTracker).getArchiveId();
@@ -96,6 +98,9 @@ public class UploadArchiveCommand extends AbstractCommand {
         for (File uploadFile : files) {
             this.upload(vaultName, uploadFile);
         }
+
+        // stop progress tracker
+        SCHEDULED_POOL.shutdown();
     }
 
     @Override
