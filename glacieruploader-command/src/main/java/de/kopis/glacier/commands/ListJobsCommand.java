@@ -74,6 +74,6 @@ public class ListJobsCommand extends AbstractCommand {
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
         return !StringUtils.isBlank(options.valueOf(optionParser.vault)) &&
-                options.has(optionParser.listJobs) && options.hasArgument(optionParser.listJobs);
+                options.has(optionParser.listJobs);
     }
 }

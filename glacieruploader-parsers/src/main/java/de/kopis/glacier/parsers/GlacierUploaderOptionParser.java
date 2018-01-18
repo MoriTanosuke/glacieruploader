@@ -42,7 +42,7 @@ public class GlacierUploaderOptionParser extends OptionParser {
     private static final Pattern REGION_REGEX_PATTERN = Pattern.compile(".*\\.?(?<region>([a-z]{2,}-){2,}\\d+)\\.?.*");
 
     public final OptionSpec<Void> listVaults;
-    public final OptionSpec<String> listJobs;
+    public final OptionSpec<Void> listJobs;
     public final OptionSpec<File> targetFile;
     /**
      * @deprecated use {@link #region} instead
@@ -193,24 +193,22 @@ public class GlacierUploaderOptionParser extends OptionParser {
         return credentialsBuilder;
     }
 
-    private OptionSpecBuilder parseCreateVault(final Configuration config) {
+    private OptionSpec<Void> parseCreateVault(final Configuration config) {
         return acceptsAll(Arrays.asList("create", "c"),
                 "creates a new vault");
     }
 
-    private OptionSpecBuilder parseListVault(final Configuration config) {
+    private OptionSpec<Void> parseListVault(final Configuration config) {
         return acceptsAll(Arrays.asList("list-vaults", "s"),
                 "lists all available vaults");
     }
 
-    private ArgumentAcceptingOptionSpec<String> parseListJobs(final Configuration config) {
+    private OptionSpec<Void> parseListJobs(final Configuration config) {
         return acceptsAll(Arrays.asList("list-jobs", "j"),
-                "lists recent jobs")
-                .withRequiredArg()
-                .ofType(String.class);
+                "lists recent jobs");
     }
 
-    private OptionSpecBuilder parseDeleteVault(final Configuration config) {
+    private OptionSpec<Void> parseDeleteVault(final Configuration config) {
         return acceptsAll(Arrays.asList("delete-vault", "r"),
                 "deletes an existing vault");
     }
