@@ -41,7 +41,7 @@
 
     <scm>
         <connection>scm:git:git://github.com/MoriTanosuke/glacieruploader.git</connection>
-        <developerConnection>scm:git:ssh://github.com:MoriTanosuke/glacieruploader.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com/MoriTanosuke/glacieruploader.git</developerConnection>
         <url>https://github.com/MoriTanosuke/glacieruploader</url>
     </scm>
 
