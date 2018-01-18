@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.kopis.glacier</groupId>
     <artifactId>glacieruploader-parent</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
     <inceptionYear>2012</inceptionYear>
 
     <name>glacieruploader-parent</name>
