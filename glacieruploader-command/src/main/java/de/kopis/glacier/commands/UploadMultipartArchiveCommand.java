@@ -8,15 +8,15 @@ package de.kopis.glacier.commands;
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the 
+ * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -44,6 +44,8 @@ import java.util.List;
 
 public class UploadMultipartArchiveCommand extends AbstractCommand {
 
+    public static final int MAX_PARTS = 10000;
+
     public UploadMultipartArchiveCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
         super(client, sqs, sns);
     }
@@ -56,6 +58,10 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         Validate.notNull(partSize, "partSize can not be null");
         final String hPartSize = HumanReadableSize.parse(partSize);
         final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
+        final long totalParts = uploadFile.length() / partSize;
+        log.debug("{} parts needed for this upload (file size {}, part size {})", totalParts, uploadFile.length(), partSize);
+        Validate.isTrue(totalParts < MAX_PARTS,
+                "More than " + MAX_PARTS + " parts needed (" + totalParts + ") for this upload, increase the partsize");
 
         log.info("Multipart uploading {} ({}) to vault {} with part size {} ({}).",
                 uploadFile.getName(), hTotalSize, vaultName, partSize, hPartSize);

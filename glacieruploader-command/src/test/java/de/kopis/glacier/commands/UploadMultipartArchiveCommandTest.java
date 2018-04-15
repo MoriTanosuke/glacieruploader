@@ -10,41 +10,39 @@ package de.kopis.glacier.commands;
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the 
+ * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertTrue;
+import com.amazonaws.services.glacier.model.*;
+import joptsimple.OptionSet;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.junit.Test;
-import com.amazonaws.services.glacier.model.CompleteMultipartUploadRequest;
-import com.amazonaws.services.glacier.model.CompleteMultipartUploadResult;
-import com.amazonaws.services.glacier.model.InitiateMultipartUploadRequest;
-import com.amazonaws.services.glacier.model.InitiateMultipartUploadResult;
-import com.amazonaws.services.glacier.model.UploadMultipartPartRequest;
-import com.amazonaws.services.glacier.model.UploadMultipartPartResult;
-import joptsimple.OptionSet;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class UploadMultipartArchiveCommandTest extends AbstractCommandTest {
+    private static final Logger LOG = LoggerFactory.getLogger(UploadMultipartArchiveCommand.class);
+
     @Test
     public void testExec() throws IOException {
         final File tempFile = File.createTempFile("this is a test with whitespaces", ".txt");
@@ -68,5 +66,33 @@ public class UploadMultipartArchiveCommandTest extends AbstractCommandTest {
         command.exec(options, optionParser);
 
         verify(client, sqs, sns);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMaximumParts() {
+        final long partSize = 10;
+        final String filePath = "doesnotexist.txt";
+        final File dummyFile = new File(filePath);
+        dummyFile.deleteOnExit();
+        try (FileOutputStream out = new FileOutputStream(dummyFile)) {
+            for (int parts = 0; parts <= (UploadMultipartArchiveCommand.MAX_PARTS + 1); parts++) {
+                for (int i = 0; i < partSize; i++) {
+                    out.write('.');
+                }
+            }
+            LOG.info("File {} written, length {}", dummyFile.getAbsolutePath(), dummyFile.length());
+        } catch (IOException e) {
+            LOG.error("Can not create dummy file", e);
+            fail("Can not create dummy file: " + e.getMessage());
+        }
+
+        final OptionSet options = optionParser.parse("--vault", "dummy",
+                "-m", filePath,
+                "--partsize", Long.toString(partSize));
+
+        final UploadMultipartArchiveCommand command = new UploadMultipartArchiveCommand(client, sqs, sns);
+
+        assertTrue(command.valid(options, optionParser));
+        command.exec(options, optionParser);
     }
 }
