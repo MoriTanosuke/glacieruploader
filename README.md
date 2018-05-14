@@ -4,8 +4,8 @@ glacieruploader
 A simple java command line application for Amazon Glacier. You can find the latest version at [https://github.com/MoriTanosuke/glacieruploader/][6].
 
 [![Build Status](https://travis-ci.org/MoriTanosuke/glacieruploader.svg)](https://travis-ci.org/MoriTanosuke/glacieruploader)
-[![Quality Gate](https://sonarqube.com/api/badges/gate?key=de.kopis.glacier%3Aglacieruploader-parent)](https://sonarcloud.io/dashboard?id=de.kopis.glacier%3Aglacieruploader-parent)
-[![Technical debt ratio](https://sonarqube.com/api/badges/measure?key=de.kopis.glacier%3Aglacieruploader-parent&metric=sqale_debt_ratio)](https://sonarqube.com/dashboard/index/de.kopis.glacier%3Aglacieruploader-parent)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=de.kopis.glacier%3Aglacieruploader-parent&metric=alert_status)](https://sonarcloud.io/dashboard?id=de.kopis.glacier%3Aglacieruploader-parent)
+[![Technical debt ratio](https://sonarcloud.io/api/project_badges/measure?project=de.kopis.glacier%3Aglacieruploader-parent&metric=sqale_index)](https://sonarqube.com/dashboard/index/de.kopis.glacier%3Aglacieruploader-parent)
 
 How to get it
 =============
