@@ -8,6 +8,7 @@
         <groupId>de.kopis.glacier</groupId>
         <artifactId>glacieruploader-parent</artifactId>
         <version>0.1.2-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>glacieruploader-parsers</artifactId>
@@ -32,13 +33,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

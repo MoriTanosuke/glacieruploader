@@ -244,6 +244,5 @@ This project is distributed under [GNU GPL v3][3].
 [1]: https://github.com/MoriTanosuke/glacieruploader/issues
 [2]: https://github.com/MoriTanosuke/glacieruploader/fork
 [3]: http://www.gnu.org/licenses/gpl-3.0.html
-[5]: http://blog.kopis.de/glacieruploader/howtobuild
 [6]: https://github.com/MoriTanosuke/glacieruploader/
 [7]: https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html

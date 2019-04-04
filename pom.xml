@@ -139,13 +139,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
@@ -154,7 +149,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>1.12</version>
                 <configuration>
                     <verbose>false</verbose>
                     <addSvnKeyWords>false</addSvnKeyWords>
@@ -162,7 +156,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>first</id>
+                        <id>check-file-header</id>
                         <goals>
                             <goal>check-file-header</goal>
                         </goals>
@@ -173,7 +167,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>add-missing-headers</id>
+                        <id>update-file-header</id>
                         <goals>
                             <goal>update-file-header</goal>
                         </goals>
@@ -184,7 +178,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
                 <executions>
                     <execution>
                         <id>create-jar</id>
@@ -198,7 +191,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -213,21 +205,14 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.owasp</groupId>
-                    <artifactId>dependency-check-maven</artifactId>
-                    <version>3.1.2</version>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>1.19</version>
                     <configuration>
-                        <failBuildOnCVSS>8</failBuildOnCVSS>
+                        <verbose>false</verbose>
+                        <addSvnKeyWords>false</addSvnKeyWords>
+                        <licenseName>gpl_v3</licenseName>
                     </configuration>
-                    <executions>
-                        <execution>
-                            <id>owasp-check-dependencies</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -317,6 +302,38 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>owasp-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                    </plugin>
+                </plugins>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.owasp</groupId>
+                            <artifactId>dependency-check-maven</artifactId>
+                            <version>4.0.2</version>
+                            <configuration>
+                                <failBuildOnCVSS>8</failBuildOnCVSS>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>owasp-check-dependencies</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>check</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
         <profile>
             <id>release</id>
             <build>
