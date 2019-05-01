@@ -19,13 +19,15 @@ How to build it
 2. Build with maven `mvn package`
 3. Run
 
+If you build the application yourself, you have to use the JAR from `glacieruploader-impl` module.
+
 How to run
 ==========
 
 To run the application, use the following command:
 
 ````bash
-java -jar glacieruploader.jar --option1 value1 --option2 value2 ...
+java -jar <PATH TO GLACIERUPLOADER JAR> --option1 value1 --option2 value2 ...
 ````
 
 Since 0.1.1 the default amazon credentials lookup is used:
