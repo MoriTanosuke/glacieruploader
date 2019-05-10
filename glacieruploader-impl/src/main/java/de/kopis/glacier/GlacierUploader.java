@@ -116,19 +116,20 @@ public final class GlacierUploader {
     private static void findAndExecCommand(final String region, OptionSet options, GlacierUploaderOptionParser optionParser) {
         Validate.notNull(region, "region can not be NULL");
         LOG.info("Using region: {}", region);
+        final Regions eregion = validateRegion(region);
 
         final DefaultAWSCredentialsProviderChain credentialsProvider = new DefaultAWSCredentialsProviderChain();
         final AmazonGlacier client = AmazonGlacierClientBuilder.standard()
                 .withCredentials(credentialsProvider)
-                .withRegion(Regions.fromName(region))
+                .withRegion(eregion)
                 .build();
         final AmazonSQS sqs = AmazonSQSClientBuilder.standard()
                 .withCredentials(credentialsProvider)
-                .withRegion(Regions.fromName(region))
+                .withRegion(eregion)
                 .build();
         final AmazonSNS sns = AmazonSNSClientBuilder.standard()
                 .withCredentials(credentialsProvider)
-                .withRegion(Regions.fromName(region))
+                .withRegion(eregion)
                 .build();
 
         // Set default command
@@ -154,5 +155,18 @@ public final class GlacierUploader {
 
         // Execute it
         command.exec(options, optionParser);
+    }
+
+    private static Regions validateRegion(String region) {
+        // check if region is actually valid
+        Regions eregion = null;
+        try {
+            eregion = Regions.fromName(region);
+        } catch (IllegalArgumentException e) {
+            // list all available regions if failing to parse
+            LOG.info("Available regions: {}", Arrays.toString(Regions.values()));
+            throw e;
+        }
+        return eregion;
     }
 }
