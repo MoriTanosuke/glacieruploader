@@ -22,18 +22,22 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.junit.Before;
-import org.junit.Test;
 import com.amazonaws.services.glacier.AmazonGlacier;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import static org.easymock.EasyMock.createMock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class CommandFactoryTest {
 
@@ -74,5 +78,41 @@ public class CommandFactoryTest {
         final AbstractCommand defaultCommand = CommandFactory.getDefaultCommand();
         // when command is not found, default command is returned
         assertEquals(defaultCommand, command);
+    }
+
+    @Test
+    public void recognizesMultipartUploadOptions() throws IOException {
+        final File tempFile = File.createTempFile("dummyfile", ".txt");
+        tempFile.deleteOnExit();
+
+        final String region = "eu-central-1";
+        final String vaultname = "myvault";
+
+        final GlacierUploaderOptionParser optionsParser = new GlacierUploaderOptionParser(new CompositeConfiguration());
+        final OptionSet options = optionsParser.parse("-m", tempFile.getAbsolutePath(), "--region", region, "-v", vaultname);
+        final List<File> optionsFiles = options.valuesOf(optionsParser.multipartUpload);
+        final List<Long> optionsPartsize = options.valuesOf(optionsParser.partSize);
+        final List<String> nonOptions = options.nonOptionArguments();
+
+        // Add all commands to the factory
+        CommandFactory.setDefaultCommand(new HelpCommand(client, sqs, sns));
+        CommandFactory.add(CommandFactory.getDefaultCommand());
+        CommandFactory.add(new CreateVaultCommand(client, sqs, sns));
+        CommandFactory.add(new ListVaultCommand(client, sqs, sns));
+        CommandFactory.add(new ListJobsCommand(client, sqs, sns));
+        CommandFactory.add(new DeleteArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new DeleteVaultCommand(client, sqs, sns));
+        CommandFactory.add(new DownloadArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new ReceiveArchivesListCommand(client, sqs, sns));
+        CommandFactory.add(new RequestArchivesListCommand(client, sqs, sns));
+        CommandFactory.add(new TreeHashArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new UploadArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new UploadMultipartArchiveCommand(client, sqs, sns));
+        CommandFactory.add(new AbortMultipartArchiveUploadCommand(client, sqs, sns));
+
+        final AbstractCommand command = CommandFactory.get(options, optionsParser);
+        // when command is not found, default command is returned
+        assertEquals(UploadMultipartArchiveCommand.class, command.getClass());
+        assertEquals((long) Math.pow(4096, 2), optionsPartsize.get(0).longValue());
     }
 }

@@ -24,8 +24,11 @@ package de.kopis.glacier.parsers;
  * #L%
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import joptsimple.OptionSet;
+import junit.framework.Assert;
+import org.apache.commons.configuration.SystemConfiguration;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,12 +36,8 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.SystemConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import joptsimple.OptionSet;
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GlacierUploaderOptionParserTest {
 
@@ -201,8 +200,6 @@ public class GlacierUploaderOptionParserTest {
         tempFile.deleteOnExit();
         System.out.println("Using temp file: " + tempFile.getAbsolutePath());
 
-        // use a dummy configuration
-        final CompositeConfiguration dummyConfig = new CompositeConfiguration();
         final OptionSet options = optionsParser.parse("-m", tempFile.getAbsolutePath());
         final List<File> optionsFiles = options.valuesOf(optionsParser.multipartUpload);
         final List<String> nonOptions = options.nonOptionArguments();

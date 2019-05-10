@@ -205,7 +205,6 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.multipartUpload) && options.hasArgument(optionParser.multipartUpload)
-                && options.has(optionParser.partSize) && options.hasArgument(optionParser.partSize);
+        return options.has(optionParser.multipartUpload) && options.hasArgument(optionParser.multipartUpload);
     }
 }
