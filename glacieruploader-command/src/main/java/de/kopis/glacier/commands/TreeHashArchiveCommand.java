@@ -31,7 +31,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
-public class TreeHashArchiveCommand extends AbstractCommand {
+public class TreeHashArchiveCommand extends AbstractGlacierCommand {
 
     public TreeHashArchiveCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns) {
         super(client, sqs, sns);

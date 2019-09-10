@@ -85,9 +85,10 @@ public final class GlacierUploader {
             }
         }
 
-        // last sanity check
-        if(region == null) {
-            LOG.error("Region is not configured.");
+        // must have region or help specified
+        if(region == null && !options.has(optionParser.help)) {
+            LOG.error("Region is not configured and --help not specified - please check your options.");
+            return;
         }
 
         // Launch
@@ -114,8 +115,14 @@ public final class GlacierUploader {
     }
 
     private static void findAndExecCommand(final String region, OptionSet options, GlacierUploaderOptionParser optionParser) {
-        Validate.notNull(region, "region can not be NULL");
-        LOG.info("Using region: {}", region);
+        // must have a region if not help
+        if (StringUtils.isNotEmpty(region)) { 
+            LOG.info("Using region: {}", region);
+        } else {
+            // show help and exit
+            new HelpCommand(System.out).exec(options, optionParser);
+            return;
+        }
 
         final DefaultAWSCredentialsProviderChain credentialsProvider = new DefaultAWSCredentialsProviderChain();
         final AmazonGlacier client = AmazonGlacierClientBuilder.standard()
@@ -132,7 +139,7 @@ public final class GlacierUploader {
                 .build();
 
         // Set default command
-        CommandFactory.setDefaultCommand(new HelpCommand(client, sqs, sns));
+        CommandFactory.setDefaultCommand(new HelpCommand());
         CommandFactory.add(CommandFactory.getDefaultCommand());
 
         // Add all commands to the factory
@@ -151,6 +158,14 @@ public final class GlacierUploader {
 
         // Find a valid one
         AbstractCommand command = CommandFactory.get(options, optionParser);
+
+        // verify arguments are valid
+        try {
+            command.verifyArguments(options, optionParser);
+        } catch (IllegalArgumentException e) {
+            LOG.error(e.getMessage());
+            return;
+        }
 
         // Execute it
         command.exec(options, optionParser);

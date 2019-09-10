@@ -213,4 +213,18 @@ public class GlacierUploaderOptionParserTest {
         final List<File> files = optionsParser.mergeNonOptionsFiles(optionsFiles, nonOptions);
         Assert.assertEquals(tempFile.getName(), files.get(0).getName());
     }
+
+    @Test
+    public void hasDefaultPartsizeDefault() throws IOException {
+        final OptionSet options = optionsParser.parse("-v", "vaultname", "--endpoint", ENDPOINT_URL);
+        assertTrue(options.valueOf(optionsParser.partSize).longValue() == 16777216);
+        
+    }
+
+    @Test
+    public void hasDefaultPartsizeCustom() throws IOException {
+        final OptionSet options = optionsParser.parse("-v", "vaultname", "--endpoint", ENDPOINT_URL, "-p", "1048576");
+        assertTrue(options.valueOf(optionsParser.partSize).longValue() == 1048576);
+        
+    }
 }

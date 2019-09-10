@@ -38,7 +38,7 @@ import java.io.OutputStream;
 /**
  * Lists recents jobs for the current vault.
  */
-public class ListJobsCommand extends AbstractCommand {
+public class ListJobsCommand extends AbstractGlacierCommand {
 
     private JobPrinter printer;
     private OutputStream out;

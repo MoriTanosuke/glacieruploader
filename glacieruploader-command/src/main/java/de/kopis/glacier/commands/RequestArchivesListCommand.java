@@ -34,7 +34,7 @@ import joptsimple.OptionSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
-public class RequestArchivesListCommand extends AbstractCommand {
+public class RequestArchivesListCommand extends AbstractGlacierCommand {
 
     public RequestArchivesListCommand(final AmazonGlacier client, final AmazonSQS sqs, final AmazonSNS sns) {
         super(client, sqs, sns);

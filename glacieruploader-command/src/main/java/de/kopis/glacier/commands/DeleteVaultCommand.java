@@ -30,7 +30,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
-public class DeleteVaultCommand extends AbstractCommand {
+public class DeleteVaultCommand extends AbstractGlacierCommand {
   public DeleteVaultCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
     super(client, sqs, sns);
   }

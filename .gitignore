@@ -6,4 +6,5 @@ aws.properties
 bin
 .idea
 *.iml
-*.log
+*.log.vscode
+.vscode

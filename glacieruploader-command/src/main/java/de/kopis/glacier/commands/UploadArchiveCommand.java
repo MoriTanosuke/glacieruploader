@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class UploadArchiveCommand extends AbstractCommand {
+public class UploadArchiveCommand extends AbstractGlacierCommand {
 
     public static final ScheduledExecutorService SCHEDULED_POOL = Executors.newScheduledThreadPool(1);
     public static final int PROGRESS_PRINT_PERIOD = 5;

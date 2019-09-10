@@ -36,7 +36,7 @@ import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.VaultPrinter;
 import joptsimple.OptionSet;
 
-public class CreateVaultCommand extends AbstractCommand {
+public class CreateVaultCommand extends AbstractGlacierCommand {
     private final VaultPrinter printer;
     private final OutputStream out;
 
