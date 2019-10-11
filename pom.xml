@@ -11,10 +11,6 @@
     <description>Simple command line tool to upload archives to Amazon Glacier.</description>
     <packaging>pom</packaging>
 
-    <prerequisites>
-        <maven>3.3</maven>
-    </prerequisites>
-
     <organization>
         <name>Carsten Ringe</name>
         <url>https://github.com/MoriTanosuke/glacieruploader</url>
@@ -140,6 +136,42 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.3</version>
+                                </requireMavenVersion>
+                                <requirePluginVersions>
+                                    <message>Best Practice is to always define plugin versions!</message>
+                                    <banLatest>true</banLatest>
+                                    <banRelease>true</banRelease>
+                                    <banSnapshots>true</banSnapshots>
+                                    <phases>clean,deploy,site</phases>
+                                    <additionalPlugins>
+                                        <additionalPlugin>org.apache.maven.plugins:maven-eclipse-plugin
+                                        </additionalPlugin>
+                                        <additionalPlugin>org.apache.maven.plugins:maven-reactor-plugin
+                                        </additionalPlugin>
+                                    </additionalPlugins>
+                                    <unCheckedPluginList>
+                                        org.apache.maven.plugins:maven-enforcer-plugin,org.apache.maven.plugins:maven-idea-plugin
+                                    </unCheckedPluginList>
+                                </requirePluginVersions>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -298,6 +330,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.19.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-reactor-plugin</artifactId>
+                    <version>1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <version>2.10</version>
                 </plugin>
             </plugins>
         </pluginManagement>
