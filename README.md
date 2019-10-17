@@ -70,7 +70,7 @@ Command-line options
     -l, --list-inventory                    retrieve the inventory listing of a vault
     -m, --multipartupload <File>            start uploading a new archive in chunks
     -o, --download                          download an existing archive
-    -p, --partsize [Integer]                sets the size of each part for multipart uploads (default: 10485760)
+    -p, --partsize [Integer]                sets the size of each part for multipart uploads (must be a power of 2) (default: 16777216)
     -r, --delete-vault                      deletes an existing vault
     -s, --list-vaults                       lists all available vaults
     -t, --target <File>                     filename to store downloaded archive

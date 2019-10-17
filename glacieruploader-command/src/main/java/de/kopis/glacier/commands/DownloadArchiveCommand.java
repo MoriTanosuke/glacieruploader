@@ -33,7 +33,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
-public class DownloadArchiveCommand extends AbstractCommand {
+public class DownloadArchiveCommand extends AbstractGlacierCommand {
 
     private ArchiveTransferManager atm;
 

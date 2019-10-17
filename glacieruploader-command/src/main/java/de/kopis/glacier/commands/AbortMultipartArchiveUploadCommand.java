@@ -37,7 +37,7 @@ import joptsimple.OptionSet;
  * @author Kendal Montgomery theWizK@yahoo.com
  * @version 1.0
  */
-public class AbortMultipartArchiveUploadCommand extends AbstractCommand {
+public class AbortMultipartArchiveUploadCommand extends AbstractGlacierCommand {
 
     public AbortMultipartArchiveUploadCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
         super(client, sqs, sns);

@@ -53,7 +53,8 @@ public class UploadMultipartArchiveCommandTest extends AbstractCommandTest {
             fw.write(UUID.randomUUID().toString());
         }
 
-        final OptionSet options = optionParser.parse("--vault", "dummy", "-m", tempFile.getAbsolutePath(), "--partsize", "1234");
+        // create option set with partsize being a power of 2 (required)
+        final OptionSet options = optionParser.parse("--vault", "dummy", "-m", tempFile.getAbsolutePath(), "--partsize", "1048576");
 
         final InitiateMultipartUploadResult initiateResult = new InitiateMultipartUploadResult();
         initiateResult.setUploadId(UUID.randomUUID().toString());

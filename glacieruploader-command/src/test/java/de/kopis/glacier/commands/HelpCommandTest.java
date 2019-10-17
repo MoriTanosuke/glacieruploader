@@ -43,7 +43,7 @@ public class HelpCommandTest extends AbstractCommandTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         // no need to specify options
         final OptionSet options = optionParser.parse("--help");
-        final HelpCommand command = new HelpCommand(client, sqs, sns, out);
+        final HelpCommand command = new HelpCommand(out);
 
         assertTrue(command.valid(options, optionParser));
         command.exec(options, optionParser);
@@ -57,7 +57,7 @@ public class HelpCommandTest extends AbstractCommandTest {
     @Test
     public void execWithoutOption() {
         final OptionSet options = optionParser.parse();
-        final HelpCommand command = new HelpCommand(client, sqs, sns, System.out);
+        final HelpCommand command = new HelpCommand(System.out);
         command.exec(options, optionParser);
     }
 
@@ -69,7 +69,7 @@ public class HelpCommandTest extends AbstractCommandTest {
         expectLastCall().andThrow(new IOException("dummy exception from junit test"));
         replay(out);
 
-        final HelpCommand command = new HelpCommand(client, sqs, sns, out);
+        final HelpCommand command = new HelpCommand(out);
         command.exec(options, optionParser);
     }
 

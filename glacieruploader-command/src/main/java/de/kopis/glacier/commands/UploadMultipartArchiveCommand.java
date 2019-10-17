@@ -35,14 +35,16 @@ import com.amazonaws.util.BinaryUtils;
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import de.kopis.glacier.printers.HumanReadableSize;
 import joptsimple.OptionSet;
+
 import org.apache.commons.lang3.Validate;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-public class UploadMultipartArchiveCommand extends AbstractCommand {
+public class UploadMultipartArchiveCommand extends AbstractGlacierCommand {
 
     public UploadMultipartArchiveCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
         super(client, sqs, sns);
@@ -57,8 +59,8 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         final String hPartSize = HumanReadableSize.parse(partSize);
         final String hTotalSize = HumanReadableSize.parse(uploadFile.length());
 
-        log.info("Multipart uploading {} ({}) to vault {} with part size {} ({}).",
-                uploadFile.getName(), hTotalSize, vaultName, partSize, hPartSize);
+        log.info("Multipart uploading {} ({}) to vault {} with part size {} ({}).", uploadFile.getName(), hTotalSize,
+                vaultName, partSize, hPartSize);
         try {
             final String uploadId = this.initiateMultipartUpload(vaultName, partSize, uploadFile.getName());
             final String checksum = this.uploadParts(uploadId, uploadFile, vaultName, partSize);
@@ -75,9 +77,11 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
             }
 
         } catch (final IOException e) {
-            log.error("Something went wrong while multipart uploading " + uploadFile + "." + e.getLocalizedMessage(), e);
+            log.error("Something went wrong while multipart uploading " + uploadFile + "." + e.getLocalizedMessage(),
+                    e);
         } catch (AmazonServiceException e) {
-            log.error("Something went wrong at Amazon while uploading " + uploadFile + "." + e.getLocalizedMessage(), e);
+            log.error("Something went wrong at Amazon while uploading " + uploadFile + "." + e.getLocalizedMessage(),
+                    e);
         } catch (NoSuchAlgorithmException e) {
             log.error("No such algorithm found " + e.getLocalizedMessage(), e);
         } catch (AmazonClientException e) {
@@ -97,19 +101,21 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
         return result.getUploadId();
     }
 
-    /* This method contains a derivative of work from the following source:
+    /*
+     * This method contains a derivative of work from the following source:
      *
-     * https://github.com/aws/aws-sdk-java/blob/master/src/main/java/com/amazonaws/services/glacier/transfer/ArchiveTransferManager.java?source=c
+     * https://github.com/aws/aws-sdk-java/blob/master/src/main/java/com/amazonaws/
+     * services/glacier/transfer/ArchiveTransferManager.java?source=c
      *
      * from the 1.8.5 tag in the source tree.
      *
      * Copyright 2012-2014 Amazon Technologies, Inc.
      *
-     * Licensed under the Apache License, Version 2.0 (the "License");
-     * you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at:
+     * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+     * use this file except in compliance with the License. You may obtain a copy of
+     * the License at:
      *
-     *    http://aws.amazon.com/apache2.0
+     * http://aws.amazon.com/apache2.0
      */
     private String uploadParts(String uploadId, File file, final String vaultName, final Long partSize)
             throws NoSuchAlgorithmException, AmazonClientException, IOException {
@@ -139,15 +145,13 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
                         byte[] binaryChecksum = BinaryUtils.fromHex(checksum);
                         inputSubStream.reset();
                         String range = "bytes " + currentPosition + "-" + (currentPosition + length - 1) + "/*";
-                        UploadMultipartPartRequest req = new UploadMultipartPartRequest()
-                                .withChecksum(checksum)
-                                .withBody(inputSubStream)
-                                .withRange(range)
-                                .withUploadId(uploadId)
+                        UploadMultipartPartRequest req = new UploadMultipartPartRequest().withChecksum(checksum)
+                                .withBody(inputSubStream).withRange(range).withUploadId(uploadId)
                                 .withVaultName(vaultName);
                         try {
                             UploadMultipartPartResult partResult = client.uploadMultipartPart(req);
-                            log.info("Part {}/{} ({}) uploaded, checksum: {}, retries: {}", counter, total, range, partResult.getChecksum(), tries);
+                            log.info("Part {}/{} ({}) uploaded, checksum: {}, retries: {}", counter, total, range,
+                                    partResult.getChecksum(), tries);
                             completed = true;
                             binaryChecksums.add(binaryChecksum);
                         } catch (Exception e) {
@@ -183,7 +187,7 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
     }
 
     private CompleteMultipartUploadResult completeMultiPartUpload(String uploadId, File file, final String vaultName,
-                                                                  String checksum) throws NoSuchAlgorithmException, IOException {
+            String checksum) throws NoSuchAlgorithmException, IOException {
         CompleteMultipartUploadRequest compRequest = new CompleteMultipartUploadRequest().withVaultName(vaultName)
                 .withUploadId(uploadId).withChecksum(checksum).withArchiveSize(String.valueOf(file.length()));
 
@@ -205,7 +209,22 @@ public class UploadMultipartArchiveCommand extends AbstractCommand {
 
     @Override
     public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.multipartUpload) && options.hasArgument(optionParser.multipartUpload)
-                && options.has(optionParser.partSize) && options.hasArgument(optionParser.partSize);
+        return options.has(optionParser.multipartUpload) && options.hasArgument(optionParser.multipartUpload);
     }
+
+    private boolean isPowerOfTwo(long x) {
+        return (x & (x - 1)) == 0;
+    }
+
+    @Override
+    public void verifyArguments(OptionSet options, GlacierUploaderOptionParser optionParser) throws IllegalArgumentException {
+        if (options.hasArgument(optionParser.partSize)) {
+            // verify power of 2
+            long partsize = options.valueOf(optionParser.partSize).longValue();
+            if (partsize == 0 || !this.isPowerOfTwo(partsize)) {
+                throw new IllegalArgumentException(MessageFormat.format("Partsize was specified on the command line {0} but is 0 or NOT a power of 2", partsize));
+            }
+        }
+    }
+
 }

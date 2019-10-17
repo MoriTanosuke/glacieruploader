@@ -22,41 +22,34 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
+import org.apache.commons.lang3.Validate;
+
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.services.glacier.AmazonGlacier;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 
-public class HelpCommand extends AbstractCommand {
+/**
+ * Base class for Glacier commands.
+ * 
+ */
+public abstract class AbstractGlacierCommand extends AbstractCommand {
+    protected AWSCredentials credentials = null;
+    protected AmazonGlacier client = null;
+    protected AmazonSQS sqs = null;
+    protected AmazonSNS sns = null;
 
-    private final OutputStream out;
-
-    public HelpCommand() {
-        this(System.out);
-    }
-
-    public HelpCommand(final OutputStream out) {
+    public AbstractGlacierCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
         super();
-        this.out = out;
-    }
+        Validate.notNull(client);
+        Validate.notNull(sqs);
+        Validate.notNull(sns);
 
-    @Override
-    public void exec(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        if (!options.has(optionParser.help)) {
-            log.info("Ooops, can't determine what you want to do. Check your options." +
-                    System.getProperty("line.separator"));
-        }
-        try {
-            optionParser.printHelpOn(out);
-        } catch (final IOException e) {
-            log.error("Can not print help", e);
-        }
+        this.client = client;
+        this.sqs = sqs;
+        this.sns = sns;
     }
-
-    @Override
-    public boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser) {
-        return options.has(optionParser.help);
-    }
-
 }

@@ -22,38 +22,47 @@ package de.kopis.glacier.commands;
  * #L%
  */
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.services.glacier.AmazonGlacier;
-import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sqs.AmazonSQS;
+
 import de.kopis.glacier.parsers.GlacierUploaderOptionParser;
 import joptsimple.OptionSet;
 
+/**
+ * Base class for all commands.
+ * 
+ */
 public abstract class AbstractCommand {
     protected final Logger log;
 
-    protected AWSCredentials credentials = null;
-    protected AmazonGlacier client = null;
-    protected AmazonSQS sqs = null;
-    protected AmazonSNS sns = null;
-
-    public AbstractCommand(AmazonGlacier client, AmazonSQS sqs, AmazonSNS sns) {
-        Validate.notNull(client);
-        Validate.notNull(sqs);
-        Validate.notNull(sns);
-
-        this.client = client;
-        this.sqs = sqs;
-        this.sns = sns;
-
+    public AbstractCommand() {
         this.log = LoggerFactory.getLogger(this.getClass());
     }
 
+    /**
+     * Called to execute the command.
+     * @param options
+     * @param optionParser
+     */
     public abstract void exec(OptionSet options, GlacierUploaderOptionParser optionParser);
 
+    /**
+     * Called to ask the command if it's valid for the supplied arguments.
+     * 
+     * @param options
+     * @param optionParser
+     * @return
+     */
     public abstract boolean valid(OptionSet options, GlacierUploaderOptionParser optionParser);
 
+    /**
+     * Called to ask the command to verify if the parameters are valid for the command.
+     * 
+     * @param options
+     * @param optionParser
+     * @throws IllegalArgumentException
+     */
+    public void verifyArguments(OptionSet options, GlacierUploaderOptionParser optionParser) throws IllegalArgumentException {
+        
+    }
 }

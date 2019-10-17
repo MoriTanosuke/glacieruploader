@@ -47,7 +47,7 @@ public class CommandFactoryTest {
         sqs = createMock(AmazonSQS.class);
         sns = createMock(AmazonSNS.class);
 
-        CommandFactory.setDefaultCommand(new HelpCommand(client, sqs, sns));
+        CommandFactory.setDefaultCommand(new HelpCommand());
     }
 
     @Test
